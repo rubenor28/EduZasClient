@@ -28,7 +28,7 @@ export interface CrudValidator<
   validateNew(
     data: NewEntity,
     repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>,
-  ): Result<void, FieldErrorDTO[]>;
+  ): Promise<Result<void, FieldErrorDTO[]>>;
 
   /**
    * Valida los datos para actualizar una entidad existente.
@@ -40,7 +40,7 @@ export interface CrudValidator<
   validate(
     data: UpdateEntity,
     repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>,
-  ): Result<void, FieldErrorDTO[]>;
+  ): Promise<Result<void, FieldErrorDTO[]>>;
 }
 
 /**

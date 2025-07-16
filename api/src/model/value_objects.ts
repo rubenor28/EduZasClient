@@ -40,7 +40,7 @@ export type FieldErrorDTO = {
   /** Nombre del campo que provocó el error. */
   field: string;
   /** Mensaje descriptivo del error. */
-  error: string;
+  message: string;
 };
 
 /**
