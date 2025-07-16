@@ -3,22 +3,58 @@ import type { Repository } from "../repository/repository";
 import { Result, Ok, Err } from "ts-results";
 
 /**
- * Crea un servicio CRUD genérico desacoplado del framework, mediante composición funcional.
+ * Interfaz para validadores de CRUD desacoplados de la infraestructura.
  *
- * Esta función implementa el patrón **Factory**, permitiendo construir servicios CRUD con
- * validaciones personalizadas y lógica de búsqueda específica para cada entidad.
+ * @template Id          Tipo del identificador único de la entidad.
+ * @template Entity      Tipo de la entidad persistida, debe extender Identifiable<Id>.
+ * @template NewEntity   Tipo de los datos requeridos para crear una nueva entidad.
+ * @template UpdateEntity Tipo de los datos para actualizar una entidad existente.
+ * @template Criteria    Tipo de los criterios de búsqueda/paginación.
+ */
+export interface CrudValidator<
+  Id,
+  Entity extends Identifiable<Id>,
+  NewEntity,
+  UpdateEntity,
+  Criteria,
+> {
+  /**
+   * Valida los datos para crear una nueva entidad.
+   *
+   * @param data - Datos de la nueva entidad.
+   * @param repo - Repositorio inyectado para operaciones de persistencia.
+   * @returns Ok si la validación pasa, o Err con un arreglo de FieldErrorDTO si falla.
+   */
+  validateNew(
+    data: NewEntity,
+    repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>,
+  ): Result<void, FieldErrorDTO[]>;
+
+  /**
+   * Valida los datos para actualizar una entidad existente.
+   *
+   * @param data - Datos de la entidad con cambios aplicados.
+   * @param repo - Repositorio inyectado para operaciones de persistencia.
+   * @returns Ok si la validación pasa, o Err con un arreglo de FieldErrorDTO si falla.
+   */
+  validate(
+    data: UpdateEntity,
+    repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>,
+  ): Result<void, FieldErrorDTO[]>;
+}
+
+/**
+ * Fábrica para crear servicios CRUD.
  *
- * @template Id - Tipo del identificador único (por ejemplo: `number`, `string`).
- * @template Entity - Tipo completo de la entidad persistida, debe implementar `Identifiable<Id>`.
- * @template NewEntity - Tipo de los datos requeridos para crear una nueva entidad.
- * @template Criteria - Tipo del objeto de filtrado/búsqueda.
+ * @template Id          Tipo del identificador único de la entidad.
+ * @template Entity      Tipo de la entidad persistida, debe extender Identifiable<Id>.
+ * @template NewEntity   Tipo de los datos requeridos para crear una nueva entidad.
+ * @template UpdateEntity Tipo de los datos para actualizar una entidad existente.
+ * @template Criteria    Tipo de los criterios de búsqueda/paginación.
  *
- * @param repo - Repositorio que implementa operaciones de persistencia.
- * @param validateNew - Función de validación para nuevas entidades.
- * @param validate - Función de validación para entidades existentes (actualización).
- * @param getBy - Función que implementa la lógica de filtrado/paginación.
- *
- * @returns Un objeto con métodos `add`, `update`, `get`, `delete` y `getBy`.
+ * @param options.repo      Repositorio que implementa las operaciones de persistencia.
+ * @param options.validator Validador para crear y actualizar entidades.
+ * @returns Un objeto con métodos `add`, `update`, `get`, `delete` y `getBy` validados.
  */
 export function createCrudService<
   Id,
@@ -28,27 +64,20 @@ export function createCrudService<
   Criteria,
 >({
   repo,
-  validateNew,
-  validate,
-  getBy,
+  validator,
 }: {
   repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>;
-  validateNew: (data: NewEntity) => Result<void, FieldErrorDTO[]>;
-  validate: (data: UpdateEntity) => Result<void, FieldErrorDTO[]>;
-  getBy: (
-    criteria: Criteria,
-    page: number,
-  ) => Promise<Result<Entity[], FieldErrorDTO[]>>;
+  validator: CrudValidator<Id, Entity, NewEntity, UpdateEntity, Criteria>;
 }) {
   return {
     /**
      * Agrega una nueva entidad tras validar sus datos.
      *
      * @param data - Datos de la nueva entidad.
-     * @returns Resultado exitoso con la entidad creada, o lista de errores de validación.
+     * @returns Resultado con `Ok(Entity)` o `Err(FieldErrorDTO[])`.
      */
     async add(data: NewEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
-      const validation = validateNew(data);
+      const validation = validator.validateNew(data, repo);
       if (validation.err) return Err(validation.val);
       return Ok(await repo.add(data));
     },
@@ -57,10 +86,10 @@ export function createCrudService<
      * Actualiza una entidad existente luego de validarla.
      *
      * @param data - Entidad con los cambios aplicados.
-     * @returns Resultado exitoso con la entidad actualizada, o lista de errores de validación.
+     * @returns Resultado con `Ok(Entity)` o `Err(FieldErrorDTO[])`.
      */
     async update(data: UpdateEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
-      const validation = validate(data);
+      const validation = validator.validate(data, repo);
       if (validation.err) return Err(validation.val);
       return Ok(await repo.update(data));
     },
@@ -69,7 +98,7 @@ export function createCrudService<
      * Obtiene una entidad por su identificador.
      *
      * @param id - Identificador único de la entidad.
-     * @returns La entidad encontrada o `undefined` si no existe.
+     * @returns La entidad encontrada, o `undefined` si no existe.
      */
     async get(id: Id): Promise<Entity | undefined> {
       return repo.get(id);
@@ -79,7 +108,7 @@ export function createCrudService<
      * Elimina una entidad si existe, identificada por su ID.
      *
      * @param id - Identificador único de la entidad.
-     * @returns Resultado exitoso con la entidad eliminada, o un error si no se encuentra.
+     * @returns Resultado con `Ok(Entity)` o `Err(string)` si no la encuentra.
      */
     async delete(id: Id): Promise<Result<Entity, string>> {
       const found = await repo.get(id);
@@ -88,14 +117,14 @@ export function createCrudService<
     },
 
     /**
-     * Busca entidades por los criterios especificados y paginación.
+     * Busca entidades según criterios y paginación.
      *
-     * @param criteria - Criterios de búsqueda (por campos, texto, fechas, etc.).
+     * @param criteria - Criterios de búsqueda (campos, texto, fechas, etc.).
      * @param page - Número de página para resultados paginados.
-     * @returns Resultado exitoso con lista de entidades, o errores de validación si aplica.
+     * @returns Resultado con `Ok(Entity[])` o `Err(FieldErrorDTO[])`.
      */
     async getBy(criteria: Criteria, page: number) {
-      return getBy(criteria, page);
+      return repo.getBy(criteria, page);
     },
   };
 }
