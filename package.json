@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "start:api": "cd api && bun run start",
+    "build:api": "cd api && bun run build",
     "build:client": "cd client && bun run build",
     "dev:client": "cd client && bun run dev",
     "dev:api": "cd api && bun run dev",
+    "migrate": "cd api && bun run migrate",
     "build": "bun run build:client",
     "start": "bun run start:api",
     "dev": "concurrently 'bun run dev:client' 'bun run dev:api'"
