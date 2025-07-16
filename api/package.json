@@ -7,7 +7,8 @@
     "dev": "bun run --watch src/server.ts",
     "migrate": "prisma migrate dev",
     "start": "BUN_ENV=production bun run src/server.ts",
-    "build": "prisma migrate deploy"
+    "build": "prisma migrate deploy",
+    "test": "jest"
   },
   "devDependencies": {
     "@types/bun": "latest",
