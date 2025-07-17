@@ -4,18 +4,25 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --watch src/server.ts",
-    "migrate": "prisma migrate dev",
-    "start": "BUN_ENV=production bun run src/server.ts",
     "build": "prisma migrate deploy",
-    "test": "jest"
+    "start": "BUN_ENV=production bun run src/server.ts",
+
+    "migrate": "prisma migrate dev",
+    "dev": "bun run --watch src/server.ts",
+
+    "migrate:test": "bun --env-file=.env.test prisma migrate deploy",
+    "test": "bun --env-file=.env.test jest --runInBand"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cors": "2.8.19",
     "@types/dotenv": "8.2.3",
     "@types/express": "5.0.3",
-    "@types/node": "22.15.30"
+    "@types/jest": "^30.0.0",
+    "@types/node": "22.15.30",
+    "jest": "^30.0.4",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2"
   },
   "peerDependencies": {
     "typescript": "5"
@@ -23,7 +30,6 @@
   "dependencies": {
     "@prisma/client": "^6.11.1",
     "cors": "2.8.5",
-    "dotenv": "16.5.0",
     "express": "5.1.0",
     "prisma": "^6.11.1",
     "ts-results": "^3.3.0",
