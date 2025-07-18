@@ -152,6 +152,8 @@ export function makeUserZodValidator(
     });
 
   return {
+    //TODO: Reparar validación de matricula repetida
+    
     /**
      * Valida los datos para crear un nuevo usuario.
      *
