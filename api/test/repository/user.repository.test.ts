@@ -5,14 +5,14 @@ import {
   type User,
   type UserCriteriaDTO,
 } from "../../src/model";
-import { prisma } from "../../src/config";
+import { PAGE_SIZE, prisma } from "../../src/config";
 
 describe("Operaciones CRUD userRepository", () => {
   const repo = prismaUserRepository;
 
   const testNew: NewUserDTO = {
     email: "aaaabbbbccceee@gmail.com",
-    tuition: "ABC012345I", // formato válido según tu schema
+    tuition: "ABC012345I",
     firstName: "Ruben",
     midName: undefined,
     fatherLastname: "Roman",
@@ -21,7 +21,7 @@ describe("Operaciones CRUD userRepository", () => {
     gender: "Masculino",
   };
 
-  const testCreated: Partial<User> = {
+  const testCreated: User = {
     ...testNew,
     id: 1,
     active: true,
@@ -82,6 +82,7 @@ describe("Operaciones CRUD userRepository", () => {
     await repo.add(testNew);
     const deleted = await repo.delete(1);
     expect(deleted.id).toBe(1);
+
     // Ahora ya no existe
     const record = await repo.get(1);
     expect(record).toBeUndefined();
@@ -99,21 +100,45 @@ describe("Operaciones CRUD userRepository", () => {
     const page = 2;
     const result = await repo.getBy({} as UserCriteriaDTO, page);
     expect(result.page).toBe(page);
-    expect(result.totalPages).toBe(
-      Math.ceil(15 / (await import("../../src/config")).PAGE_SIZE),
-    );
+    expect(result.totalPages).toBe(Math.ceil(15 / PAGE_SIZE));
     expect(result.results.length).toBeGreaterThan(0);
   });
 
-  test("Filtrar por email exacto", async () => {
+  test("Filtrado exacto matricula", async () => {
     await repo.add(testNew);
-    await repo.add({ ...testNew, email: "other@example.com" });
-    const result = await repo.getBy(
+    await repo.add({
+      ...testNew,
+      email: "notImportantField",
+      tuition: "asdjakslda",
+    });
+
+    const resultTuition = await repo.getBy(
+      {
+        tuition: { string: testNew.tuition, searchType: StringSearchType.EQ },
+      },
+      1,
+    );
+
+    expect(resultTuition.results).toHaveLength(1);
+    expect(resultTuition.results[0]?.tuition).toBe(testNew.tuition);
+  });
+
+  test("Filtrado exacto correo", async () => {
+    await repo.add(testNew);
+
+    await repo.add({
+      ...testNew,
+      email: "other@example.com",
+      tuition: "notImportantField",
+    });
+
+    const resultEmail = await repo.getBy(
       { email: { string: testNew.email, searchType: StringSearchType.EQ } },
       1,
     );
-    expect(result.results).toHaveLength(1);
-    expect(result.results[0]?.email).toBe(testNew.email);
+
+    expect(resultEmail.results).toHaveLength(1);
+    expect(resultEmail.results[0]?.email).toBe(testNew.email);
   });
 
   test("Filtrar por matrícula parcial (contains)", async () => {
@@ -139,11 +164,13 @@ describe("Operaciones CRUD userRepository", () => {
     await repo.add({
       ...testNew,
       email: "combo1@test.com",
+      tuition: "1",
       firstName: "Ana",
     });
     await repo.add({
       ...testNew,
       email: "combo2@test.com",
+      tuition: "2",
       firstName: "Luis",
     });
 
@@ -160,12 +187,14 @@ describe("Operaciones CRUD userRepository", () => {
     await repo.add({
       ...testNew,
       email: "combo1@test.com",
+      tuition: "1",
       firstName: "Ana",
     });
 
     await repo.add({
       ...testNew,
       email: "combo2@test.com",
+      tuition: "2",
       firstName: "Luis",
     });
 

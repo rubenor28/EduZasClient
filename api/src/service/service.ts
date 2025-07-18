@@ -77,7 +77,7 @@ export function createCrudService<
      * @returns Resultado con `Ok(Entity)` o `Err(FieldErrorDTO[])`.
      */
     async add(data: NewEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
-      const validation = validator.validateNew(data, repo);
+      const validation = await validator.validateNew(data, repo);
       if (validation.err) return Err(validation.val);
       return Ok(await repo.add(data));
     },
@@ -89,7 +89,7 @@ export function createCrudService<
      * @returns Resultado con `Ok(Entity)` o `Err(FieldErrorDTO[])`.
      */
     async update(data: UpdateEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
-      const validation = validator.validate(data, repo);
+      const validation = await validator.validate(data, repo);
       if (validation.err) return Err(validation.val);
       return Ok(await repo.update(data));
     },

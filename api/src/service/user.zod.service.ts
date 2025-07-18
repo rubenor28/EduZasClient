@@ -31,64 +31,73 @@ export function makeUserZodValidator(
   repo: Repository<number, User, NewUserDTO, UpdateUserDTO, UserCriteriaDTO>,
 ): CrudValidator<number, User, NewUserDTO, UpdateUserDTO, UserCriteriaDTO> {
   const base = z.object({
-    tuition: z.coerce.string().toUpperCase().regex(tuitionRegex),
-    firstName: z.coerce.string().toUpperCase().regex(simpleNameRegex),
-    midName: z.coerce
+    tuition: z.string().toUpperCase().trim().regex(tuitionRegex),
+    firstName: z.string().toUpperCase().trim().regex(simpleNameRegex),
+    midName: z
       .string()
       .toUpperCase()
+      .trim()
       .refine(
         (val) => simpleNameRegex.test(val) || compositeNameRegex.test(val),
         {
           message: "Formato de segundo nombre inválido",
         },
-      ),
-    fatherLastname: z.coerce.string().toUpperCase().regex(simpleNameRegex),
-    motherLastname: z.coerce
+      )
+      .optional(),
+    fatherLastname: z.string().toUpperCase().trim().regex(simpleNameRegex),
+    motherLastname: z
       .string()
       .toUpperCase()
+      .trim()
       .refine(
         (val) => simpleNameRegex.test(val) || compositeNameRegex.test(val),
         {
           message: "Formato de apellido materno inválido",
         },
-      ),
-    gender: z.string().optional(),
-    email: z.string().email(),
-    password: z.coerce.string().regex(passwordRegex),
+      )
+      .optional(),
+    gender: z.string().trim().optional(),
+    email: z.email().trim(),
+    password: z.string().trim().regex(passwordRegex),
   });
 
-  const createSchema = base.check(async (ctx) => {
-    const user = ctx.value;
+  const createSchema = base
+    .check(async (ctx) => {
+      const user = ctx.value;
 
-    const emailCriteria: UserCriteriaDTO = {
-      email: { string: user.email, searchType: StringSearchType.EQ },
-    };
-    const tuitionCriteria: UserCriteriaDTO = {
-      tuition: { string: user.tuition, searchType: StringSearchType.EQ },
-    };
+      const emailCriteria: UserCriteriaDTO = {
+        email: { string: user.email, searchType: StringSearchType.EQ },
+      };
 
-    const [emailRes, tuitionRes] = await Promise.all([
-      repo.getBy(emailCriteria, 1),
-      repo.getBy(tuitionCriteria, 1),
-    ]);
+      const emailRes = await repo.getBy(emailCriteria, 1);
 
-    if (emailRes.results.length > 0) {
-      ctx.issues.push({
-        code: "custom",
-        message: "Ya existe un usuario con este correo",
-        path: ["email"],
-        input: user.email,
-      });
-    }
-    if (tuitionRes.results.length > 0) {
-      ctx.issues.push({
-        code: "custom",
-        message: "Ya existe un usuario con esta matrícula",
-        path: ["tuition"],
-        input: user.tuition,
-      });
-    }
-  });
+      if (emailRes.results.length > 0) {
+        ctx.issues.push({
+          code: "custom",
+          message: "Ya existe un usuario con este correo",
+          path: ["email"],
+          input: user.email,
+        });
+      }
+    })
+    .check(async (ctx) => {
+      const user = ctx.value;
+
+      const tuitionCriteria: UserCriteriaDTO = {
+        tuition: { string: user.tuition, searchType: StringSearchType.EQ },
+      };
+
+      const tuitionRes = await repo.getBy(tuitionCriteria, 1);
+
+      if (tuitionRes.results.length > 0) {
+        ctx.issues.push({
+          code: "custom",
+          message: "Ya existe un usuario con esta matrícula",
+          path: ["tuition"],
+          input: user.tuition,
+        });
+      }
+    });
 
   const updateSchema = base
     .extend({
@@ -106,14 +115,8 @@ export function makeUserZodValidator(
       const emailCriteria: UserCriteriaDTO = {
         email: { string: user.email, searchType: StringSearchType.EQ },
       };
-      const tuitionCriteria: UserCriteriaDTO = {
-        tuition: { string: user.tuition, searchType: StringSearchType.EQ },
-      };
 
-      const [emailRes, tuitionRes] = await Promise.all([
-        repo.getBy(emailCriteria, 1),
-        repo.getBy(tuitionCriteria, 1),
-      ]);
+      const emailRes = await repo.getBy(emailCriteria, 1);
 
       if (emailRes.results.length > 0 && emailRes.results[0]?.id !== user.id) {
         ctx.issues.push({
@@ -121,8 +124,19 @@ export function makeUserZodValidator(
           message: "Ya existe un usuario con este correo",
           path: ["email"],
           input: user.email,
+          continue: true,
         });
       }
+    })
+    .check(async (ctx) => {
+      const user = ctx.value;
+
+      const tuitionCriteria: UserCriteriaDTO = {
+        tuition: { string: user.tuition, searchType: StringSearchType.EQ },
+      };
+
+      const tuitionRes = await repo.getBy(tuitionCriteria, 1);
+
       if (
         tuitionRes.results.length > 0 &&
         tuitionRes.results[0]?.id !== user.id
@@ -132,6 +146,7 @@ export function makeUserZodValidator(
           message: "Ya existe un usuario con esta matrícula",
           path: ["tuition"],
           input: user.tuition,
+          continue: true,
         });
       }
     });
