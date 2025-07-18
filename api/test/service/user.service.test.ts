@@ -36,17 +36,22 @@ describe("Operaciones CRUD userRepository", () => {
 
   // Limpia registros y reinicia identidades antes de cada test
   beforeEach(async () => {
-    await prisma.$executeRawUnsafe(`
-      DO $$
-      BEGIN
-        EXECUTE (
-          SELECT 'TRUNCATE TABLE ' || string_agg(quote_ident(table_name), ', ') || ' RESTART IDENTITY CASCADE'
-          FROM information_schema.tables
-          WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
-        );
-      END
-      $$;
-    `);
+    await prisma.$executeRawUnsafe("SET FOREIGN_KEY_CHECKS = 0;");
+
+    // Obtener todas las tablas
+    const tables = await prisma.$queryRawUnsafe<{ TABLE_NAME: string }[]>(
+      `SELECT TABLE_NAME 
+     FROM information_schema.TABLES 
+     WHERE TABLE_SCHEMA = DATABASE()`,
+    );
+
+    // Truncar cada tabla (elimina datos + reinicia autoincrementos)
+    for (const table of tables) {
+      await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${table.TABLE_NAME}`);
+    }
+
+    // Rehabilitar verificaciones de FK
+    await prisma.$executeRawUnsafe("SET FOREIGN_KEY_CHECKS = 1;");
   });
 
   test("Insercion exitosa", async () => {
