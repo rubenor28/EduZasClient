@@ -4,8 +4,8 @@ App web para creación de clases y evaluaciones
 
 ## Prerequisitos
 
-- Descargar [Postgresql](https://www.postgresql.org/download/)
-- Descargar [Bun](https://bun.com/) como entorno de ejecución de `JavaScript`
+- Descargar En MySQL ≥ 5.7.9 GA y MariaDB ≥  10.4.3 
+- Descargar [Bun](https://bun.com/) como entorno de ejecución de `TypeScript`
 
 ## Preparar el entorno de desarrollo/ejecución
 
