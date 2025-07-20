@@ -13,6 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserType {
+  ADMIN     @map("ADMIN")
+  PROFESSOR @map("PROFESSOR")
+  STUDENT   @map("STUDENT")
+}
+
+enum Gender {
+  MALE   @map("MALE")
+  FEMALE @map("FEMALE")
+  OTHER  @map("OTHER")
+}
+
 model User {
   id             Int      @id @default(autoincrement())
   tuition        String   @unique
@@ -21,9 +33,133 @@ model User {
   midName        String?  @map("mid_name")
   fatherLastname String   @map("father_lastname")
   motherLastname String?  @map("mother_lastname")
-  gender         String?
+  gender         Gender?
   email          String   @unique
   password       String
+  role           UserType @default(STUDENT)
   createdAt      DateTime @default(now()) @map("created_at")
   modifiedAt     DateTime @updatedAt @map("modified_at")
+
+  teachingClasses ClassProfessor[]
+  enrolledClasses ClassStudent[]
+  ownedClasses    Class[]          @relation("ClassOwner")
+  ownedResources  ClassResource[]
+
+  contactList    AgendaContact[] @relation("AgendaOwnerContacts")
+  inOtherAgendas AgendaContact[] @relation("UserInOtherAgendas")
+
+  @@map("users")
+}
+
+model Class {
+  id         String   @id @db.VarChar(20)
+  className  String   @map("class_name") @db.VarChar(100)
+  subject    String   @db.VarChar(100)
+  section    String   @db.VarChar(100)
+  ownerId    Int?     @map("owner_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  modifiedAt DateTime @updatedAt @map("modified_at")
+
+  owner      User?               @relation("ClassOwner", fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  professors ClassProfessor[]
+  students   ClassStudent[]
+  materials  ClassResourceLink[]
+  tests      ClassTestLink[]
+
+  @@map("classes")
+}
+
+model ClassProfessor {
+  id          Int      @id @default(autoincrement())
+  classId     String?  @map("class_id") @db.VarChar(20)
+  professorId Int?     @map("professor_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  modifiedAt  DateTime @updatedAt @map("modified_at")
+
+  class     Class? @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  professor User?  @relation(fields: [professorId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@map("classes_professors")
+}
+
+model ClassStudent {
+  id         Int      @id @default(autoincrement())
+  classId    String?  @map("class_id") @db.VarChar(20)
+  studentId  Int?     @map("student_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  modifiedAt DateTime @updatedAt @map("modified_at")
+
+  class   Class? @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  student User?  @relation(fields: [studentId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@map("classes_studens")
+}
+
+model AgendaContact {
+  id            Int      @id @default(autoincrement())
+  agendaOwnerId Int?     @map("agenda_owner_id")
+  contactId     Int?     @map("contact_id")
+  alias         String   @db.VarChar(40)
+  tag           String
+  notes         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  modifiedAt    DateTime @updatedAt @map("modified_at")
+
+  agendaOwner User? @relation("AgendaOwnerContacts", fields: [agendaOwnerId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  contact     User? @relation("UserInOtherAgendas", fields: [contactId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@map("agenda_contacts")
+}
+
+model ClassResource {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(40)
+  content     Json     @db.Json
+  professorId Int?     @map("professor_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  modifiedAt  DateTime @updatedAt @map("modified_at")
+
+  professor     User?               @relation(fields: [professorId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  linkedClasses ClassResourceLink[]
+
+  @@map("class_resources")
+}
+
+model ClassResourceLink {
+  id         Int      @id @default(autoincrement())
+  classId    String?  @db.VarChar(20)
+  materialId Int?     @map("material_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  modifiedAt DateTime @updatedAt @map("modified_at")
+
+  class    Class?         @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  material ClassResource? @relation(fields: [materialId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@map("classes_resources_link")
+}
+
+model ClassTest {
+  id         Int      @id @default(autoincrement())
+  title      String   @db.VarChar(40)
+  password   String?  @db.VarChar(25)
+  content    Json     @db.Json
+  createdAt  DateTime @default(now()) @map("created_at")
+  modifiedAt DateTime @updatedAt @map("modified_at")
+
+  linkedClasses ClassTestLink[]
+
+  @@map("class_tests")
+}
+
+model ClassTestLink {
+  id         Int      @id @default(autoincrement())
+  classId    String?  @map("class_id") @db.VarChar(20)
+  testId     Int?     @map("test_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  modifiedAt DateTime @updatedAt @map("modified_at")
+
+  class Class?     @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  test  ClassTest? @relation(fields: [testId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@map("classes_tests_link")
 }
