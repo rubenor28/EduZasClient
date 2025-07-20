@@ -7,7 +7,7 @@ import {
 } from "../../src/model";
 import { PAGE_SIZE, prisma } from "../../src/config";
 
-describe("Operaciones CRUD userRepository", () => {
+describe("Operaciones CRUD Repositorio Usuarios", () => {
   const repo = prismaUserRepository;
 
   const testNew: NewUserDTO = {

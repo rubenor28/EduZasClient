@@ -3,9 +3,8 @@ import { createCrudService } from "../../src/service/service";
 import { prismaUserRepository } from "../../src/repository";
 import { prisma } from "../../src/config";
 import { NewUserDTO, User } from "../../src/model";
-import { password } from "bun";
 
-describe("Operaciones CRUD userRepository", () => {
+describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
   const repo = prismaUserRepository;
   const validator = makeUserZodValidator(repo);
   const service = createCrudService({ repo, validator });
@@ -119,7 +118,7 @@ describe("Operaciones CRUD userRepository", () => {
     expect(insercion.err).toBe(true);
   });
 
-  test("Insercion contraeña invalida", async () => {
+  test("Insercion contraseña invalida", async () => {
     const invalidRecord = {
       ...testNew,
       password: "123",
@@ -130,5 +129,52 @@ describe("Operaciones CRUD userRepository", () => {
 
     const insercion = await service.add(invalidRecord);
     expect(insercion.err).toBe(true);
+  });
+
+  test("Insercion nombre compuesto", async () => {
+    const invalidRecord: NewUserDTO = {
+      ...testNew,
+      firstName: "MaRíA",
+      midName: "DeL CaRmEl",
+      fatherLastname: "Pérez",
+      motherLastname: "DEl leon",
+    };
+
+    const validation = await validator.validateNew(invalidRecord, repo);
+    expect(validation.ok).toBe(true);
+
+    const insercion = await service.add(invalidRecord);
+    expect(insercion.ok).toBe(true);
+  });
+
+  test("Insercion nombre invalido", async () => {
+    const invalidRecords: NewUserDTO[] = [
+      { ...testNew, firstName: "Ruben Omar" },
+      { ...testNew, midName: "Ruben Omar" },
+      { ...testNew, fatherLastname: "Ruben Omar" },
+      { ...testNew, motherLastname: "Ruben Omar" },
+    ];
+
+    for (let i = 0; i < invalidRecords.length; i++) {
+      const invalidRecord = {
+        ...invalidRecords[i],
+        tuition: `rsro22${i.toString().padStart(4, "0")}`,
+        email: `${i.toString().padStart(4, "0")}@test.com`,
+      } as NewUserDTO;
+
+      const validation = await validator.validateNew(invalidRecord, repo);
+      if (validation.ok) {
+        throw Error(
+          `❌ Validación incorrecta para: ${JSON.stringify(invalidRecord)}`,
+        );
+      }
+
+      const insercion = await service.add(invalidRecord);
+      if (insercion.ok) {
+        throw Error(
+          `❌ Inserción incorrecta para: ${JSON.stringify(invalidRecord)}`,
+        );
+      }
+    }
   });
 });
