@@ -1,13 +1,13 @@
 import { makeUserZodValidator } from "../../src/service/user.zod.service";
-import { createCrudService } from "../../src/service/service";
+import { CrudService } from "../../src/service/service";
 import { prismaUserRepository } from "../../src/repository";
 import { prisma } from "../../src/config";
-import { NewUserDTO, User } from "../../src/model";
+import { Gender, NewUserDTO, User, UserType } from "../../src/model";
 
 describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
   const repo = prismaUserRepository;
   const validator = makeUserZodValidator(repo);
-  const service = createCrudService({ repo, validator });
+  const service = new CrudService({ repo, validator });
 
   const testNew: NewUserDTO = {
     email: "aaaabbbbccceee@gmail.com",
@@ -17,13 +17,13 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
     fatherLastname: "Roman",
     motherLastname: undefined,
     password: "1234Ab!@",
-    gender: "Masculino",
+    gender: Gender.MALE,
   };
 
   const testCreated: User = {
     ...testNew,
     id: 1,
-    active: true,
+    role: UserType.STUDENT,
     createdAt: expect.any(Date),
     modifiedAt: expect.any(Date),
   };

@@ -11,7 +11,7 @@ import {
 } from "../model";
 import z from "zod";
 import { Ok, Err } from "ts-results";
-import type { CrudValidator } from "./service";
+import type { CrudServiceValidator } from "./service";
 import type { Repository } from "../repository";
 import { zodToFieldErrors } from "../parsers/zod.parser";
 
@@ -29,7 +29,7 @@ import { zodToFieldErrors } from "../parsers/zod.parser";
  */
 export function makeUserZodValidator(
   repo: Repository<number, User, NewUserDTO, UpdateUserDTO, UserCriteriaDTO>,
-): CrudValidator<number, User, NewUserDTO, UpdateUserDTO, UserCriteriaDTO> {
+): CrudServiceValidator<number, User, NewUserDTO, UpdateUserDTO, UserCriteriaDTO> {
   const base = z.object({
     tuition: z.string().toUpperCase().trim().regex(tuitionRegex),
     firstName: z.string().toUpperCase().trim().regex(simpleNameRegex),

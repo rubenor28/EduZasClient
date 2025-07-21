@@ -1,4 +1,4 @@
-import type { FieldErrorDTO, Identifiable } from "../model";
+import type { FieldErrorDTO, Identifiable, PaginatedQuery } from "../model";
 import type { Repository } from "../repository/repository";
 import { Result, Ok, Err } from "ts-results";
 
@@ -11,7 +11,7 @@ import { Result, Ok, Err } from "ts-results";
  * @template UpdateEntity Tipo de los datos para actualizar una entidad existente.
  * @template Criteria    Tipo de los criterios de búsqueda/paginación.
  */
-export interface CrudValidator<
+export interface CrudServiceValidator<
   Id,
   Entity extends Identifiable<Id>,
   NewEntity,
@@ -44,87 +44,104 @@ export interface CrudValidator<
 }
 
 /**
- * Fábrica para crear servicios CRUD.
+ * Servicio genérico para operaciones CRUD sobre una entidad.
  *
- * @template Id          Tipo del identificador único de la entidad.
- * @template Entity      Tipo de la entidad persistida, debe extender Identifiable<Id>.
- * @template NewEntity   Tipo de los datos requeridos para crear una nueva entidad.
- * @template UpdateEntity Tipo de los datos para actualizar una entidad existente.
- * @template Criteria    Tipo de los criterios de búsqueda/paginación.
- *
- * @param options.repo      Repositorio que implementa las operaciones de persistencia.
- * @param options.validator Validador para crear y actualizar entidades.
- * @returns Un objeto con métodos `add`, `update`, `get`, `delete` y `getBy` validados.
+ * @template Id            Tipo del identificador único de la entidad.
+ * @template Entity        Tipo de la entidad persistida; debe extender `Identifiable<Id>`.
+ * @template NewEntity     Tipo de los datos necesarios para crear una nueva entidad.
+ * @template UpdateEntity  Tipo de los datos para actualizar una entidad existente.
+ * @template Criteria      Tipo de los criterios de búsqueda/paginación.
  */
-export function createCrudService<
+export class CrudService<
   Id,
   Entity extends Identifiable<Id>,
   NewEntity,
   UpdateEntity,
   Criteria,
->({
-  repo,
-  validator,
-}: {
-  repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>;
-  validator: CrudValidator<Id, Entity, NewEntity, UpdateEntity, Criteria>;
-}) {
-  return {
-    /**
-     * Agrega una nueva entidad tras validar sus datos.
-     *
-     * @param data - Datos de la nueva entidad.
-     * @returns Resultado con `Ok(Entity)` o `Err(FieldErrorDTO[])`.
-     */
-    async add(data: NewEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
-      const validation = await validator.validateNew(data, repo);
-      if (validation.err) return Err(validation.val);
-      return Ok(await repo.add(data));
-    },
+> {
+  private repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>;
+  private validator: CrudServiceValidator<
+    Id,
+    Entity,
+    NewEntity,
+    UpdateEntity,
+    Criteria
+  >;
 
-    /**
-     * Actualiza una entidad existente luego de validarla.
-     *
-     * @param data - Entidad con los cambios aplicados.
-     * @returns Resultado con `Ok(Entity)` o `Err(FieldErrorDTO[])`.
-     */
-    async update(data: UpdateEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
-      const validation = await validator.validate(data, repo);
-      if (validation.err) return Err(validation.val);
-      return Ok(await repo.update(data));
-    },
+  /**
+   * Crea una instancia de `CrudService`.
+   *
+   * @param options.repo      Repositorio que implementa las operaciones de persistencia.
+   * @param options.validator Validador para crear y actualizar entidades.
+   */
+  constructor(options: {
+    repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>;
+    validator: CrudValidator<Id, Entity, NewEntity, UpdateEntity, Criteria>;
+  }) {
+    this.repo = options.repo;
+    this.validator = options.validator;
+  }
 
-    /**
-     * Obtiene una entidad por su identificador.
-     *
-     * @param id - Identificador único de la entidad.
-     * @returns La entidad encontrada, o `undefined` si no existe.
-     */
-    async get(id: Id): Promise<Entity | undefined> {
-      return repo.get(id);
-    },
+  /**
+   * Agrega una nueva entidad tras validar sus datos.
+   *
+   * @param data - Datos de la nueva entidad.
+   * @returns `Ok(Entity)` si la creación fue exitosa, o `Err(FieldErrorDTO[])` con errores de validación.
+   */
+  async add(data: NewEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
+    const validation = await this.validator.validateNew(data, this.repo);
+    if (validation.err) return Err(validation.val);
+    const created = await this.repo.add(data);
+    return Ok(created);
+  }
 
-    /**
-     * Elimina una entidad si existe, identificada por su ID.
-     *
-     * @param id - Identificador único de la entidad.
-     * @returns Resultado con `Ok(Entity)` o `Err(string)` si no la encuentra.
-     */
-    async delete(id: Id): Promise<Result<Entity, string>> {
-      const found = await repo.get(id);
-      if (!found) return Err("Registro no encontrado");
-      return Ok(await repo.delete(id));
-    },
+  /**
+   * Actualiza una entidad existente luego de validarla.
+   *
+   * @param data - Datos de la entidad con los cambios a aplicar.
+   * @returns `Ok(Entity)` si la actualización fue exitosa, o `Err(FieldErrorDTO[])` con errores de validación.
+   */
+  async update(data: UpdateEntity): Promise<Result<Entity, FieldErrorDTO[]>> {
+    const validation = await this.validator.validate(data, this.repo);
+    if (validation.err) return Err(validation.val);
+    const updated = await this.repo.update(data);
+    return Ok(updated);
+  }
 
-    /**
-     * Busca entidades según criterios y paginación.
-     *
-     * @param criteria - Criterios de búsqueda (campos, texto, fechas, etc.).
-     * @param page - Número de página para resultados paginados.
-     * @returns Resultado con `Ok(Entity[])` o `Err(FieldErrorDTO[])`.
-     */
-    async getBy(criteria: Criteria, page: number) {
-      return repo.getBy(criteria, page);
-    },
-  };
+  /**
+   * Obtiene una entidad por su identificador.
+   *
+   * @param id - Identificador único de la entidad.
+   * @returns La entidad si se encuentra, o `undefined` en caso contrario.
+   */
+  async get(id: Id): Promise<Entity | undefined> {
+    return this.repo.get(id);
+  }
+
+  /**
+   * Elimina una entidad si existe, identificada por su ID.
+   *
+   * @param id - Identificador único de la entidad.
+   * @returns `Ok(Entity)` con la entidad eliminada, o `Err(string)` si no se encuentra.
+   */
+  async delete(id: Id): Promise<Result<Entity, string>> {
+    const found = await this.repo.get(id);
+    if (!found) return Err("Registro no encontrado");
+    const removed = await this.repo.delete(id);
+    return Ok(removed);
+  }
+
+  /**
+   * Busca entidades según criterios y paginación.
+   *
+   * @param criteria - Criterios de búsqueda (campos, texto, fechas, etc.).
+   * @param page     - Número de página para resultados paginados.
+   * @returns `Ok(Entity[])` con la lista de entidades o `Err(FieldErrorDTO[])` si hay errores.
+   */
+  async getBy(
+    criteria: Criteria,
+    page: number,
+  ): Promise<PaginatedQuery<Entity, Criteria>> {
+    return this.repo.getBy(criteria, page);
+  }
 }

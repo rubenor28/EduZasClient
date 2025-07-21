@@ -55,6 +55,33 @@ export const tuitionRegex = /^[A-ZÁÉÍÓÚÜÑ]{3}[OIPV]\d{6}$/;
 export const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
 
 /**
+ * Tipos de usuario disponibles en el sistema.
+ */
+export enum UserType {
+  /** Usuario con todos los permisos administrativos */
+  ADMIN = "ADMIN",
+  /** Profesor, con permisos de gestión docente */
+  PROFESSOR = "PROFESSOR",
+  /** Estudiante, con acceso restringido a su propio perfil y materias */
+  STUDENT = "STUDENT",
+}
+
+/**
+ * Género de una persona o usuario.
+ *
+ * Este `enum` se utiliza para representar el género de forma explícita
+ * y legible, facilitando la validación, visualización y manejo de datos.
+ */
+export enum Gender {
+  /** Género masculino. */
+  MALE = "MALE",
+  /** Género femenino. */
+  FEMALE = "FEMALE",
+  /** Otro género o no especificado. */
+  OTHER = "OTHER",
+}
+
+/**
  * Representa un usuario completo dentro del sistema, incluyendo
  * campos de autenticación, identidad y metadatos.
  *
@@ -63,8 +90,6 @@ export const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
 export type User = Identifiable<number> & {
   /** Matrícula o número de control del usuario. */
   tuition: string;
-  /** Estado de actividad del usuario en el sistema. */
-  active: boolean;
   /** Nombre de pila del usuario. */
   firstName: string;
   /** Segundo nombre o nombre intermedio del usuario. */
@@ -74,11 +99,13 @@ export type User = Identifiable<number> & {
   /** Apellido materno del usuario. */
   motherLastname?: string;
   /** Género del usuario. */
-  gender?: string;
+  gender?: Gender;
   /** Dirección de correo electrónico del usuario. */
   email: string;
   /** Contraseña del usuario (almacenada de forma segura). */
   password: string;
+  /** Tipo de usuario dentro del sistema */
+  role: UserType;
   /** Fecha de creación del usuario. */
   createdAt: Date;
   /** Fecha de última modificación del usuario. */
@@ -92,7 +119,7 @@ export type User = Identifiable<number> & {
  */
 export type NewUserDTO = Omit<
   User,
-  "id" | "active" | "createdAt" | "modifiedAt"
+  "id" | "active" | "role" | "createdAt" | "modifiedAt"
 >;
 
 /**
@@ -107,7 +134,10 @@ export type UpdateUserDTO = Omit<User, "createdAt" | "modifiedAt">;
  *
  * @remarks Omite `password`, `createdAt` y `modifiedAt` por seguridad.
  */
-export type PublicUserDTO = Omit<User, "password" | "createdAt" | "modifiedAt">;
+export type PublicUserDTO = Omit<
+  User,
+  "password" | "role" | "createdAt" | "modifiedAt"
+>;
 
 /**
  * DTO para realizar consultas paginadas o filtradas de usuarios.
@@ -128,8 +158,6 @@ export type UserCriteriaDTO = Partial<
   fatherLastname?: StringQuery;
   /** Filtrar por apellido materno. */
   motherLastname?: StringQuery;
-  /** Filtrar por género. */
-  gender?: StringQuery;
   /** Filtrar por correo. */
   email?: StringQuery;
 };
