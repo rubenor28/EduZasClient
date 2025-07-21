@@ -1,10 +1,12 @@
-import type {
+import {
+  Gender,
   NewUserDTO,
   UpdateUserDTO,
   User,
   UserCriteriaDTO,
+  UserType,
 } from "../model";
-import type { User as PrismaUser } from "@prisma/client";
+import { $Enums, type User as PrismaUser } from "@prisma/client";
 import { PAGE_SIZE, prisma } from "../config";
 import { optionalStringQueryToPrisma } from "../parsers/prisma.parser";
 import { offset, type Repository } from "./repository";
@@ -33,7 +35,6 @@ export const prismaUserRepository: Repository<
   async add(data) {
     const createdUser = await prisma.user.create({
       data: {
-        active: true,
         ...data,
       },
     });
@@ -85,8 +86,9 @@ export const prismaUserRepository: Repository<
    * @param page - Número de página (basado en 1).
    * @returns Resultado paginado con la lista de usuarios y metadata.
    */
-  async getBy(criteria, page) {
+  async getBy(criteria) {
     const {
+      page,
       gender,
       motherLastname,
       midName,
@@ -99,7 +101,6 @@ export const prismaUserRepository: Repository<
 
     const where = {
       ...rest,
-      gender: optionalStringQueryToPrisma(gender),
       motherLastname: optionalStringQueryToPrisma(motherLastname),
       midName: optionalStringQueryToPrisma(midName),
       email: optionalStringQueryToPrisma(email),
@@ -128,6 +129,32 @@ export const prismaUserRepository: Repository<
   },
 };
 
+const normalizeGender = (gender: $Enums.Gender) => {
+  switch (gender) {
+    case "MALE":
+      return Gender.MALE;
+    case "FEMALE":
+      return Gender.FEMALE;
+    case "OTHER":
+      return Gender.OTHER;
+    default:
+      throw Error("Invalid gender option on user normalization");
+  }
+};
+
+const normalizeUserType = (type: $Enums.UserType) => {
+  switch (type) {
+    case "ADMIN":
+      return UserType.ADMIN;
+    case "PROFESSOR":
+      return UserType.PROFESSOR;
+    case "STUDENT":
+      return UserType.STUDENT;
+    default:
+      throw Error("Invalid gender option on user normalization");
+  }
+};
+
 /**
  * Normaliza un registro `PrismaUser` a la entidad de dominio `User`,
  * ajustando propiedades opcionales para que sean `undefined` en vez de `null`.
@@ -136,11 +163,14 @@ export const prismaUserRepository: Repository<
  * @returns Usuario normalizado compatible con la entidad de dominio.
  */
 const normalizeUser = (user: PrismaUser): User => {
-  const { motherLastname, midName, gender, ...rest } = user;
+  const { id, motherLastname, midName, gender, role, ...rest } = user;
+
   return {
     ...rest,
+    id: Number(id),
     motherLastname: motherLastname ?? undefined,
     midName: midName ?? undefined,
-    gender: gender ?? undefined,
+    gender: gender ? normalizeGender(gender) : undefined,
+    role: normalizeUserType(role),
   };
 };

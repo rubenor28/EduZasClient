@@ -1,4 +1,9 @@
-import type { FieldErrorDTO, Identifiable, PaginatedQuery } from "../model";
+import type {
+  FieldErrorDTO,
+  Identifiable,
+  PaginatedQuery,
+  Criteria as CriteriaType,
+} from "../model";
 import type { Repository } from "../repository/repository";
 import { Result, Ok, Err } from "ts-results";
 
@@ -16,7 +21,7 @@ export interface CrudServiceValidator<
   Entity extends Identifiable<Id>,
   NewEntity,
   UpdateEntity,
-  Criteria,
+  Criteria extends CriteriaType,
 > {
   /**
    * Valida los datos para crear una nueva entidad.
@@ -57,7 +62,7 @@ export class CrudService<
   Entity extends Identifiable<Id>,
   NewEntity,
   UpdateEntity,
-  Criteria,
+  Criteria extends CriteriaType,
 > {
   private repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>;
   private validator: CrudServiceValidator<
@@ -76,7 +81,13 @@ export class CrudService<
    */
   constructor(options: {
     repo: Repository<Id, Entity, NewEntity, UpdateEntity, Criteria>;
-    validator: CrudValidator<Id, Entity, NewEntity, UpdateEntity, Criteria>;
+    validator: CrudServiceValidator<
+      Id,
+      Entity,
+      NewEntity,
+      UpdateEntity,
+      Criteria
+    >;
   }) {
     this.repo = options.repo;
     this.validator = options.validator;
@@ -134,14 +145,10 @@ export class CrudService<
   /**
    * Busca entidades según criterios y paginación.
    *
-   * @param criteria - Criterios de búsqueda (campos, texto, fechas, etc.).
-   * @param page     - Número de página para resultados paginados.
+   * @param criteria - Criterios de búsqueda (pagina, campos, texto, fechas, etc.).
    * @returns `Ok(Entity[])` con la lista de entidades o `Err(FieldErrorDTO[])` si hay errores.
    */
-  async getBy(
-    criteria: Criteria,
-    page: number,
-  ): Promise<PaginatedQuery<Entity, Criteria>> {
-    return this.repo.getBy(criteria, page);
+  async getBy(criteria: Criteria): Promise<PaginatedQuery<Entity, Criteria>> {
+    return this.repo.getBy(criteria);
   }
 }

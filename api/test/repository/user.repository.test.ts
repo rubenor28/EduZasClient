@@ -1,6 +1,8 @@
 import { prismaUserRepository } from "../../src/repository/user.prisma.repository";
 import {
+  Gender,
   StringSearchType,
+  UserType,
   type NewUserDTO,
   type User,
   type UserCriteriaDTO,
@@ -18,13 +20,13 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
     fatherLastname: "Roman",
     motherLastname: undefined,
     password: "1234Ab!@",
-    gender: "Masculino",
+    gender: Gender.MALE,
   };
 
   const testCreated: User = {
     ...testNew,
     id: 1,
-    active: true,
+    role: UserType.STUDENT,
     createdAt: expect.any(Date),
     modifiedAt: expect.any(Date),
   };
@@ -103,7 +105,7 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
       });
     }
     const page = 2;
-    const result = await repo.getBy({} as UserCriteriaDTO, page);
+    const result = await repo.getBy({ page });
     expect(result.page).toBe(page);
     expect(result.totalPages).toBe(Math.ceil(15 / PAGE_SIZE));
     expect(result.results.length).toBeGreaterThan(0);
@@ -117,12 +119,10 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
       tuition: "asdjakslda",
     });
 
-    const resultTuition = await repo.getBy(
-      {
-        tuition: { string: testNew.tuition, searchType: StringSearchType.EQ },
-      },
-      1,
-    );
+    const resultTuition = await repo.getBy({
+      page: 1,
+      tuition: { string: testNew.tuition, searchType: StringSearchType.EQ },
+    });
 
     expect(resultTuition.results).toHaveLength(1);
     expect(resultTuition.results[0]?.tuition).toBe(testNew.tuition);
@@ -137,10 +137,10 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
       tuition: "notImportantField",
     });
 
-    const resultEmail = await repo.getBy(
-      { email: { string: testNew.email, searchType: StringSearchType.EQ } },
-      1,
-    );
+    const resultEmail = await repo.getBy({
+      page: 1,
+      email: { string: testNew.email, searchType: StringSearchType.EQ },
+    });
 
     expect(resultEmail.results).toHaveLength(1);
     expect(resultEmail.results[0]?.email).toBe(testNew.email);
@@ -157,10 +157,10 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
       tuition: "XYZI123456",
       email: "combo2@test.com",
     });
-    const result = await repo.getBy(
-      { tuition: { string: "ABC", searchType: StringSearchType.LIKE } },
-      1,
-    );
+    const result = await repo.getBy({
+      page: 1,
+      tuition: { string: "ABC", searchType: StringSearchType.LIKE },
+    });
     expect(result.results).toHaveLength(1);
     expect(result.results[0]?.tuition).toContain("ABC");
   });
@@ -172,6 +172,7 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
       tuition: "1",
       firstName: "Ana",
     });
+
     await repo.add({
       ...testNew,
       email: "combo2@test.com",
@@ -180,10 +181,13 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
     });
 
     const criteria: UserCriteriaDTO = {
+      page: 1,
       email: { string: "combo1@test.com", searchType: StringSearchType.EQ },
       firstName: { string: "Ana", searchType: StringSearchType.EQ },
     };
-    const result = await repo.getBy(criteria, 1);
+
+    const result = await repo.getBy(criteria);
+
     expect(result.results).toHaveLength(1);
     expect(result.results[0]?.firstName).toBe("Ana");
   });
@@ -210,11 +214,13 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
     });
 
     const criteria: UserCriteriaDTO = {
+      page: 1,
       email: { string: "so", searchType: StringSearchType.LIKE },
       firstName: { string: "L", searchType: StringSearchType.LIKE },
     };
 
-    const result = await repo.getBy(criteria, 1);
+    const result = await repo.getBy(criteria);
+
     expect(result.results).toHaveLength(1);
   });
 });

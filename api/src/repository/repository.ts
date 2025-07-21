@@ -1,4 +1,8 @@
-import type { Identifiable, PaginatedQuery } from "../model";
+import type {
+  Criteria as CriteriaType,
+  Identifiable,
+  PaginatedQuery,
+} from "../model";
 
 /**
  * Interfaz genérica que define el comportamiento para un repositorio.
@@ -16,7 +20,7 @@ export interface Repository<
   Entity extends Identifiable<Id>,
   NewEntity,
   UpdateEntity,
-  Criteria,
+  Criteria extends CriteriaType,
 > {
   /**
    * Crea y almacena una nueva entidad.
@@ -54,10 +58,9 @@ export interface Repository<
    * Recupera un conjunto de entidades que coincidan con los criterios de búsqueda.
    *
    * @param criteria - Criterios para filtrar entidades.
-   * @param page - Número de página para paginación (base 1 o base 0 según convención interna).
    * @returns Una promesa que resuelve con una busqueda paginada con las entidades que coincidan.
    */
-  getBy(criteria: Criteria, page: number): Promise<PaginatedQuery<Entity, Criteria>>;
+  getBy(criteria: Criteria): Promise<PaginatedQuery<Entity, Criteria>>;
 }
 
 /**
@@ -77,4 +80,3 @@ export interface Repository<
  */
 export const offset = (pageSize: number, pageNumber: number) =>
   (pageNumber - 1) * pageSize;
-
