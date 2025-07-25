@@ -6,11 +6,7 @@ import { PORT } from "./config";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
-
-app.get("/api/ping", (_, res) => {
-  res.status(200).json("Ok");
-});
+// app.use(cors());
 
 if (process.env.BUN_ENV === "production") {
   const clientDistPath = path.join(__dirname, "..", "..", "client", "dist");

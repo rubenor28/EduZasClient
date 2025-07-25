@@ -6,10 +6,8 @@
   "scripts": {
     "build": "prisma migrate deploy",
     "start": "BUN_ENV=production bun run src/server.ts",
-
     "migrate": "prisma migrate dev",
     "dev": "bun run --watch src/server.ts",
-
     "migrate:test": "bun --env-file=.env.test prisma migrate deploy",
     "test": "bun --env-file=.env.test jest --runInBand"
   },

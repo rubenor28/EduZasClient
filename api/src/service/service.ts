@@ -135,9 +135,9 @@ export class CrudService<
    * @param id - Identificador único de la entidad.
    * @returns `Ok(Entity)` con la entidad eliminada, o `Err(string)` si no se encuentra.
    */
-  async delete(id: Id): Promise<Result<Entity, string>> {
+  async delete(id: Id): Promise<Result<Entity, void>> {
     const found = await this.repo.get(id);
-    if (!found) return Err("Registro no encontrado");
+    if (!found) return Err(undefined);
     const removed = await this.repo.delete(id);
     return Ok(removed);
   }

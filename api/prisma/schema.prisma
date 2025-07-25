@@ -38,35 +38,40 @@ model Log {
   id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   timestamp  DateTime @default(now())
   type       LogType
-  message    String
-  stacktrace String?
-  metadata   Json?
+  message    String   @db.Text
+  stacktrace String?  @db.Text
+  metadata   Json?    @db.Json
   userId     BigInt?  @map("user_id") @db.UnsignedBigInt
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  @@map("logs")
 }
 
 model User {
   id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  tuition        String   @unique
-  firstName      String   @map("first_name")
-  midName        String?  @map("mid_name")
-  fatherLastname String   @map("father_lastname")
-  motherLastname String?  @map("mother_lastname")
+  tuition        String   @unique @db.VarChar(10)
+  firstName      String   @map("first_name") @db.VarChar(20)
+  midName        String?  @map("mid_name") @db.VarChar(20)
+  fatherLastname String   @map("father_lastname") @db.VarChar(20)
+  motherLastname String?  @map("mother_lastname") @db.VarChar(20)
   gender         Gender?
-  email          String   @unique
-  password       String
+  email          String   @unique @db.VarChar(30)
+  password       String   @db.VarChar(30)
   role           UserType @default(STUDENT)
   createdAt      DateTime @default(now()) @map("created_at")
   modifiedAt     DateTime @updatedAt @map("modified_at")
 
-  teachingClasses ClassProfessor[]
-  enrolledClasses ClassStudent[]
-  ownedClasses    Class[]          @relation("ClassOwner")
-  ownedResources  ClassResource[]
-  contactList     AgendaContact[]  @relation("AgendaOwnerContacts")
-  inOtherAgendas  AgendaContact[]  @relation("UserInOtherAgendas")
-  Log             Log[]
+  teachingClasses     ClassProfessor[]
+  enrolledClasses     ClassStudent[]
+  ownedClasses        Class[]               @relation("ClassOwner")
+  ownedResources      ClassResource[]
+  contactList         AgendaContact[]       @relation("AgendaOwnerContacts")
+  inOtherAgendas      AgendaContact[]       @relation("UserInOtherAgendas")
+  Log                 Log[]
+  NotificationPerUser NotificationPerUser[]
+  Answer              Answer[]
+  ClassTest           ClassTest[]
 
   @@map("users")
 }
@@ -80,11 +85,12 @@ model Class {
   createdAt  DateTime @default(now()) @map("created_at")
   modifiedAt DateTime @updatedAt @map("modified_at")
 
-  owner      User?               @relation("ClassOwner", fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  professors ClassProfessor[]
-  students   ClassStudent[]
-  resources  ClassResourceLink[]
-  tests      ClassTestLink[]
+  owner        User?               @relation("ClassOwner", fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  professors   ClassProfessor[]
+  students     ClassStudent[]
+  resources    ClassResourceLink[]
+  tests        ClassTestLink[]
+  Notification Notification[]
 
   @@map("classes")
 }
@@ -112,7 +118,7 @@ model ClassStudent {
   class   Class? @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
   student User?  @relation(fields: [studentId], references: [id], onUpdate: Cascade, onDelete: SetNull)
 
-  @@map("classes_studens")
+  @@map("classes_students")
 }
 
 model AgendaContact {
@@ -120,7 +126,7 @@ model AgendaContact {
   agendaOwnerId BigInt?  @map("agenda_owner_id") @db.UnsignedBigInt
   contactId     BigInt?  @map("contact_id") @db.UnsignedBigInt
   alias         String   @db.VarChar(40)
-  tag           String
+  tag           String   @db.VarChar(10)
   notes         String?  @db.Text
   createdAt     DateTime @default(now()) @map("created_at")
   modifiedAt    DateTime @updatedAt @map("modified_at")
@@ -147,6 +153,7 @@ model ClassResource {
 
 model ClassResourceLink {
   id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  published  Boolean  @default(false)
   classId    String?  @db.VarChar(20)
   resourceId BigInt?  @map("resource_id") @db.UnsignedBigInt
   createdAt  DateTime @default(now()) @map("created_at")
@@ -163,10 +170,12 @@ model ClassTest {
   title      String   @db.VarChar(40)
   password   String?  @db.VarChar(25)
   content    Json     @db.Json
+  userId     BigInt?  @map("user_id") @db.UnsignedBigInt
   createdAt  DateTime @default(now()) @map("created_at")
   modifiedAt DateTime @updatedAt @map("modified_at")
 
   linkedClasses ClassTestLink[]
+  owner         User?           @relation(fields: [userId], references: [id])
 
   @@map("class_tests")
 }
@@ -178,8 +187,47 @@ model ClassTestLink {
   createdAt  DateTime @default(now()) @map("created_at")
   modifiedAt DateTime @updatedAt @map("modified_at")
 
-  class Class?     @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  test  ClassTest? @relation(fields: [testId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  class   Class?     @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  test    ClassTest? @relation(fields: [testId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  answers Answer[]
 
   @@map("classes_tests_link")
+}
+
+model Notification {
+  id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  title     String   @db.VarChar(30)
+  createdAt DateTime @default(now()) @map("created_at")
+  classId   String?  @map("class_id") @db.VarChar(20)
+
+  class        Class?                @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  statePerUser NotificationPerUser[]
+
+  @@map("notifications")
+}
+
+model NotificationPerUser {
+  id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  readed         Boolean  @default(false)
+  userId         BigInt?  @map("user_id") @db.UnsignedBigInt
+  notificationId BigInt?  @map("notification_id") @db.UnsignedBigInt
+  createdAt      DateTime @default(now()) @map("created_at")
+  modifiedAt     DateTime @updatedAt @map("modified_at")
+
+  user         User?         @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  notification Notification? @relation(fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@map("notifications_per_user")
+}
+
+model Answer {
+  id              BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
+  answers         Json
+  userId          BigInt? @db.UnsignedBigInt
+  classTestLinkId BigInt? @db.UnsignedBigInt
+
+  test    ClassTestLink? @relation(fields: [classTestLinkId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  creator User?          @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+
+  @@map("answers")
 }
