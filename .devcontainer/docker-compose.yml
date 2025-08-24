@@ -1,0 +1,26 @@
+services:
+  dev:
+    container_name: bun-dev
+    image: oven/bun:1.2.20-alpine
+    env_file:
+      - .env
+      - .env.test
+    volumes:
+      - ../:/workspace
+    working_dir: /workspace
+    command: sleep infinity
+    depends_on:
+      - mariadb
+
+  mariadb:
+    container_name: edu-zas-mariadb-dev
+    image: mariadb:10.4.3
+    environment:
+      - MYSQL_ROOT_PASSWORD=cisco-class
+      - MYSQL_DATABASE=EDU_ZAS
+      - MYSQL_USER=dr-cisco
+      - MYSQL_PASSWORD=cisco-class
+    volumes:
+      - ./data/mariadb:/var/lib/mysql:Z
+    ports:
+      - "3307:3306"
