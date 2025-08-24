@@ -16,7 +16,4 @@ RUN bun install
 # Copiar el resto del código
 COPY . .
 
-RUN bun run build
-
-# El build real se hará en runtime con las variables disponibles
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "build", "&&", "bun", "run", "start"]

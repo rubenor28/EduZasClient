@@ -3,12 +3,14 @@ services:
     container_name: edu-zas-mariadb
     image: mariadb:10.4.3
     ports:
-      - "3306"  # Exponer el puerto para acceso externo si es necesario
+      - "3307:3306" # Exponer el puerto para acceso externo si es necesario
     environment:
       - MYSQL_ROOT_PASSWORD=cisco-class
       - MYSQL_DATABASE=EDU_ZAS
+      - MYSQL_USER=dr-cisco
+      - MYSQL_PASSWORD=cisco-class
     volumes:
-      - ./data/mariadb:/var/lib/mysql  # ← Bind mount a carpeta local
+      - ./data/mariadb:/var/lib/mysql # ← Bind mount a carpeta local
     networks:
       - edu-zas-network
 
