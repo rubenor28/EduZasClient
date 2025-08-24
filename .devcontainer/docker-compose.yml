@@ -10,14 +10,13 @@ services:
     working_dir: /workspace
     command: sleep infinity
     depends_on:
-      - mariadb
+      - mariadb-dev
 
-  mariadb:
+  mariadb-dev:
     container_name: edu-zas-mariadb-dev
     image: mariadb:10.4.3
     environment:
       - MYSQL_ROOT_PASSWORD=cisco-class
-      - MYSQL_DATABASE=EDU_ZAS
       - MYSQL_USER=dr-cisco
       - MYSQL_PASSWORD=cisco-class
     volumes:
