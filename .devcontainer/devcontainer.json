@@ -7,9 +7,6 @@
   "forwardPorts": [3000, 3001, 3306],
   "postCreateCommand": "bun install",
   "remoteUser": "root",
-  "remoteEnv": {
-    "DATABASE_URL": "mysql://root:cisco-class@edu-zas-mariadb-dev:3306/EDU_ZAS"
-  },
   "customizations": {
     "vscode": {
       "extensions": [
