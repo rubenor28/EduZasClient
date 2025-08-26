@@ -11,9 +11,9 @@ COPY package.json bun.lock ./
 COPY prisma ./prisma/
 
 # Instalar dependencias
-RUN bun install
+RUN bun install --omit-dev
 
 # Copiar el resto del código
 COPY . .
 
-CMD ["bun", "run", "build", "&&", "bun", "run", "start"]
+CMD ["sh", "-c", "bun run migrate && bun run start"]

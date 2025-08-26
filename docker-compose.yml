@@ -9,6 +9,11 @@ services:
       - MYSQL_DATABASE=EDU_ZAS
       - MYSQL_USER=dr-cisco
       - MYSQL_PASSWORD=cisco-class
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     volumes:
       - ./data/mariadb:/var/lib/mysql # ← Bind mount a carpeta local
     networks:
@@ -18,13 +23,22 @@ services:
     container_name: edu-zas-api
     build: ./api
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
-      - PORT=3000
       - DATABASE_URL=mysql://root:cisco-class@edu-zas-mariadb:3306/EDU_ZAS
       - PAGE_SIZE=10
     depends_on:
       - mariadb
+    networks:
+      - edu-zas-network
+
+  client:
+    container_name: edu-zas-client
+    build: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
     networks:
       - edu-zas-network
 
