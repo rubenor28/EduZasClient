@@ -1,4 +1,3 @@
-# Usa una imagen oficial con Bun
 FROM oven/bun:1.2.20-alpine
 
 WORKDIR /home/app
