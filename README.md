@@ -1,4 +1,4 @@
-# Edu-zass
+# Edu-zas
 
 App web para creación de clases y evaluaciones
 
