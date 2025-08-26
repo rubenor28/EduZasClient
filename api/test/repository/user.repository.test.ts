@@ -134,7 +134,7 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
     await repo.add({
       ...testNew,
       email: "other@example.com",
-      tuition: "notImportantField",
+      tuition: "test",
     });
 
     const resultEmail = await repo.getBy({

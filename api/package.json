@@ -12,15 +12,19 @@
     "test": "bun --env-file=.env.test jest --runInBand"
   },
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@types/bun": "latest",
     "@types/cors": "2.8.19",
     "@types/dotenv": "8.2.3",
     "@types/express": "5.0.3",
     "@types/jest": "^30.0.0",
     "@types/node": "22.15.30",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
     "jest": "^30.0.4",
     "ts-jest": "^29.4.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript-eslint": "^8.41.0"
   },
   "peerDependencies": {
     "typescript": "5"

@@ -44,6 +44,7 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
      WHERE TABLE_SCHEMA = DATABASE()`,
     );
 
+
     // Truncar cada tabla (elimina datos + reinicia autoincrementos)
     for (const table of tables) {
       await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${table.TABLE_NAME}`);
