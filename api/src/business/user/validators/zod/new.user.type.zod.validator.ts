@@ -44,6 +44,8 @@ export const newUserSchema = z.object({
  * - gender: variante opcional del enum `Gender`.
  * - email: cadena obligatoria (no valida formato de correo).
  * - password: cadena obligatoria.
+ *
+ * @implements NewUserTypeValidator
  */
 export const newUserTypeZodValidator =
   createZodObjectTypeValidator(newUserSchema);

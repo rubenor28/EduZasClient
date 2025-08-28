@@ -1,3 +1,5 @@
+import { FieldBusinessValidation } from "persistence/common/entities";
+
 /**
  * Define el contrato para validar reglas de negocio sobre un objeto del tipo `T`.
  *
@@ -13,5 +15,5 @@ export interface BusinessValidator<T> {
    * @param input - Objeto del dominio a validar.
    * @returns `true` si cumple con las reglas de negocio, `false` en caso contrario.
    */
-  isValid(input: T): boolean;
+  validate(input: T): FieldBusinessValidation;
 }
