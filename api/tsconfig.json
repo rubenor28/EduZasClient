@@ -28,6 +28,15 @@
     // For testing
     "verbatimModuleSyntax": false,
     "esModuleInterop": true
+
+    // Path aliases
+    "baseUrl": "src",
+    "paths": {
+      "config": ["config.ts"],
+      "persistence/*": ["persistence/*"],
+      "business/*": ["business/*"],
+      "presentation/*": ["presentation/*"]
+    }
   },
   "include": ["src/**/*", "test/**/*"]
 }

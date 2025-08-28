@@ -5,19 +5,15 @@
   "scripts": {
     "build:client": "cd client && bun run build",
     "build": "bun run build:client",
-
     "start:client": "cd client && bun run start",
     "start:api": "cd api && bun run start",
     "start": "concurrently 'bun run start:client' 'bun run start:api'",
-
     "migrate:test": "cd api && bun run migrate:test",
     "migrate:dev": "cd api && bun run migrate:dev",
     "migrate": "cd api && bun run migrate",
-
     "dev:client": "cd client && bun run dev",
     "dev:api": "cd api && bun run dev",
     "dev": "concurrently 'bun run dev:client' 'bun run dev:api'",
-
     "test": "cd api && bun run test"
   },
   "devDependencies": {
@@ -27,6 +23,8 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "bcrypt": "^6.0.0",
     "concurrently": "9.1.2"
   },
   "workspaces": [
