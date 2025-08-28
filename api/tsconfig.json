@@ -27,7 +27,7 @@
 
     // For testing
     "verbatimModuleSyntax": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
 
     // Path aliases
     "baseUrl": "src",
