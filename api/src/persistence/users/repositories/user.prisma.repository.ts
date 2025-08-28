@@ -13,7 +13,7 @@ import { optionalStringQueryToPrisma } from "persistence/common/mappers";
  *
  * @implements Repository<number, User, NewUserDTO, UpdateUserDTO, UserCriteriaDTO>
  */
-export const prismaUserRepository: UserRepository = {
+export const userPrismaRepository: UserRepository = {
   /**
    * Crea un nuevo usuario en el sistema.
    *
@@ -134,5 +134,13 @@ export const prismaUserRepository: UserRepository = {
     });
 
     return id !== null;
+  },
+
+  async findByTuition(tuition) {
+    const record = await prisma.user.findUnique({
+      where: { tuition },
+    });
+
+    return record ? mapPrismaUserToBuisness(record) : undefined;
   },
 };

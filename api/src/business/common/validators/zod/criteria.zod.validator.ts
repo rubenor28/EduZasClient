@@ -1,4 +1,4 @@
-import z from "zod"
+import z from "zod";
 
 /**
  * Esquema Zod base para criterios de paginación y filtrado genéricos.
@@ -11,6 +11,15 @@ import z from "zod"
  * Este esquema puede extenderse para incluir otros filtros comunes
  * en consultas paginadas o búsquedas.
  */
-export const criteriaSchema = {
-  page: z.number().min(1).optional().default(1),
+export const criteriaTypeSchema = {
+  page: z.number("La página debe ser un número").optional().default(1),
+};
+
+export const criteriaBusinessSchema = {
+  page: z
+    .number("La página debe ser un número")
+    .int("La página debe ser un entero")
+    .positive("La página debe ser un número positivo")
+    .optional()
+    .default(1),
 };

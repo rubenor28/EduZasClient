@@ -1,15 +1,15 @@
-import { prismaUserRepository } from "../../src/persistence/users/repositories/user.prisma.repository";
-import { PAGE_SIZE, prisma } from "../../src/config";
-import { Gender, UserType } from "../../src/persistence/users/enums";
-import { StringSearchType } from "../../src/persistence/common/enums";
+import { PAGE_SIZE, prisma } from "../../../../src/config.ts";
+import { Gender, UserType } from "../../../../src/persistence/users/enums";
+import { StringSearchType } from "../../../../src/persistence/common/enums";
 import {
   NewUser,
   User,
   UserCriteria,
-} from "../../src/persistence/users/entities";
+} from "../../../../src/persistence/users/entities";
+import { userPrismaRepository } from "../../../../src/persistence/users/repositories";
 
 describe("Operaciones CRUD Repositorio Usuarios", () => {
-  const repo = prismaUserRepository;
+  const repo = userPrismaRepository;
 
   const testNew: NewUser = {
     email: "aaaabbbbccceee@gmail.com",
@@ -246,5 +246,17 @@ describe("Operaciones CRUD Repositorio Usuarios", () => {
     const pwd = await repo.getPasswordHash("combo1@test.com");
     expect(pwd.ok).toBe(true);
     expect(pwd.val).toBe("test");
+  });
+
+  test("Buscar por matrícula", async () => {
+    const test = {
+      ...testNew,
+      tuition: "rsro220228",
+    };
+
+    await repo.add(test);
+
+    const user = await repo.findByTuition("rsro220228");
+    expect(user?.tuition).toBe(test.tuition);
   });
 });

@@ -1,8 +1,8 @@
 import z from "zod";
 import { Gender, UserType } from "persistence/users/enums";
-import { stringQueryZodSchema } from "business/common/validators";
-import { criteriaSchema } from "business/common/validators";
-import { createZodObjectTypeValidator } from "business/common/validators";
+import { stringQueryZodSchema } from "business/common/validators/string.query.zod.schema";
+import { criteriaTypeSchema } from "business/common/validators/zod/criteria.zod.validator";
+import { createZodObjectTypeValidator } from "business/common/validators/zod/zod.validator";
 
 /**
  * Esquema Zod que representa los criterios de búsqueda de usuarios.
@@ -31,7 +31,7 @@ const schema = z
     motherLastname: stringQueryZodSchema.optional(),
     email: stringQueryZodSchema.optional(),
   })
-  .extend(criteriaSchema);
+  .extend(criteriaTypeSchema);
 
 /**
  * Validador de tipo de objeto para criterios de usuario.

@@ -1,8 +1,6 @@
 import z from "zod";
-import { Gender, UserType } from "../../../persistence/users/enums";
-import { stringQueryZodSchema } from "../../common/validators/string.query.zod.schema";
-import { criteriaSchema } from "../../common/validators/zod/criteria.zod.validator";
-import { createZodObjectTypeValidator } from "../../common/validators/zod/zod.validator";
+import { criteriaBusinessSchema } from "business/common/validators";
+import { createZodObjectTypeValidator } from "business/common/validators";
 
 /**
  * Esquema Zod que representa los criterios de búsqueda de usuarios.
@@ -18,18 +16,7 @@ import { createZodObjectTypeValidator } from "../../common/validators/zod/zod.va
  *
  * Extiende `criteriaSchema` que puede contener otros campos genéricos de paginación o filtrado.
  */
-const schema = z.object({
-  gender: z.enum(Gender).optional(),
-  role: z.enum(UserType).optional(),
-  createdAt: z.date().optional(),
-  modifiedAt: z.date().optional(),
-  tuition: stringQueryZodSchema.optional(),
-  firstName: stringQueryZodSchema.optional(),
-  midName: stringQueryZodSchema.optional(),
-  fatherLastname: stringQueryZodSchema.optional(),
-  motherLastname: stringQueryZodSchema.optional(),
-  email: stringQueryZodSchema.optional(),
-}).extend(criteriaSchema);
+const schema = z.object({}).extend(criteriaBusinessSchema);
 
 /**
  * Validador de tipo de objeto para criterios de usuario.
@@ -41,4 +28,5 @@ const schema = z.object({
  * - Salida: `ObjectTypeValidation<UserCriteriaDTO>` (éxito con valor refinado
  *   o fallo con `FieldError[]`).
  */
-export const userCriteriaTypeZodValidator = createZodObjectTypeValidator(schema);
+export const userCriteriaTypeZodValidator =
+  createZodObjectTypeValidator(schema);

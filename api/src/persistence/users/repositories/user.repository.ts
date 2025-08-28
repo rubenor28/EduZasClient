@@ -6,4 +6,5 @@ export interface UserRepository
   extends Repository<number, User, NewUser, UserUpdate, UserCriteria> {
   emailIsRegistered(email: string): Promise<boolean>;
   getPasswordHash(email: string): Promise<Result<string, void>>;
+  findByTuition(tuition: string): Promise<User | undefined>;
 }

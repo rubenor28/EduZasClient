@@ -8,7 +8,6 @@ export const bcryptHasher: Hasher = {
   },
 
   matches(input, hash) {
-    const inputHash = this.hash(input);
-    return inputHash === hash;
+    return bcrypt.compareSync(input, hash);
   },
 };

@@ -1,15 +1,18 @@
-import { makeUserZodValidator } from "../../src/service/user.zod.service";
-import { CrudService } from "../../src/service/service";
-import { prismaUserRepository } from "../../src/repository";
-import { prisma } from "../../src/config";
-import { Gender, NewUserDTO, User, UserType } from "../../src/model";
+import { NewUser, User } from "persistence/users/entities";
+import { Gender, UserType } from "persistence/users/enums";
 
-describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
-  const repo = prismaUserRepository;
-  const validator = makeUserZodValidator(repo);
-  const service = new CrudService({ repo, validator });
+import { bcryptHasher } from "business/common/services/hasher";
+import { addUserUseCase } from "business/users/useCases";
+import { userPrismaRepository } from "persistence/users/repositories/user.prisma.repository";
+import { prisma } from "config";
+import { newUserBusinessZodValidator } from "business/users/validators/zod/new.user.business.zod.validator";
 
-  const testNew: NewUserDTO = {
+describe("Test caso de uso: Creacion de usuarios", () => {
+  const repository = userPrismaRepository;
+  const newUserBusinessValidator = newUserBusinessZodValidator;
+  const hasher = bcryptHasher;
+
+  const testNew: NewUser = {
     email: "aaaabbbbccceee@gmail.com",
     tuition: "RSRO220228",
     firstName: "Ruben",
@@ -44,7 +47,6 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
      WHERE TABLE_SCHEMA = DATABASE()`,
     );
 
-
     // Truncar cada tabla (elimina datos + reinicia autoincrementos)
     for (const table of tables) {
       await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${table.TABLE_NAME}`);
@@ -55,21 +57,25 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
   });
 
   test("Insercion exitosa", async () => {
-    const validation = await validator.validateNew(testNew, repo);
-    expect(validation.ok).toBe(true);
+    const addition = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input: testNew,
+    });
 
-    const addition = await service.add(testNew);
     expect(addition.ok).toBe(true);
-    expect(addition.unwrap()).toEqual(testCreated);
+    expect(hasher.matches(testNew.password, addition.unwrap().password)).toBe(
+      true,
+    );
   });
 
   test("Insercion email repetido", async () => {
-    const firstInsert = await service.add({
+    const firstRecord = {
       ...testNew,
       email: "rsro220228@upemor.edu.mx",
       tuition: "rsro220228",
-    });
-    expect(firstInsert.ok).toBe(true);
+    };
 
     const invalidRecord = {
       ...testNew,
@@ -77,11 +83,24 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
       tuition: "rsro220229",
     };
 
-    const validation = await validator.validateNew(invalidRecord, repo);
-    expect(validation.err).toBe(true);
+    const firstInsert = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input: firstRecord,
+    });
 
-    const insercion = await service.add(invalidRecord);
-    expect(insercion.err).toBe(true);
+    if (firstInsert.err) console.log(firstInsert);
+
+    expect(firstInsert.ok).toBe(true);
+
+    const addition = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input: invalidRecord,
+    });
+    expect(addition.err).toBe(true);
   });
 
   test("Formato matricula invalida", async () => {
@@ -91,20 +110,22 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
       tuition: "123sadjalkasds",
     };
 
-    const validation = await validator.validateNew(invalidRecord, repo);
-    expect(validation.err).toBe(true);
+    const addition = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input: invalidRecord,
+    });
 
-    const insercion = await service.add(invalidRecord);
-    expect(insercion.err).toBe(true);
+    expect(addition.err).toBe(true);
   });
 
   test("Insercion matricula repetida", async () => {
-    const firstInsert = await service.add({
+    const firstRecord = {
       ...testNew,
       email: "rsro220228@upemor.edu.mx",
       tuition: "rsro220228",
-    });
-    expect(firstInsert.ok).toBe(true);
+    };
 
     const invalidRecord = {
       ...testNew,
@@ -112,11 +133,23 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
       tuition: "rsro220228",
     };
 
-    const validation = await validator.validateNew(invalidRecord, repo);
-    expect(validation.err).toBe(true);
+    const firstInsert = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input: firstRecord,
+    });
 
-    const insercion = await service.add(invalidRecord);
-    expect(insercion.err).toBe(true);
+    expect(firstInsert.ok).toBe(true);
+
+    const addition = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input: invalidRecord,
+    });
+
+    expect(addition.err).toBe(true);
   });
 
   test("Insercion contraseña invalida", async () => {
@@ -125,15 +158,18 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
       password: "123",
     };
 
-    const validation = await validator.validateNew(invalidRecord, repo);
-    expect(validation.err).toBe(true);
+    const addition = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input: invalidRecord,
+    });
 
-    const insercion = await service.add(invalidRecord);
-    expect(insercion.err).toBe(true);
+    expect(addition.err).toBe(true);
   });
 
   test("Insercion nombre compuesto", async () => {
-    const invalidRecord: NewUserDTO = {
+    const input: NewUser = {
       ...testNew,
       firstName: "MaRíA",
       midName: "DeL CaRmEl",
@@ -141,15 +177,18 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
       motherLastname: "DEl leon",
     };
 
-    const validation = await validator.validateNew(invalidRecord, repo);
-    expect(validation.ok).toBe(true);
+    const addition = await addUserUseCase.execute({
+      repository,
+      hasher,
+      validator: newUserBusinessValidator,
+      input,
+    });
 
-    const insercion = await service.add(invalidRecord);
-    expect(insercion.ok).toBe(true);
+    expect(addition.ok).toBe(true);
   });
 
   test("Insercion nombre invalido", async () => {
-    const invalidRecords: NewUserDTO[] = [
+    const invalidRecords: NewUser[] = [
       { ...testNew, firstName: "Ruben Omar" },
       { ...testNew, midName: "Ruben Omar" },
       { ...testNew, fatherLastname: "Ruben Omar" },
@@ -161,17 +200,16 @@ describe("Operaciones CRUD y validaciones Servicio Usuario", () => {
         ...invalidRecords[i],
         tuition: `rsro22${i.toString().padStart(4, "0")}`,
         email: `${i.toString().padStart(4, "0")}@test.com`,
-      } as NewUserDTO;
+      } as NewUser;
 
-      const validation = await validator.validateNew(invalidRecord, repo);
-      if (validation.ok) {
-        throw Error(
-          `❌ Validación incorrecta para: ${JSON.stringify(invalidRecord)}`,
-        );
-      }
+      const addition = await addUserUseCase.execute({
+        repository,
+        hasher,
+        validator: newUserBusinessValidator,
+        input: invalidRecord,
+      });
 
-      const insercion = await service.add(invalidRecord);
-      if (insercion.ok) {
+      if (addition.ok) {
         throw Error(
           `❌ Inserción incorrecta para: ${JSON.stringify(invalidRecord)}`,
         );
