@@ -22,6 +22,18 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
+
+
+    // Path aliases
+    "baseUrl": "src",
+    "paths": {
+      "assets": ["assets/"],
+      "components": ["components/"],
+      "entities": ["entities/"],
+      "pages": ["pages/"],
+      "services": ["services/"],
+      "state": ["state/"]
+    }
   },
   "include": ["src"]
 }
