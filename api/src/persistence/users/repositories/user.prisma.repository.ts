@@ -21,12 +21,7 @@ export const userPrismaRepository: UserRepository = {
    * @returns El usuario creado.
    */
   async add(data) {
-    const createdUser = await prisma.user.create({
-      data: {
-        ...data,
-      },
-    });
-
+    const createdUser = await prisma.user.create({ data });
     return mapPrismaUserToBuisness(createdUser);
   },
 

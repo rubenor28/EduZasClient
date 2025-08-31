@@ -14,6 +14,7 @@ const config: Config = {
   },
   extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
+    "^server$": "<rootDir>/src/server.ts",
     "^config$": "<rootDir>/src/config.ts",
     "^persistence/(.*)$": "<rootDir>/src/persistence/$1",
     "^business/(.*)$": "<rootDir>/src/business/$1",

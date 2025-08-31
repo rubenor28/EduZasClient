@@ -1,14 +1,13 @@
-import { NewUser, User } from "persistence/users/entities";
-import { Gender, UserType } from "persistence/users/enums";
+import { NewUser } from "persistence/users/entities";
+import { Gender } from "persistence/users/enums";
 
 import { bcryptHasher } from "business/common/services/hasher";
 import { addUserUseCase } from "business/users/useCases";
-import { userPrismaRepository } from "persistence/users/repositories/user.prisma.repository";
-import { prisma } from "config";
 import { newUserBusinessZodValidator } from "business/users/validators/zod/new.user.business.zod.validator";
+import { inMemoryUserRepository } from "../../../persistence/users/repositories/user.in.memory.repository";
 
 describe("Test caso de uso: Creacion de usuarios", () => {
-  const repository = userPrismaRepository;
+  const repository = inMemoryUserRepository;
   const newUserBusinessValidator = newUserBusinessZodValidator;
   const hasher = bcryptHasher;
 
@@ -23,37 +22,9 @@ describe("Test caso de uso: Creacion de usuarios", () => {
     gender: Gender.MALE,
   };
 
-  const testCreated: User = {
-    ...testNew,
-    id: 1,
-    role: UserType.STUDENT,
-    createdAt: expect.any(Date),
-    modifiedAt: expect.any(Date),
-  };
-
-  // Limpia y conecta antes de todos los tests
-  beforeAll(async () => {
-    await prisma.$connect();
-  });
-
   // Limpia registros y reinicia identidades antes de cada test
   beforeEach(async () => {
-    await prisma.$executeRawUnsafe("SET FOREIGN_KEY_CHECKS = 0;");
-
-    // Obtener todas las tablas
-    const tables = await prisma.$queryRawUnsafe<{ TABLE_NAME: string }[]>(
-      `SELECT TABLE_NAME 
-     FROM information_schema.TABLES 
-     WHERE TABLE_SCHEMA = DATABASE()`,
-    );
-
-    // Truncar cada tabla (elimina datos + reinicia autoincrementos)
-    for (const table of tables) {
-      await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${table.TABLE_NAME}`);
-    }
-
-    // Rehabilitar verificaciones de FK
-    await prisma.$executeRawUnsafe("SET FOREIGN_KEY_CHECKS = 1;");
+    repository.dropData();
   });
 
   test("Insercion exitosa", async () => {

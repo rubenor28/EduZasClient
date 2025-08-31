@@ -1,16 +1,17 @@
 import express from "express";
 import cors from "cors";
-import { PORT } from "config";
+import { BUN_ENV, PORT } from "config";
+import { userExpressController } from "presentation/controllers";
 
-import { userController } from "presentation/controllers";
-
-const app = express();
+export const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.use("/users", userController);
+app.use("/users", userExpressController);
 
-app.listen(PORT, () => {
-  console.log(`\nAPI listening on http://localhost:${PORT}\n`);
-});
+if (BUN_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log("Server running on port 3000");
+  });
+}

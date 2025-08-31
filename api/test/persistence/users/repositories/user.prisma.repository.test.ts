@@ -8,7 +8,7 @@ import {
 } from "../../../../src/persistence/users/entities";
 import { userPrismaRepository } from "../../../../src/persistence/users/repositories";
 
-describe("Operaciones CRUD Repositorio Usuarios", () => {
+describe("Operaciones CRUD Repositorio Usuarios Prisma", () => {
   const repo = userPrismaRepository;
 
   const testNew: NewUser = {
