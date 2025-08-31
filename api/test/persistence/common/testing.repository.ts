@@ -1,6 +1,11 @@
 import { Repository, offset } from "persistence/common/repositories";
-import { Criteria, Identifiable } from "persistence/common/entities";
+import {
+  Criteria,
+  Identifiable,
+  StringQuery,
+} from "persistence/common/entities";
 import { PaginatedQuery } from "persistence/common/entities";
+import { StringSearchType } from "persistence/common/enums";
 
 /**
  * Repositorio especializado para **testing** que extiende de {@link Repository}.
@@ -208,5 +213,23 @@ export abstract class InMemoryRepository<
     }
 
     return id;
+  }
+
+  /**
+   * Convierte una consulta StringQuery a una función de comparación
+   * muy simple (EQ = igualdad, LIKE = contains).
+   */
+  protected matchesStringQuery(value: string | undefined, q?: StringQuery) {
+    if (q === undefined || value === undefined || value === null) return true;
+
+    const needle = q.string;
+    switch (q.searchType) {
+      case StringSearchType.EQ:
+        return value === needle;
+      case StringSearchType.LIKE:
+        return value.includes(needle);
+      default:
+        throw Error("Unexpected behavior");
+    }
   }
 }

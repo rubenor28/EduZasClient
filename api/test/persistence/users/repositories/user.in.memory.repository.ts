@@ -15,7 +15,7 @@ import { UserRepository } from "persistence/users/repositories";
 /**
  * Repositorio en memoria para la entidad User.
  * - Diseñado para tests. No usar en producción.
- * - Implementa las mismas operaciones que userPrismaRepository.
+ * - Implementa las mismas operaciones que {@link UserRepository}.
  */
 class InMemoryUserRepository
   extends InMemoryRepository<number, User, NewUser, UserUpdate, UserCriteria>
@@ -23,24 +23,6 @@ class InMemoryUserRepository
 {
   constructor(pageSize = 10) {
     super(pageSize);
-  }
-
-  /**
-   * Convierte una consulta StringQuery a una función de comparación
-   * muy simple (EQ = igualdad, LIKE = contains).
-   */
-  private matchesStringQuery(value: string | undefined, q?: StringQuery) {
-    if (q === undefined || value === undefined || value === null) return true;
-
-    const needle = q.string;
-    switch (q.searchType) {
-      case StringSearchType.EQ:
-        return value === needle;
-      case StringSearchType.LIKE:
-        return value.includes(needle);
-      default:
-        throw Error("Unexpected behavior");
-    }
   }
 
   /**
