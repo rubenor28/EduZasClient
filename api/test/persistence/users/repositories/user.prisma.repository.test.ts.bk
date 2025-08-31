@@ -1,12 +1,12 @@
-import { PAGE_SIZE, prisma } from "../../../../src/config.ts";
-import { Gender, UserType } from "../../../../src/persistence/users/enums";
-import { StringSearchType } from "../../../../src/persistence/common/enums";
+import { PAGE_SIZE, prisma } from "config";
+import { Gender, UserType } from "persistence/users/enums";
+import { StringSearchType } from "persistence/common/enums";
 import {
   NewUser,
   User,
   UserCriteria,
-} from "../../../../src/persistence/users/entities";
-import { userPrismaRepository } from "../../../../src/persistence/users/repositories";
+} from "persistence/users/entities";
+import { userPrismaRepository } from "persistence/users/repositories";
 
 describe("Operaciones CRUD Repositorio Usuarios Prisma", () => {
   const repo = userPrismaRepository;
