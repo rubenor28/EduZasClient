@@ -1,7 +1,6 @@
 import { Ok, Err } from "ts-results";
 import { InMemoryRepository } from "../../common/testing.repository"; // ruta donde tengas la clase base
 import { UserType } from "persistence/users/enums";
-import { StringQuery } from "persistence/common/entities";
 import { StringSearchType } from "persistence/common/enums";
 import { PaginatedQuery } from "persistence/common/entities";
 import {

@@ -4,7 +4,7 @@ import { Gender } from "persistence/users/enums";
 import { bcryptHasher } from "business/common/services/hasher";
 import { addUserUseCase } from "business/users/useCases";
 import { newUserBusinessZodValidator } from "business/users/validators/zod/new.user.business.zod.validator";
-import { inMemoryUserRepository } from "../../../persistence/users/repositories/user.in.memory.repository";
+import { inMemoryUserRepository } from "../../../persistence/users/repositories/user.testing.repository";
 
 describe("Test caso de uso: Creacion de usuarios", () => {
   const repository = inMemoryUserRepository;
