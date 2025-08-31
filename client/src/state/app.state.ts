@@ -34,9 +34,6 @@ interface AppState {
 
 /**
  * Store global de la aplicación usando `zustand`.
- *
- * Inicializa la autenticación como no autenticada (`isAuth: false`) y
- * provee métodos `login` y `logout` para actualizar el estado.
  * ```
  */
 export const appState = create<AppState>((set) => ({
