@@ -1,14 +1,11 @@
 import { Routes, Route } from "react-router-dom";
 import { RegisterPage, NotFoundPage } from "pages";
-import { FormInput } from "components/Input";
+import { Form } from "pages/dashboard/Dashboard";
 
 function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={<FormInput placeholder="Prueba" hint="Hola" />}
-      />
+      <Route path="/" element={<Form />} />
       <Route path="/sign-up" element={<RegisterPage />} />
 
       {/* CATCH-ALL: si no coincide ninguna, muestra 404 */}

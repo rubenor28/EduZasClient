@@ -1,4 +1,3 @@
-import React from "react";
 import { Hint } from "../Hint/Hint";
 import "./FormInput.css";
 
@@ -23,20 +22,19 @@ export function FormInput<T = string>({
 }: FormInputProps<T>) {
   return (
     <div className={`form-input-wrapper ${className}`}>
-      <div className="relative flex items-center">
-        <input
-          type={type}
-          name={name?.toString()}
-          className="form-input-base pr-8"
-          onChange={onChange}
-          required={required}
-        />
+      <input
+        type={type}
+        name={name?.toString()}
+        className="form-input-base pr-8"
+        onChange={onChange}
+        required={required}
+        placeholder=" "
+      />
 
-        {/* Hint: colocarlo aquí para que quede encima del placeholder */}
-        {hint && <Hint text={hint} placement="bottom" />}
+      <div className="form-field-placeholder">
+        {placeholder}
+        {hint && <Hint text={hint} className="ml-1" />}
       </div>
-
-      <div className="form-field-placeholder">{placeholder}</div>
     </div>
   );
 }

@@ -1,26 +1,68 @@
-/* FormInput.css */
 @import "tailwindcss";
 
+/* ===== SECCIÓN DE COMPONENTES TAILWIND ===== */
+/* Define clases reutilizables para el formulario */
 @layer components {
+  /* Contenedor principal de cada campo del formulario */
   .form-input-wrapper {
     @apply relative mb-4;
   }
 
-  /* clase exclusiva para este input */
+  /* Estilo base para todos los inputs del formulario */
   .form-input-base {
-    /* tamaño del texto y del placeholder */
-    @apply text-xs placeholder:text-xs;
-    /* padding / altura */
-    @apply block w-full px-3 py-2;
-    /* visual */
-    @apply border rounded-md bg-white text-gray-700;
-    /* focus */
-    @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500;
-    /* ajuste de line-height para que el contenido y placeholder encajen */
-    line-height: 1rem; /* 16px * 0.75 = 12px aprox, ajusta si hace falta */
+    @apply w-full px-3 py-2 border border-gray-300 
+           rounded-md focus:outline-none focus:ring-2
+           focus:ring-blue-500 focus:border-transparent;
   }
 
+  /* Estilo del placeholder que flota sobre el input */
   .form-field-placeholder {
-    @apply mt-1 text-gray-400 text-xs;
+    @apply absolute left-3 top-1/2 -translate-y-1/2 
+           text-gray-500 transition-all duration-200 flex items-center;
+    transform-origin: left center;
   }
+
+  /* Permite eventos de clic solo en el área del hint/ayuda */
+  .form-field-placeholder .hint-wrapper {
+    @apply pointer-events-auto;
+  }
+
+  /* Efecto cuando el input está enfocado o tiene contenido:
+     El placeholder se mueve hacia arriba y se reduce de tamaño */
+  .form-input-base:focus + .form-field-placeholder,
+  .form-input-base:not(:placeholder-shown) + .form-field-placeholder {
+    @apply top-0 left-2 bg-white px-1 text-gray-500 scale-90;
+  }
+
+  /* Mantiene visible el hint/ayuda cuando el input está activo */
+  .form-input-base:focus + .form-field-placeholder .hint-wrapper,
+  .form-input-base:not(:placeholder-shown)
+    + .form-field-placeholder
+    .hint-wrapper {
+    @apply inline-block;
+  }
+}
+
+/* ===== ESTILOS ESPECÍFICOS PARA EL PLACEHOLDER INFERIOR ===== */
+/* Posiciona el placeholder debajo del input cuando está activo */
+.form-input-base:focus + .form-field-placeholder,
+.form-input-base:not(:placeholder-shown) + .form-field-placeholder {
+  top: auto;
+  bottom: -0.75rem; /* Posiciona el placeholder justo debajo del borde del input */
+  margin-top: 0;
+  margin-left: 0;
+  transform: none;
+  left: 0.75rem;
+  background: white; /* Fondo blanco para que se superponga a la línea del input */
+  padding: 0 0.25rem;
+  font-size: 1.1rem; /* Tamaño de fuente más grande (equivalente a text-sm) */
+  line-height: 1.25rem;
+  font-weight: 500; /* Un poco más de peso para mejor legibilidad */
+  z-index: 1; /* Asegura que esté por encima de otros elementos */
+  color: #6b7280; /* Color gris-500 de Tailwind */
+}
+
+/* Espaciado adicional en la parte inferior del contenedor para el placeholder */
+.form-input-wrapper {
+  padding-bottom: 0.5rem;
 }
