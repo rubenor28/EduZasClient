@@ -9,3 +9,13 @@ export type NewUser = Omit<
   User,
   "id" | "active" | "role" | "createdAt" | "modifiedAt"
 >;
+
+/*
+    email: string;
+    tuition: string;
+    firstName: string;
+    midName?: string | undefined;
+    fatherLastname: string;
+    motherLastname?: string | undefined;
+    gender?: Gender | undefined;
+*/
