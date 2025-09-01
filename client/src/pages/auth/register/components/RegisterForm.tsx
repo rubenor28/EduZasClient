@@ -127,7 +127,11 @@ export function RegisterForm() {
           alert={
             formState.state === "input_error" &&
             formState.tuition && (
-              <Alert type={AlertType.WARNING} message={formState.tuition} />
+              <Alert
+                className="text-xs"
+                type={AlertType.WARNING}
+                message={formState.tuition}
+              />
             )
           }
         >
@@ -142,7 +146,11 @@ export function RegisterForm() {
           alert={
             formState.state === "input_error" &&
             formState.firstName && (
-              <Alert type={AlertType.WARNING} message={formState.firstName} />
+              <Alert
+                className="text-xs"
+                type={AlertType.WARNING}
+                message={formState.firstName}
+              />
             )
           }
         >
@@ -157,7 +165,11 @@ export function RegisterForm() {
           alert={
             formState.state === "input_error" &&
             formState.midName && (
-              <Alert type={AlertType.WARNING} message={formState.midName} />
+              <Alert
+                className="text-xs"
+                type={AlertType.WARNING}
+                message={formState.midName}
+              />
             )
           }
         >
@@ -171,10 +183,12 @@ export function RegisterForm() {
 
       <div className="field-group">
         <FieldWrapper
+          className="flex-1"
           alert={
             formState.state === "input_error" &&
             formState.fatherLastname && (
               <Alert
+                className="text-xs"
                 type={AlertType.WARNING}
                 message={formState.fatherLastname}
               />
@@ -189,10 +203,12 @@ export function RegisterForm() {
         </FieldWrapper>
 
         <FieldWrapper
+          className="flex-1"
           alert={
             formState.state === "input_error" &&
             formState.motherLastname && (
               <Alert
+                className="text-xs"
                 type={AlertType.WARNING}
                 message={formState.motherLastname}
               />
@@ -207,10 +223,15 @@ export function RegisterForm() {
         </FieldWrapper>
 
         <FieldWrapper
+          className="flex-1"
           alert={
             formState.state === "input_error" &&
             formState.gender && (
-              <Alert type={AlertType.WARNING} message={formState.gender} />
+              <Alert
+                className="text-xs"
+                type={AlertType.WARNING}
+                message={formState.gender}
+              />
             )
           }
         >
@@ -234,7 +255,11 @@ export function RegisterForm() {
           alert={
             formState.state === "input_error" &&
             formState.email && (
-              <Alert type={AlertType.WARNING} message={formState.email} />
+              <Alert
+                className="text-xs"
+                type={AlertType.WARNING}
+                message={formState.email}
+              />
             )
           }
         >
@@ -250,12 +275,15 @@ export function RegisterForm() {
           alert={
             formState.state === "input_error" &&
             formState.password && (
-              <Alert type={AlertType.WARNING} message={formState.password} />
+              <Alert
+                className="text-xs"
+                type={AlertType.WARNING}
+                message={formState.password}
+              />
             )
           }
         >
           <RegisterInput
-            hint="Hola"
             type="password"
             name="password"
             placeholder="Contraseña"
@@ -268,6 +296,7 @@ export function RegisterForm() {
             formState.state === "input_error" &&
             formState.matchingPassword && (
               <Alert
+                className="text-xs"
                 type={AlertType.WARNING}
                 message={formState.matchingPassword}
               />
@@ -280,7 +309,7 @@ export function RegisterForm() {
               className="input-base"
               onChange={handleConfirmPasswordChange}
             />
-            <div className="mt-1 text-gray-400 text-sm">
+            <div className="mt-1 text-gray-400 text-xs">
               Confirmar contraseña
             </div>
           </div>
@@ -288,11 +317,19 @@ export function RegisterForm() {
       </div>
 
       {formState.state === "unexpected_error" && (
-        <Alert type="error" message="Ocurrió un error, intente más tarde" />
+        <Alert
+          className="text-xs"
+          type="error"
+          message="Ocurrió un error, intente más tarde"
+        />
       )}
 
       {formState.state === "success" && (
-        <Alert type="error" message="Se registró correctamente" />
+        <Alert
+          className="text-xs"
+          type="error"
+          message="Se registró correctamente"
+        />
       )}
 
       <div className="flex justify-end">

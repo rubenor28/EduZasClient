@@ -41,6 +41,8 @@ export interface AlertProps {
    * como: `"success"`, `"danger"`, `"warning"`, `"info"`.
    */
   type: AlertType;
+
+  className?: string;
 }
 
 /**
@@ -50,9 +52,9 @@ export interface AlertProps {
  * @param props - Propiedades de tipo {@link AlertProps}.
  * @returns Un elemento JSX que muestra la alerta estilizada.
  */
-export function Alert({ type, message }: AlertProps) {
+export function Alert({ type, message, className = "" }: AlertProps) {
   return (
-    <div className={`alert-block alert-${type.toLowerCase()}`}>
+    <div className={`alert-block alert-${type.toLowerCase()} ${className}`}>
       {message}
     </div>
   );
