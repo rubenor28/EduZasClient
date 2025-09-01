@@ -120,14 +120,8 @@ export function RegisterForm() {
       aria-labelledby="register-legend"
       onSubmit={handleSubmit}
     >
-      <legend
-        id="register-legend"
-        className="text-3xl font-bold mb-4 text-center"
-      >
-        Edu-zas
-      </legend>
+      <legend className="register-legend">Edu-zas</legend>
 
-      {/* Agrupamos matrícula y primer nombre */}
       <div className="field-group">
         <FieldWrapper
           alert={
@@ -158,10 +152,7 @@ export function RegisterForm() {
             onChange={handleChange}
           />
         </FieldWrapper>
-      </div>
 
-      {/* Agrupamos segundo nombre y apellido paterno */}
-      <div className="field-group">
         <FieldWrapper
           alert={
             formState.state === "input_error" &&
@@ -176,7 +167,9 @@ export function RegisterForm() {
             onChange={handleChange}
           />
         </FieldWrapper>
+      </div>
 
+      <div className="field-group">
         <FieldWrapper
           alert={
             formState.state === "input_error" &&
@@ -194,10 +187,7 @@ export function RegisterForm() {
             onChange={handleChange}
           />
         </FieldWrapper>
-      </div>
 
-      {/* Agrupamos apellido materno y género */}
-      <div className="field-group">
         <FieldWrapper
           alert={
             formState.state === "input_error" &&
@@ -235,12 +225,11 @@ export function RegisterForm() {
             <option value={Gender.FEMALE}>Mujer</option>
             <option value={Gender.OTHER}>Otro</option>
           </select>
-          <div className="mt-1 text-gray-400 text-sm">Género</div>
+          <div className="field-placeholder">Género</div>
         </FieldWrapper>
       </div>
 
-      {/* Correo y contraseña podrían ir cada uno en línea propia */}
-      <div className="mb-4">
+      <div className="field-group">
         <FieldWrapper
           alert={
             formState.state === "input_error" &&
@@ -256,10 +245,7 @@ export function RegisterForm() {
             onChange={handleChange}
           />
         </FieldWrapper>
-      </div>
 
-      {/* Agrupamos contraseñas */}
-      <div className="field-group">
         <FieldWrapper
           alert={
             formState.state === "input_error" &&
@@ -269,6 +255,7 @@ export function RegisterForm() {
           }
         >
           <RegisterInput
+            hint="Hola"
             type="password"
             name="password"
             placeholder="Contraseña"

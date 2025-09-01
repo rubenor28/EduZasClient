@@ -1,1 +1,1 @@
-export { Register } from "./register/Register.tsx";
+export { RegisterPage } from "./register/RegisterPage.tsx";

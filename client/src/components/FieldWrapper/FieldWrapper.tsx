@@ -47,15 +47,12 @@ type FieldWrapperProps = {
 export function FieldWrapper({
   alert,
   children,
-  className,
+  className = "",
 }: FieldWrapperProps) {
   return (
-    <div className={`mb-4 flex-1`}>
-      {/* Área reservada para mostrar la alerta, o mantener espacio vacío */}
+    <div className={`mb-4 ${className}`}>
       <div className="min-h-[1.25rem] mb-1">{alert}</div>
-
-      {/* Campo de formulario (input, select, etc.) */}
-      {children}
+      <div>{children}</div>
     </div>
   );
 }

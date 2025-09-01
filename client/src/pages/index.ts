@@ -1,2 +1,2 @@
-export { Register } from "./auth/";
-export * from "./common"
+export { RegisterPage } from "./auth/";
+export * from "./common";

@@ -56,7 +56,7 @@ export function RegisterInput({
         onChange={onChange}
         required={required ?? false}
       />
-      <div className="mt-1 text-gray-400 text-sm">{placeholder}</div>
+      <div className="field-placeholder">{placeholder}</div>
     </div>
   );
 }

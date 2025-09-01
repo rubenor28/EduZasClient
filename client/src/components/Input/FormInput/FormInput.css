@@ -1,0 +1,26 @@
+/* FormInput.css */
+@import "tailwindcss";
+
+@layer components {
+  .form-input-wrapper {
+    @apply relative mb-4;
+  }
+
+  /* clase exclusiva para este input */
+  .form-input-base {
+    /* tamaño del texto y del placeholder */
+    @apply text-xs placeholder:text-xs;
+    /* padding / altura */
+    @apply block w-full px-3 py-2;
+    /* visual */
+    @apply border rounded-md bg-white text-gray-700;
+    /* focus */
+    @apply focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500;
+    /* ajuste de line-height para que el contenido y placeholder encajen */
+    line-height: 1rem; /* 16px * 0.75 = 12px aprox, ajusta si hace falta */
+  }
+
+  .form-field-placeholder {
+    @apply mt-1 text-gray-400 text-xs;
+  }
+}
