@@ -1,0 +1,13 @@
+/* ===== ESTILOS ESPECÍFICOS PARA INPUT ===== */
+/* Estilos adicionales específicos para inputs de texto */
+.form-input-wrapper {
+  /* Estilos específicos si son necesarios */
+}
+
+/* Asegurar que el hint se mantenga visible cuando el input está activo */
+.form-input-base:focus + .form-field-placeholder .hint-wrapper,
+.form-input-base:not(:placeholder-shown)
+  + .form-field-placeholder
+  .hint-wrapper {
+  @apply inline-block;
+}

@@ -1,2 +1,2 @@
-export { FormInput } from "./FormInput/FormInput.tsx";
-export { Hint } from "./Hint/Hint.tsx";
+export * from "./FormComponents/";
+export { Hint } from "../Hint/Hint.tsx";
