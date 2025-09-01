@@ -3,7 +3,8 @@ import { Hint } from "components";
 import "../FormComponents.css";
 import "./FormSelect.css";
 
-export type FormSelectOpts = Array<{ value: string; label: string }>;
+export type FormSelectOpt = { value: string; label: string };
+export type FormSelectOpts = Array<FormSelectOpt>;
 
 type FormSelectProps<T = string> = {
   options: FormSelectOpts;
@@ -37,7 +38,7 @@ export function FormSelect<T = string>({
         defaultValue=""
       >
         <option value="" disabled hidden>
-          {placeholder}
+          {/* Este placeholder no será visible */}
         </option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>

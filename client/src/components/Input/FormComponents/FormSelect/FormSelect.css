@@ -13,7 +13,7 @@
   appearance: none;
 }
 
-/* Asegurar que el hint se mantenga visible cuando el select está activo */
-select.form-input-base:not([value=""]) + .form-field-placeholder .hint-wrapper {
+/* Asegurar que el hint se mantenga visible */
+.form-field-placeholder .hint-wrapper {
   @apply inline-block;
 }
