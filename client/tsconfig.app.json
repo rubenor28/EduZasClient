@@ -27,6 +27,7 @@
     // Path aliases
     "baseUrl": "src",
     "paths": {
+      "config": ["config.ts"],
       "assets": ["assets/"],
       "components": ["components/"],
       "entities": ["entities/"],

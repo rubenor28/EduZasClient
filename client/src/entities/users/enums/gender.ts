@@ -4,7 +4,7 @@
  * Este `enum` se utiliza para representar el género de forma explícita
  * y legible, facilitando la validación, visualización y manejo de datos.
  */
-const Gender = {
+export const Gender = {
   /** Género masculino. */
   MALE: "MALE",
   /** Género femenino. */
@@ -13,5 +13,4 @@ const Gender = {
   OTHER: "OTHER",
 } as const;
 
-
-export type Gender = typeof Gender[keyof typeof Gender];
+export type Gender = (typeof Gender)[keyof typeof Gender];

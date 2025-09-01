@@ -61,8 +61,6 @@ describe("Test caso de uso: Creacion de usuarios", () => {
       input: firstRecord,
     });
 
-    if (firstInsert.err) console.log(firstInsert);
-
     expect(firstInsert.ok).toBe(true);
 
     const addition = await addUserUseCase.execute({
