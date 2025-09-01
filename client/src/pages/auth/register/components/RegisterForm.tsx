@@ -1,15 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-import { Alert, FieldWrapper } from "components";
-import { AlertType } from "components/Alert/AlertType";
-import { RegisterInput } from "./Input";
-
-import { NEW_USER_KEYS, type NewUser } from "entities/users/entities";
 import { Gender } from "entities/users/enums";
-import { userService, mapFieldErrorsToFieldMessageMapFromKeys } from "services";
+import { type NewUser, NEW_USER_KEYS } from "entities/users/entities";
 
-import "../Register.css";
-import { useNavigate } from "react-router-dom";
+import { mapFieldErrorsToFieldMessageMapFromKeys, userService } from "services";
+
+import {
+  FieldWrapper,
+  Alert,
+  AlertType,
+  FormInput,
+  FormSelect,
+  type FormSelectOpts,
+} from "components";
 
 type InputError = Partial<Record<keyof NewUser, string>> & {
   matchingPassword?: string;
@@ -21,6 +25,13 @@ type FormState =
 
 // Register.tsx
 export function RegisterForm() {
+  const genderOptions: FormSelectOpts = [
+    { label: "Prefiero no decirlo", value: "" },
+    { label: "Hombre", value: Gender.MALE },
+    { label: "Mujer", value: Gender.FEMALE },
+    { label: "Otro", value: Gender.OTHER },
+  ];
+
   const navigate = useNavigate();
 
   const [newUser, setNewUser] = useState<NewUser>({
@@ -135,7 +146,7 @@ export function RegisterForm() {
             )
           }
         >
-          <RegisterInput
+          <FormInput<NewUser>
             name="tuition"
             placeholder="Matrícula"
             onChange={handleChange}
@@ -154,7 +165,7 @@ export function RegisterForm() {
             )
           }
         >
-          <RegisterInput
+          <FormInput<NewUser>
             name="firstName"
             placeholder="Primer nombre"
             onChange={handleChange}
@@ -173,7 +184,7 @@ export function RegisterForm() {
             )
           }
         >
-          <RegisterInput
+          <FormInput<NewUser>
             name="midName"
             placeholder="Segundo nombre"
             onChange={handleChange}
@@ -195,7 +206,7 @@ export function RegisterForm() {
             )
           }
         >
-          <RegisterInput
+          <FormInput<NewUser>
             name="fatherLastname"
             placeholder="Apellido paterno"
             onChange={handleChange}
@@ -215,7 +226,7 @@ export function RegisterForm() {
             )
           }
         >
-          <RegisterInput
+          <FormInput<NewUser>
             name="motherLastname"
             placeholder="Apellido materno"
             onChange={handleChange}
@@ -235,18 +246,11 @@ export function RegisterForm() {
             )
           }
         >
-          <select
-            name="gender"
-            className="input-base"
-            value={newUser.gender ?? ""}
+          <FormSelect
+            placeholder="Género"
+            options={genderOptions}
             onChange={handleSelectGender}
-          >
-            <option value="">Prefiero no decirlo</option>
-            <option value={Gender.MALE}>Hombre</option>
-            <option value={Gender.FEMALE}>Mujer</option>
-            <option value={Gender.OTHER}>Otro</option>
-          </select>
-          <div className="field-placeholder">Género</div>
+          />
         </FieldWrapper>
       </div>
 
@@ -263,7 +267,7 @@ export function RegisterForm() {
             )
           }
         >
-          <RegisterInput
+          <FormInput<NewUser>
             type="email"
             name="email"
             placeholder="Correo"
@@ -283,7 +287,7 @@ export function RegisterForm() {
             )
           }
         >
-          <RegisterInput
+          <FormInput<NewUser>
             type="password"
             name="password"
             placeholder="Contraseña"
@@ -303,16 +307,11 @@ export function RegisterForm() {
             )
           }
         >
-          <div className="relative">
-            <input
-              type="password"
-              className="input-base"
-              onChange={handleConfirmPasswordChange}
-            />
-            <div className="mt-1 text-gray-400 text-xs">
-              Confirmar contraseña
-            </div>
-          </div>
+          <FormInput
+            type="password"
+            onChange={handleConfirmPasswordChange}
+            placeholder="Confirmar contraseña"
+          />
         </FieldWrapper>
       </div>
 
