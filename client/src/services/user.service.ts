@@ -46,10 +46,12 @@ export const userService = {
    */
   async createUser(newUser: NewUser): Promise<Result<User, FieldError[]>> {
     const response = await axios.post(userEndpoint, newUser, {
-      validateStatus: (status) => status < 500, // 500+ lanza excepción
+      validateStatus: (status) => status <= 500,
     });
 
-    if (response.status >= 400) return Err(response.data.error as FieldError[]);
+    if (response.status >= 400) {
+      return Err(response.data.error as FieldError[]);
+    }
 
     return Ok(response.data.record as User);
   },
