@@ -1,6 +1,6 @@
 // presentation/controllers/user.controller.ts
 import { Router } from "express";
-import type { Hasher } from "business/common/services/hasher";
+import type { Hasher } from "business/auth/services";
 import type { UserRepository } from "persistence/users/repositories";
 import { addUserUseCase } from "business/users/useCases";
 import { userToPublicUser } from "persistence/users/mappers";
@@ -51,7 +51,7 @@ export function createUserExpressController(opts: {
 }
 
 import { userPrismaRepository } from "persistence/users/repositories";
-import { bcryptHasher } from "business/common/services/hasher";
+import { bcryptHasher } from "business/auth/services";
 import { newUserTypeZodValidator } from "business/users/validators/zod";
 import { newUserBusinessZodValidator } from "business/users/validators/zod";
 

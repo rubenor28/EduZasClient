@@ -3,7 +3,7 @@ import { UseCaseAsync } from "business/common/useCases";
 import { FieldError } from "persistence/common/entities";
 import { NewUser, User } from "persistence/users/entities";
 import { BusinessValidator } from "business/common/validators";
-import { Hasher } from "business/common/services/hasher/hasher";
+import { Hasher } from "business/auth/services";
 import { UserRepository } from "persistence/users/repositories/user.repository";
 
 /**

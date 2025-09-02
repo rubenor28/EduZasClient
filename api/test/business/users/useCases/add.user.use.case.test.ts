@@ -1,7 +1,7 @@
 import { NewUser } from "persistence/users/entities";
 import { Gender } from "persistence/users/enums";
 
-import { bcryptHasher } from "business/common/services/hasher";
+import { bcryptHasher } from "business/auth/services/hasher";
 import { addUserUseCase } from "business/users/useCases";
 import { newUserBusinessZodValidator } from "business/users/validators/zod/new.user.business.zod.validator";
 import { inMemoryUserRepository } from "../../../persistence/users/repositories/user.testing.repository";
