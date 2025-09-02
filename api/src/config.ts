@@ -6,3 +6,5 @@ export const PAGE_SIZE = Number(process.env.PAGE_SIZE) ?? 10;
 export const SALT_OR_ROUNDS = Number(process.env.SALT_ROUNDS) ?? 10;
 
 export const prisma = new PrismaClient();
+
+console.log(`BUN_ENV: ${BUN_ENV}`)

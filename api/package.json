@@ -5,11 +5,11 @@
   "private": true,
   "scripts": {
     "migrate": "prisma migrate deploy",
-    "start": "bun run src/server.ts",
+    "start": "BUN_ENV=production bun run src/server.ts",
     "migrate:dev": "prisma migrate dev",
-    "dev": "bun run --watch src/server.ts",
+    "dev": "BUN_ENV=dev bun run --watch src/server.ts",
     "migrate:test": "bun --env-file=.env.test prisma migrate deploy",
-    "test": "bun --env-file=.env.test jest --runInBand"
+    "test": "BUN_ENV=test bun --env-file=.env.test jest --runInBand"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
