@@ -9,8 +9,8 @@
     "start": "BUN_ENV=production bun run src/server.ts",
     "migrate:dev": "prisma migrate dev",
     "dev": "BUN_ENV=dev bun run --watch src/server.ts",
-    "migrate:test": "bun --env-file=.env.test prisma migrate deploy",
-    "test": "BUN_ENV=test bun --env-file=.env.test jest --runInBand"
+    "test": "BUN_ENV=test bun test --env-file=.env.test",
+    "migrate:test": "bun --env-file=.env.test prisma migrate deploy"
   },
   "devDependencies": {
     "@eslint/js": "^9.34.0",
@@ -22,7 +22,6 @@
     "@types/node": "22.15.30",
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
-    "jest": "^30.0.4",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript-eslint": "^8.41.0"
