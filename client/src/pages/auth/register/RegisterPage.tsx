@@ -6,21 +6,22 @@ export function RegisterPage() {
   const background = "/images/jellyfish.jpg";
 
   return (
-    <div className="register-view">
+    <div className="split-layout-container">
       {/* Mitad izquierda: Formulario */}
-      <div className="register-form-section">
+      <div className="centered-panel">
         <RegisterForm />
       </div>
 
       {/* Mitad derecha: Imagen con cuadro */}
-      <div className="register-image-section">
-        <ImageCard imageUrl={background}>
-          <h2 className="image-card-title">Bienvenido a Edu-zas</h2>
-          <p className="image-card-subtitle">
-            La plataforma para impulsar tu aprendizaje 🚀
-          </p>
-        </ImageCard>
-      </div>
+      <ImageCard
+        imageUrl={background}
+        className="half-horizontal-media-container"
+      >
+        <h2 className="image-card-title">Bienvenido a Edu-zas</h2>
+        <p className="image-card-subtitle">
+          La plataforma para impulsar tu aprendizaje 🚀
+        </p>
+      </ImageCard>
     </div>
   );
 }

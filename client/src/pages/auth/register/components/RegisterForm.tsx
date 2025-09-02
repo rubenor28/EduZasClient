@@ -127,13 +127,13 @@ export function RegisterForm() {
 
   return (
     <form
-      className="register-form"
+      className="content-card-white"
       aria-labelledby="register-legend"
       onSubmit={handleSubmit}
     >
       <legend className="register-legend">Edu-zas</legend>
 
-      <div className="field-group">
+      <div className="horizontal-group">
         <FieldWrapper
           alert={
             formState.state === "input_error" &&
@@ -150,6 +150,7 @@ export function RegisterForm() {
             name="tuition"
             placeholder="Matrícula"
             onChange={handleChange}
+            hint="Aqui se pone algo"
           />
         </FieldWrapper>
 
@@ -192,7 +193,7 @@ export function RegisterForm() {
         </FieldWrapper>
       </div>
 
-      <div className="field-group">
+      <div className="horizontal-group">
         <FieldWrapper
           className="flex-1"
           alert={
@@ -254,7 +255,7 @@ export function RegisterForm() {
         </FieldWrapper>
       </div>
 
-      <div className="field-group">
+      <div className="horizontal-group">
         <FieldWrapper
           alert={
             formState.state === "input_error" &&

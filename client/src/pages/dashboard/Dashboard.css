@@ -2,7 +2,4 @@
 
 /* Aquí defines tus clases "componentes" */
 @layer components {
-  .field-group {
-    @apply flex gap-4 mb-4;
-  }
 }
