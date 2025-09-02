@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "prune": "bunx rimraf node_modules && bun install --omit dev",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
