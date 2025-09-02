@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "prune": "bunx rimraf node_modules && bun install --omit dev",
-    "migrate": "prisma migrate deploy",
+    "migrate": "prisma migrate deploy && bunx prisma generate",
     "start": "BUN_ENV=production bun run src/server.ts",
     "migrate:dev": "prisma migrate dev",
     "dev": "BUN_ENV=dev bun run --watch src/server.ts",
