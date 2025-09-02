@@ -7,4 +7,8 @@ export const SALT_OR_ROUNDS = Number(process.env.SALT_ROUNDS) ?? 10;
 
 export const prisma = new PrismaClient();
 
-console.log(`BUN_ENV: ${BUN_ENV}`)
+if (process.env.JWT_SECRET === undefined) {
+  throw Error("JWT_SECRET must be defined");
+}
+
+export const JWT_SECRET = `${process.env.JWT_SECRET}`;

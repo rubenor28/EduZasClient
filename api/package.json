@@ -31,8 +31,10 @@
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "@types/jsonwebtoken": "^9.0.10",
     "cors": "2.8.5",
     "express": "5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "prisma": "^6.11.1",
     "ts-results": "^3.3.0",
     "zod": "^4.0.5"
