@@ -61,7 +61,7 @@ bun run migrate
 # Construir cliente
 bun run build
 # Limpiar dependencias de desarrollo
-bun run
+bun run prune
 # Inicializar
 bun run start
 ```
