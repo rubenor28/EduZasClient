@@ -7,10 +7,7 @@ import { StringSearchType } from "persistence/common/enums";
 import { UserRepository } from "persistence/users/repositories";
 import { userToPublicUser } from "persistence/users/mappers";
 import { UserCredentials } from "persistence/users/entities";
-import {
-  SignedTokenExpirationTime,
-  SignedTokenService,
-} from "../services/";
+import { SignedTokenExpirationTime, SignedTokenService } from "../services/";
 
 /**
  * Tipo de entrada para el caso de uso de inicio de sesión.
@@ -27,6 +24,7 @@ type LogInInput = {
   input: UserCredentials;
   repository: UserRepository;
   tokenService: SignedTokenService;
+  expiresIn: SignedTokenExpirationTime;
   hasher: Hasher;
 };
 
@@ -78,7 +76,7 @@ export const logInUseCase: UseCaseAsync<LogInInput, LogInOutput> = {
    * @throws Error - Solo en casos excepcionales donde la lógica de negocio falla
    * (usuario existe según emailIsRegistered pero no se encuentra en getBy)
    */
-  async execute({ input, repository, tokenService, hasher }) {
+  async execute({ input, repository, tokenService, hasher, expiresIn }) {
     const { email, password } = input;
 
     const emailExists = await repository.emailIsRegistered(email);
@@ -105,11 +103,7 @@ export const logInUseCase: UseCaseAsync<LogInInput, LogInOutput> = {
       return Err({ field: "password", message: "Contraseña incorrecta" });
 
     return Ok(
-      tokenService.generate(
-        JWT_SECRET,
-        SignedTokenExpirationTime.Hours24,
-        userToPublicUser(user),
-      ),
+      tokenService.generate(JWT_SECRET, expiresIn, userToPublicUser(user)),
     );
   },
 };

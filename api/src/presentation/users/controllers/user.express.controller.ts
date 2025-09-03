@@ -23,10 +23,12 @@ export function createUserExpressController(opts: {
   router.post("/", async (req, res) => {
     try {
       const validation = newUserTypeValidator.validate(req.body);
-      if (!validation.success)
+
+      if (!validation.success) {
         return res
           .status(400)
           .json({ message: "Error", error: validation.error });
+      }
 
       const result = await addUserUseCase.execute({
         repository,
@@ -35,8 +37,9 @@ export function createUserExpressController(opts: {
         input: validation.value,
       });
 
-      if (!result.ok)
+      if (!result.ok) {
         return res.status(400).json({ message: "Error", error: result.val });
+      }
 
       return res
         .status(201)

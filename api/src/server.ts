@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { BUN_ENV, PORT } from "config";
-import { userExpressController } from "presentation/controllers";
+import { userExpressController } from "presentation/users/controllers";
 
 export const app = express();
 
