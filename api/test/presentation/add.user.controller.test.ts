@@ -3,7 +3,7 @@ import request from "supertest";
 import { Gender } from "persistence/users/enums";
 import { bcryptHasher } from "business/auth/services/hasher";
 import { NewUser, PublicUser } from "persistence/users/entities";
-import { createUserExpressController } from "presentation/controllers";
+import { createUserExpressController } from "presentation/users/controllers";
 import { inMemoryUserRepository } from "../persistence/users/repositories/user.testing.repository";
 import {
   newUserBusinessZodValidator,
