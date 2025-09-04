@@ -1,6 +1,6 @@
 import { Hint } from "components";
 import "../FormComponents.css";
-import "./FormInput.css"
+import "./FormInput.css";
 
 /**
  * PROPIEDADES DEL COMPONENTE FormInput
@@ -18,7 +18,7 @@ type FormInputProps<T = string> = {
   type?: string;
   placeholder: string;
   required?: boolean;
-  name?: string | keyof T;
+  name?: T extends string ? string : keyof T;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   hint?: string;

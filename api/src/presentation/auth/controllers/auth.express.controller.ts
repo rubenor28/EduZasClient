@@ -12,6 +12,7 @@ import {
   SignedTokenExpirationTime,
   SignedTokenService,
 } from "business/auth/services";
+import { userToPublicUser } from "persistence/users/mappers";
 
 const mapCookieExpirationTime = {
   [SignedTokenExpirationTime.Minutes15]: 15 * 60 * 1000, // 15 minutos en ms
@@ -49,18 +50,21 @@ export function createAuthExpressController(opts: {
       });
 
       if (!result.ok) {
-        return res.status(400).json({ message: "Error", error: result.val });
+        return res.status(400).json({ message: "Error", error: [result.val] });
       }
 
       return res
         .status(200)
-        .cookie("jwt", result.val, {
+        .cookie("jwt", result.val.token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
           maxAge: mapCookieExpirationTime[expiresIn],
         })
-        .json({ message: "Autenticado" });
+        .json({
+          message: "Autenticado",
+          user: userToPublicUser(result.val.user),
+        });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: "Internal server error" });

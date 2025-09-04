@@ -23,6 +23,16 @@
   }
 
   /**
+   * Contenedor flexible para agrupar elementos en disposición vertical
+   * Resultado visual: Elementos alineados en columna con espaciado consistente
+   * Uso: Grupos de campos de formulario, listas, elementos apilados, o cualquier
+   *       conjunto que necesite disposición vertical con espaciado uniforme
+   */
+  .vertical-group {
+    @apply flex flex-col gap-4 mb-4;
+  }
+
+  /**
    * Tarjeta de contenido con fondo blanco y sombra
    * Resultado visual: Contenedor elevado y destacado con espaciado interno
    * Uso: Paneles de formularios, secciones de contenido, tarjetas informativas

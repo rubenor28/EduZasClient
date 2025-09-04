@@ -8,6 +8,7 @@ import { UserRepository } from "persistence/users/repositories";
 import { userToPublicUser } from "persistence/users/mappers";
 import { UserCredentials } from "persistence/users/entities";
 import { SignedTokenExpirationTime, SignedTokenService } from "../services/";
+import { User } from "persistence/users/entities";
 
 /**
  * Tipo de entrada para el caso de uso de inicio de sesión.
@@ -35,7 +36,7 @@ type LogInInput = {
  * @success - Token JWT generado (string)
  * @error - Error de campo con detalles de validación (FieldError)
  */
-type LogInOutput = Result<string, FieldError>;
+type LogInOutput = Result<{ token: string; user: User }, FieldError>;
 
 /**
  * Caso de uso para el proceso de autenticación de usuarios.
@@ -102,8 +103,13 @@ export const logInUseCase: UseCaseAsync<LogInInput, LogInOutput> = {
     if (!hasher.matches(password, user.password))
       return Err({ field: "password", message: "Contraseña incorrecta" });
 
-    return Ok(
-      tokenService.generate(JWT_SECRET, expiresIn, userToPublicUser(user)),
-    );
+    return Ok({
+      token: tokenService.generate(
+        JWT_SECRET,
+        expiresIn,
+        userToPublicUser(user),
+      ),
+      user,
+    });
   },
 };

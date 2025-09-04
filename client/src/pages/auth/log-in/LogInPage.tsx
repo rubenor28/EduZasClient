@@ -1,10 +1,10 @@
-import { RegisterForm } from "./RegisterForm";
+import { LogInForm } from "./LogInForm";
 import { AuthPage } from "../components/PageDecoration";
 
-export function RegisterPage() {
+export function LogInPage() {
   return (
     <AuthPage>
-      <RegisterForm />
+      <LogInForm />
     </AuthPage>
   );
 }
