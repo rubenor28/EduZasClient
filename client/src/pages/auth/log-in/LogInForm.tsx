@@ -106,6 +106,7 @@ export function LogInForm() {
           }
         >
           <FormInput<UserCredentials>
+            type="password"
             name="password"
             placeholder="Contraseña"
             onChange={handleChange}
