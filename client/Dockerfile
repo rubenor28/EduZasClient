@@ -1,7 +1,5 @@
 FROM oven/bun:1.2.20-alpine AS base
 
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
 ENV DIR=/home/app
 WORKDIR $DIR
 
