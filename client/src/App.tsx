@@ -8,7 +8,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Form />} />
       <Route path="/sign-up" element={<RegisterPage />} />
-      <Route path="/sign-in" element={<LogInPage />} />
+      <Route path="/login" element={<LogInPage />} />
 
       {/* CATCH-ALL: si no coincide ninguna, muestra 404 */}
       <Route path="*" element={<NotFoundPage />} />
