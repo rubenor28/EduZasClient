@@ -50,7 +50,7 @@ export function createAuthExpressController(opts: {
       });
 
       if (!result.ok) {
-        return res.status(400).json({ message: "Error", error: result.val });
+        return res.status(400).json({ message: "Error", error: [result.val] });
       }
 
       return res

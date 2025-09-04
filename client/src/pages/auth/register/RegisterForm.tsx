@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 import { Gender } from "entities/users/enums";
@@ -31,8 +30,6 @@ export function RegisterForm() {
     { label: "Mujer", value: Gender.FEMALE },
     { label: "Otro", value: Gender.OTHER },
   ];
-
-  const navigate = useNavigate();
 
   const [newUser, setNewUser] = useState<NewUser>({
     email: "",
@@ -95,7 +92,6 @@ export function RegisterForm() {
         }
 
         setFormState({ state: "success" });
-        navigate("/");
       })
       .catch(() => setFormState({ state: "unexpected_error" }));
   };

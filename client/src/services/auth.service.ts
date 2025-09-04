@@ -7,7 +7,9 @@ import { Err, Ok, type Result } from "ts-results";
 const authEndpoint = `${VITE_API_URL}/auth`;
 
 export const authService = {
-  async createUser(credentials: UserCredentials): Promise<Result<User, FieldError[]>> {
+  async createUser(
+    credentials: UserCredentials,
+  ): Promise<Result<User, FieldError[]>> {
     const response = await axios.post(authEndpoint, credentials, {
       validateStatus: (status) => status <= 500,
     });
