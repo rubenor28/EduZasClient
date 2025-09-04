@@ -1,6 +1,6 @@
 FROM oven/bun:1.2.20-alpine AS base
 
-ENV DIR /home/app
+WORKDIR /home/app
 
 FROM base AS build
 
@@ -8,25 +8,25 @@ FROM base AS build
 RUN apk update && apk add --no-cache openssl dumb-init
 
 # Copiar solo los archivos necesarios para instalar dependencias
-COPY package.json $DIR
+COPY package.json .
 
 RUN bun install --omit-dev --frozen-lockfile
 
-COPY tsconfig*.json $DIR
-COPY prisma $DIR/prisma/
-COPY src $DIR/src
+COPY tsconfig*.json .
+COPY prisma ./prisma/
+COPY src ./src
 
 FROM base as production
 
 COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
 COPY --from=build /usr/bin/openssl /usr/bin/openssl
 
-COPY --from=build $DIR/package.json $DIR/package.json
+COPY --from=build ./package.json ./package.json
 
-COPY --from=build $DIR/tsconfig*.json $DIR/tsconfig*.json
-COPY --from=build $DIR/node_modules $DIR/node_modules
-COPY --from=build $DIR/prisma $DIR/prisma/
-COPY --from=build $DIR/src $DIR/src
+COPY --from=build ./tsconfig*.json ./tsconfig*.json
+COPY --from=build ./node_modules ./node_modules
+COPY --from=build ./prisma ./prisma/
+COPY --from=build ./src ./src
 
 EXPOSE 3000
 
