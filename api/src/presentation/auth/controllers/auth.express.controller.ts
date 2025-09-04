@@ -54,13 +54,13 @@ export function createAuthExpressController(opts: {
 
       return res
         .status(200)
-        .cookie("jwt", result.val, {
+        .cookie("jwt", result.val.token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "strict",
           maxAge: mapCookieExpirationTime[expiresIn],
         })
-        .json({ message: "Autenticado" });
+        .json({ message: "Autenticado", user: result.val.user });
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: "Internal server error" });
