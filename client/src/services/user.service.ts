@@ -2,7 +2,7 @@ import axios from "axios";
 import { VITE_API_URL } from "config";
 import type { FieldError } from "entities/common/entities";
 import type { NewUser, User } from "entities/users/entities";
-import { Err, Ok, type Result } from "ts-results";
+import { Err, Ok, type Result } from "entities/common/valueObjects";
 
 const userEndpoint = `${VITE_API_URL}/users`;
 

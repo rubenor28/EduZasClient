@@ -1,4 +1,4 @@
-import { Ok, Err } from "ts-results";
+import { Result, Ok, Err } from "persistence/common/valueObjects";
 import { InMemoryRepository } from "../../common/testing.repository"; // ruta donde tengas la clase base
 import { UserType } from "persistence/users/enums";
 import { StringSearchType } from "persistence/common/enums";
@@ -111,9 +111,9 @@ class InMemoryUserRepository
    * Devuelve el hash de la contraseña para un email.
    * Simula la misma API que el prisma repo: Ok(hash) | Err.EMPTY
    */
-  async getPasswordHash(email: string) {
+  async getPasswordHash(email: string): Promise<Result<string, void>> {
     const found = this.all().find((u) => u.email === email);
-    if (!found) return Err.EMPTY;
+    if (!found) return Err(undefined);
     return Ok(found.password);
   }
 

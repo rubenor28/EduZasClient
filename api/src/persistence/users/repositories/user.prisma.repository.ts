@@ -1,4 +1,4 @@
-import { Err, Ok } from "ts-results";
+import { Err, Ok } from "persistence/common/valueObjects";
 import { offset } from "persistence/common/repositories";
 import { UserRepository } from "./user.repository";
 import { PAGE_SIZE, prisma } from "config";
@@ -117,7 +117,7 @@ export const userPrismaRepository: UserRepository = {
       select: { password: true },
     });
 
-    if (result === null) return Err.EMPTY;
+    if (result === null) return Err(undefined);
 
     return Ok(result.password);
   },
