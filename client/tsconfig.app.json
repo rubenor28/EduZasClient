@@ -21,7 +21,20 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+
+    // Path aliases
+    "baseUrl": "src",
+    "paths": {
+      "config": ["config.ts"],
+      "assets": ["assets/"],
+      "components": ["components/"],
+      "entities": ["entities/"],
+      "pages": ["pages/"],
+      "services": ["services/"],
+      "state": ["state/"]
+    }
   },
   "include": ["src"]
 }

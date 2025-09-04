@@ -4,31 +4,37 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "migrate": "prisma migrate deploy",
+    "prune": "bunx rimraf node_modules && bun install --omit dev",
+    "migrate": "prisma migrate deploy && bunx prisma generate",
     "start": "BUN_ENV=production bun run src/server.ts",
     "migrate:dev": "prisma migrate dev",
-    "dev": "bun run --watch src/server.ts",
-    "migrate:test": "bun --env-file=.env.test prisma migrate deploy",
-    "test": "bun --env-file=.env.test jest --runInBand"
+    "dev": "BUN_ENV=dev bun run --watch src/server.ts",
+    "test": "BUN_ENV=test bun test --env-file=.env.test",
+    "migrate:test": "bun --env-file=.env.test prisma migrate deploy"
   },
   "devDependencies": {
+    "@eslint/js": "^9.34.0",
     "@types/bun": "latest",
     "@types/cors": "2.8.19",
     "@types/dotenv": "8.2.3",
     "@types/express": "5.0.3",
     "@types/jest": "^30.0.0",
     "@types/node": "22.15.30",
-    "jest": "^30.0.4",
+    "eslint": "^9.34.0",
+    "globals": "^16.3.0",
     "ts-jest": "^29.4.0",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript-eslint": "^8.41.0"
   },
   "peerDependencies": {
     "typescript": "5"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "@types/jsonwebtoken": "^9.0.10",
     "cors": "2.8.5",
     "express": "5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "prisma": "^6.11.1",
     "ts-results": "^3.3.0",
     "zod": "^4.0.5"

@@ -1,0 +1,34 @@
+@import "tailwindcss";
+
+/* ===== ESTILOS COMUNES PARA FORMULARIOS ===== */
+@layer components {
+  /* Contenedor principal de cada campo del formulario */
+  .form-input-wrapper,
+  .form-select-wrapper {
+    @apply relative mb-4;
+  }
+
+  /* Estilo base para todos los inputs y selects del formulario */
+  .form-input-base {
+    @apply w-full px-3 py-2 border border-gray-300 
+           rounded-md focus:outline-none focus:ring-2
+           focus:ring-blue-500 focus:border-transparent;
+  }
+
+  /* Estilo del placeholder que siempre está debajo */
+  .form-field-placeholder {
+    @apply absolute left-0 top-full mt-1 
+           text-gray-500 flex items-center text-sm;
+  }
+
+  /* Permite eventos de clic solo en el área del hint/ayuda */
+  .form-field-placeholder .hint-wrapper {
+    @apply pointer-events-auto;
+  }
+}
+
+/* Espaciado adicional en la parte inferior del contenedor */
+.form-input-wrapper,
+.form-select-wrapper {
+  padding-bottom: 0.5rem;
+}

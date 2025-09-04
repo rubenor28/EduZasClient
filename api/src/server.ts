@@ -1,18 +1,20 @@
 import express from "express";
 import cors from "cors";
-import path from "path";
-import { PORT } from "./config";
+import { BUN_ENV, PORT } from "config";
 
-const app = express();
+import { userExpressController } from "presentation/users/controllers";
+import { authExpressController } from "presentation/auth/controllers";
+
+export const app = express();
 
 app.use(express.json());
-// app.use(cors());
+app.use(cors());
 
-if (process.env.BUN_ENV === "production") {
-  const clientDistPath = path.join(__dirname, "..", "..", "client", "dist");
-  app.use(express.static(clientDistPath));
+app.use("/users", userExpressController);
+app.use("/auth", authExpressController);
+
+if (BUN_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log("Server running on port 3000");
+  });
 }
-
-app.listen(PORT, () => {
-  console.log(`\nAPI listening on http://localhost:${PORT}\n`);
-});

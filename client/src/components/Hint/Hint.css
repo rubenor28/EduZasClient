@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Componente Hint - Tooltip de ayuda contextual */
+@layer components {
+  /* Contenedor principal del hint (inline para integración en texto) */
+  .hint-wrapper {
+    @apply relative inline-block;
+  }
+
+  /* Icono/indicador visual del hint */
+  .hint-icon {
+    @apply text-gray-400 cursor-pointer text-xs inline-flex items-center;
+  }
+
+  /* Tooltip emergente con información de ayuda */
+  .hint-tooltip {
+    @apply absolute z-50 hidden bg-black text-white text-xs rounded px-2 py-1;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 125%;
+    white-space: nowrap;
+  }
+
+  /* Muestra el tooltip al hacer hover o focus (accesibilidad) */
+  .group:hover .hint-tooltip,
+  .group:focus-within .hint-tooltip {
+    @apply block;
+  }
+}
