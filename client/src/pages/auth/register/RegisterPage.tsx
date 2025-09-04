@@ -1,27 +1,10 @@
-import { RegisterForm } from "./components/RegisterForm";
-import { ImageCard } from "components";
-import "./Register.css";
+import { RegisterForm } from "./RegisterForm";
+import { AuthPage } from "../components/PageDecoration";
 
 export function RegisterPage() {
-  const background = "/images/jellyfish.jpg";
-
   return (
-    <div className="split-layout-container">
-      {/* Mitad izquierda: Formulario */}
-      <div className="centered-panel">
-        <RegisterForm />
-      </div>
-
-      {/* Mitad derecha: Imagen con cuadro */}
-      <ImageCard
-        imageUrl={background}
-        className="half-horizontal-media-container"
-      >
-        <h2 className="image-card-title">Bienvenido a Edu-zas</h2>
-        <p className="image-card-subtitle">
-          La plataforma para impulsar tu aprendizaje 🚀
-        </p>
-      </ImageCard>
-    </div>
+    <AuthPage>
+      <RegisterForm />
+    </AuthPage>
   );
 }
