@@ -1,6 +1,6 @@
 FROM oven/bun:1.2.20-alpine AS base
 
-ENV DIR /home/app
+ENV DIR=/home/app
 WORKDIR $DIR
 
 FROM base AS build
@@ -17,7 +17,7 @@ COPY tsconfig*.json .
 COPY prisma ./prisma/
 COPY src ./src
 
-FROM base as production
+FROM base AS production
 
 COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
 COPY --from=build /usr/bin/openssl /usr/bin/openssl

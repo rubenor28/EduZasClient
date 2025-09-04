@@ -1,6 +1,7 @@
 FROM oven/bun:1.2.20-alpine AS base
 
-WORKDIR /home/app
+ENV DIR=/home/app
+WORKDIR $DIR
 
 FROM base AS build
 
@@ -21,11 +22,11 @@ FROM base AS production
 
 COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
 
-COPY --from=build ./package.json ./package.json
+COPY --from=build $DIR/package.json ./package.json
 
-COPY --from=build ./tsconfig*.json ./tsconfig*.json
-COPY --from=build ./node_modules ./node_modules
-COPY --from=build ./dist ./dist
+COPY --from=build $DIR/tsconfig*.json ./tsconfig*.json
+COPY --from=build $DIR/node_modules ./node_modules
+COPY --from=build $DIR/dist ./dist
 
 EXPOSE 3000
 
