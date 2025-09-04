@@ -13,6 +13,7 @@ COPY package.json .
 RUN bun install --frozen-lockfile
 
 COPY tsconfig*.json .
+COPY vite.config.ts .
 COPY src ./src
 
 RUN bun run build && \
