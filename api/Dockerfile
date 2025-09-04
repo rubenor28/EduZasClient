@@ -9,7 +9,6 @@ RUN apk update && apk add --no-cache openssl dumb-init
 
 # Copiar solo los archivos necesarios para instalar dependencias
 COPY package.json $DIR
-COPY bun.lock $DIR
 
 RUN bun run install --omit-dev --frozen-lockfile
 
