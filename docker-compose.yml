@@ -25,9 +25,9 @@ services:
     ports:
       - "3001:3000"
     environment:
-      - DATABASE_URL=mysql://root:cisco-class@edu-zas-mariadb:3306/EDU_ZAS
-      - PAGE_SIZE=10
-      - JWT_SECRET=ContraseñaSegura123&
+      DATABASE_URL: "mysql://dr-cisco:cisco-class@edu-zas-mariadb:3306/EDU_ZAS"
+      PAGE_SIZE: "10"
+      JWT_SECRET: "ContraseñaSegura123&"
     depends_on:
       - mariadb
     networks:
@@ -36,6 +36,8 @@ services:
   client:
     container_name: edu-zas-client
     build: ./client
+    args:
+      VITE_API_URL: "http://edu-zas-api:3000"
     ports:
       - "3000:3000"
     depends_on:
