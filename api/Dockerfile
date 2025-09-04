@@ -10,7 +10,7 @@ RUN apk update && apk add --no-cache openssl dumb-init
 # Copiar solo los archivos necesarios para instalar dependencias
 COPY package.json $DIR
 
-RUN bun run install --omit-dev --frozen-lockfile
+RUN bun install --omit-dev --frozen-lockfile
 
 COPY tsconfig*.json $DIR
 COPY prisma $DIR/prisma/

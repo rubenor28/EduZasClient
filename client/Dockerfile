@@ -9,7 +9,7 @@ RUN apk update && apk add --no-cache dumb-init
 # Copiar solo los archivos necesarios para instalar dependencias
 COPY package.json $DIR
 
-RUN bun run install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 COPY tsconfig*.json $DIR
 COPY src $DIR/src
