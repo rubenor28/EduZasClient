@@ -1,6 +1,6 @@
 import { Hasher } from "../services";
 import { JWT_SECRET } from "config";
-import { Err, Ok, Result } from "ts-results";
+import { Err, Ok, Result } from "persistence/common/valueObjects";
 import { UseCaseAsync } from "business/common/useCases";
 import { FieldError } from "persistence/common/entities";
 import { StringSearchType } from "persistence/common/enums";

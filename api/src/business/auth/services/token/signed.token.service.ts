@@ -1,5 +1,5 @@
 import { ObjectTypeValidator } from "business/common/validators";
-import { Result } from "ts-results";
+import { Result } from "persistence/common/valueObjects";
 
 /**
  * Tiempos de expiración predefinidos para tokens firmados.

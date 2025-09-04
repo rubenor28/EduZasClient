@@ -1,4 +1,4 @@
-import { Result } from "ts-results";
+import { Result } from "persistence/common/valueObjects";
 import { Repository } from "../../common/repositories";
 import { NewUser, User, UserCriteria, UserUpdate } from "../entities";
 

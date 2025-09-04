@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { ObjectTypeValidator } from "business/common/validators";
-import { Err, Ok, Result } from "ts-results";
+import { Result, Ok, Err } from "persistence/common/valueObjects";
 import {
   SignedTokenService,
   SignedTokenExpirationTime,
