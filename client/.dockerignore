@@ -1,0 +1,10 @@
+# Ignore everything
+*
+
+# Allow files and directories
+!/src
+!/public
+!/package.json
+!/index.html
+!/tsconfig*.json
+!/vite.config.ts
