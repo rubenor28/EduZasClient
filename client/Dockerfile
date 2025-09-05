@@ -9,12 +9,14 @@ RUN apk update && apk add --no-cache dumb-init
 
 # Copiar solo los archivos necesarios para instalar dependencias
 COPY package.json .
+COPY ./.env .
 
 RUN bun install --frozen-lockfile
 
 COPY tsconfig*.json .
 COPY vite.config.ts .
 COPY index.html .
+COPY public ./public/
 COPY src ./src
 
 RUN bun run build && \
@@ -26,6 +28,7 @@ COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
 
 COPY --from=build $DIR/package.json ./package.json
 
+COPY --from=build $DIR/public ./public
 COPY --from=build $DIR/tsconfig*.json ./tsconfig*.json
 COPY --from=build $DIR/node_modules ./node_modules
 COPY --from=build $DIR/dist ./dist
