@@ -15,6 +15,10 @@ App web para creación de clases y evaluaciones
 Dentro del directorio raíz del proyecto existe un archivo `docker-compose.yml` que contiene la configucación para las imágenes de la api, el cliente y una instancia de maridb, si desea cambiar variables de entorno puede hacerlo desde el docker compose.
 
 Si no funciona `docker compose` prueba con `docker-compose` si no funciona ninguno de los dos, te falta instalar docker compose.
+
+Antes de contruir la imagen del cliente o ejecutar el `docker-compose` es necesario establecer en `client/.env` el valor de la URL de la API
+
+Además establecer las credenciales necesarias en el archivo `.env` en la raíz del proyecto
 ```bash
 # Construir imágenes, crear contenedores e iniciar contenedores
 docker compose up
