@@ -15,7 +15,7 @@ services:
       timeout: 3s
       retries: 10
     volumes:
-      - ./data/mariadb:/var/lib/mysql # ← Bind mount a carpeta local
+      - ./containers/data/mariadb:/var/lib/mysql # ← Bind mount a carpeta local
     networks:
       - edu-zas-network
 
