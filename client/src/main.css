@@ -96,4 +96,12 @@
   textarea {
     @apply border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
   }
+
+  /**
+   * Estilo para URL que fuerza color azul en todos los estados (normal,
+   * hover, visited, active).
+   */
+  .blue-url {
+    @apply text-blue-600 hover:text-blue-600 visited:text-blue-600 active:text-blue-600;
+  }
 }

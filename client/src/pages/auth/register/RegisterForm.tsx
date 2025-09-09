@@ -13,6 +13,7 @@ import {
   FormSelect,
   type FormSelectOpts,
 } from "components";
+import { VITE_CLIENT_URL } from "config";
 
 type InputError = Partial<Record<keyof NewUser, string>> & {
   matchingPassword?: string;
@@ -327,6 +328,13 @@ export function RegisterForm() {
           message="Se registró correctamente"
         />
       )}
+
+      <a
+        href={`${VITE_CLIENT_URL}/login`}
+        className="text-blue-600 hover:text-blue-600 visited:text-blue-600 active:text-blue-600"
+      >
+        ¿Ya tienes una cuenta? Inicia sesión
+      </a>
 
       <div className="flex justify-end">
         <button type="submit" className="submit-button">

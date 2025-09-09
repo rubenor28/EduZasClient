@@ -8,6 +8,7 @@ import {
   type UserCredentials,
 } from "entities/users/entities/user.credentials";
 import { authService } from "services/auth.service";
+import { VITE_CLIENT_URL } from "config";
 
 type InputError = {
   email?: string;
@@ -129,6 +130,13 @@ export function LogInForm() {
           message="Se registró correctamente"
         />
       )}
+
+      <a
+        href={`${VITE_CLIENT_URL}/sign-up`}
+        className="text-blue-600 hover:text-blue-600 visited:text-blue-600 active:text-blue-600"
+      >
+        ¿Aún no tienes una cuenta? Regístrate
+      </a>
 
       <div className="flex justify-end">
         <button type="submit" className="submit-button">
