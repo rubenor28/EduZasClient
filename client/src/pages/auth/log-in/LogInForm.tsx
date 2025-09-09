@@ -8,7 +8,6 @@ import {
   type UserCredentials,
 } from "entities/users/entities/user.credentials";
 import { authService } from "services/auth.service";
-import { VITE_CLIENT_URL } from "config";
 
 type InputError = {
   email?: string;
@@ -72,7 +71,9 @@ export function LogInForm() {
       aria-labelledby="register-legend"
       onSubmit={handleSubmit}
     >
-      <legend className="register-legend">Edu-zas</legend>
+      <a href="/sign-up">
+        <legend className="register-legend">Edu-zas</legend>
+      </a>
 
       <div className="vertical-group">
         <FieldWrapper
@@ -132,7 +133,7 @@ export function LogInForm() {
       )}
 
       <a
-        href={`${VITE_CLIENT_URL}/sign-up`}
+        href="/sign-up"
         className="text-blue-600 hover:text-blue-600 visited:text-blue-600 active:text-blue-600"
       >
         ¿Aún no tienes una cuenta? Regístrate

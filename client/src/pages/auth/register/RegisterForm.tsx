@@ -13,7 +13,6 @@ import {
   FormSelect,
   type FormSelectOpts,
 } from "components";
-import { VITE_CLIENT_URL } from "config";
 
 type InputError = Partial<Record<keyof NewUser, string>> & {
   matchingPassword?: string;
@@ -150,7 +149,9 @@ export function RegisterForm() {
       aria-labelledby="register-legend"
       onSubmit={handleSubmit}
     >
-      <legend className="register-legend">Edu-zas</legend>
+      <a href="/">
+        <legend className="register-legend">Edu-zas</legend>
+      </a>
 
       <div className="horizontal-group">
         <FieldWrapper
@@ -357,7 +358,7 @@ export function RegisterForm() {
       )}
 
       <a
-        href={`${VITE_CLIENT_URL}/login`}
+        href="/login"
         className="text-blue-600 hover:text-blue-600 visited:text-blue-600 active:text-blue-600"
       >
         ¿Ya tienes una cuenta? Inicia sesión
