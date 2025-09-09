@@ -44,6 +44,28 @@ export function RegisterForm() {
 
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
+  const hints = {
+    tuition:
+      "3 letras en mayúscula (incluye Ñ/acentos) " +
+      "+ periodo (O, I, P o V) + últimos dos " +
+      "digitos del año de inscripción + cédula",
+    firstName: "Solo letras (incluye acentos y Ñ), mínimo 3 caracteres",
+    midName:
+      "Mínimo 3 letras o compuesto con" +
+      " artículos/preposiciones (de, del," +
+      " la, las, los, el, al) seguido de" +
+      " palabra de 3+ letras",
+    fatherLastname: "Solo letras (incluye acentos y Ñ), mínimo 3 caracteres",
+    motherLastname:
+      "Mínimo 3 letras o compuesto con" +
+      " artículos/preposiciones (de, del," +
+      " la, las, los, el, al) seguido de" +
+      " palabra de 3+ letras",
+    password:
+      "Mínimo 8 caracteres, con al" +
+      " menos 1 mayúscula, 1 minúscula y 1 carácter especial",
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -147,7 +169,7 @@ export function RegisterForm() {
             name="tuition"
             placeholder="Matrícula"
             onChange={handleChange}
-            hint="Primeras dos letras de tus apellidos, primer letra del nombre, periodo de inscripcion, año de inscripción, cédula"
+            hint={hints.tuition}
           />
         </FieldWrapper>
 
@@ -167,6 +189,7 @@ export function RegisterForm() {
             name="firstName"
             placeholder="Primer nombre"
             onChange={handleChange}
+            hint={hints.firstName}
           />
         </FieldWrapper>
 
@@ -186,6 +209,7 @@ export function RegisterForm() {
             name="midName"
             placeholder="Segundo nombre"
             onChange={handleChange}
+            hint={hints.midName}
           />
         </FieldWrapper>
       </div>
@@ -208,6 +232,7 @@ export function RegisterForm() {
             name="fatherLastname"
             placeholder="Apellido paterno"
             onChange={handleChange}
+            hint={hints.fatherLastname}
           />
         </FieldWrapper>
 
@@ -228,6 +253,7 @@ export function RegisterForm() {
             name="motherLastname"
             placeholder="Apellido materno"
             onChange={handleChange}
+            hint={hints.motherLastname}
           />
         </FieldWrapper>
 
@@ -290,6 +316,7 @@ export function RegisterForm() {
             name="password"
             placeholder="Contraseña"
             onChange={handleChange}
+            hint={hints.password}
           />
         </FieldWrapper>
 
