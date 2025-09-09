@@ -132,7 +132,7 @@ export function LogInForm() {
 
       <div className="flex justify-end">
         <button type="submit" className="submit-button">
-          Registrar
+          Iniciar sesión
         </button>
       </div>
     </form>

@@ -146,7 +146,7 @@ export function RegisterForm() {
             name="tuition"
             placeholder="Matrícula"
             onChange={handleChange}
-            hint="Aqui se pone algo"
+            hint="Primeras dos letras de tus apellidos, primer letra del nombre, periodo de inscripcion, año de inscripción, cédula"
           />
         </FieldWrapper>
 

@@ -9,21 +9,83 @@
 
   /* Icono/indicador visual del hint */
   .hint-icon {
-    @apply text-gray-400 cursor-pointer text-xs inline-flex items-center;
+    @apply text-gray-500 cursor-pointer text-sm inline-flex items-center justify-center w-[18px] h-[18px] rounded-full bg-gray-100 transition-colors duration-200;
+  }
+
+  .hint-icon:hover,
+  .hint-icon:focus {
+    @apply bg-gray-200 text-gray-700 outline-none;
   }
 
   /* Tooltip emergente con información de ayuda */
   .hint-tooltip {
-    @apply absolute z-50 hidden bg-black text-white text-xs rounded px-2 py-1;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 125%;
-    white-space: nowrap;
+    @apply absolute z-50 bg-gray-800 text-white text-xs rounded px-3 py-2 max-w-xs shadow-lg opacity-0 invisible transition-all duration-200 pointer-events-none;
   }
 
-  /* Muestra el tooltip al hacer hover o focus (accesibilidad) */
-  .group:hover .hint-tooltip,
-  .group:focus-within .hint-tooltip {
-    @apply block;
+  .hint-tooltip.visible {
+    @apply opacity-100 visible;
+  }
+
+  /* Flecha del tooltip */
+  .hint-tooltip .hint-arrow {
+    @apply absolute w-2 h-2 bg-inherit;
+  }
+
+  /* Posicionamiento para tooltip en la parte superior */
+  .hint-tooltip.top {
+    @apply bottom-full left-1/2 -translate-x-1/2 mb-2;
+  }
+
+  .hint-tooltip.top .hint-arrow {
+    @apply bottom-[-4px] left-1/2 -translate-x-1/2 rotate-45;
+  }
+
+  /* Posicionamiento para tooltip en la parte inferior */
+  .hint-tooltip.bottom {
+    @apply top-full left-1/2 -translate-x-1/2 mt-2;
+  }
+
+  .hint-tooltip.bottom .hint-arrow {
+    @apply top-[-4px] left-1/2 -translate-x-1/2 rotate-45;
+  }
+
+  /* Posicionamiento para tooltip a la izquierda */
+  .hint-tooltip.left {
+    @apply right-full top-1/2 -translate-y-1/2 mr-2;
+  }
+
+  .hint-tooltip.left .hint-arrow {
+    @apply right-[-4px] top-1/2 -translate-y-1/2 rotate-45;
+  }
+
+  /* Posicionamiento para tooltip a la derecha */
+  .hint-tooltip.right {
+    @apply left-full top-1/2 -translate-y-1/2 ml-2;
+  }
+
+  .hint-tooltip.right .hint-arrow {
+    @apply left-[-4px] top-1/2 -translate-y-1/2 rotate-45;
+  }
+}
+
+/* Estilos responsivos para dispositivos móviles */
+@layer utilities {
+  @media (max-width: 640px) {
+    .hint-tooltip {
+      @apply max-w-[200px] text-[0.6875rem] p-1.5;
+    }
+
+    /* En móviles, forzar posición inferior si es posible */
+    .hint-tooltip.top,
+    .hint-tooltip.left,
+    .hint-tooltip.right {
+      @apply bottom-auto right-auto left-1/2 top-full -translate-x-1/2 mt-2;
+    }
+
+    .hint-tooltip.top .hint-arrow,
+    .hint-tooltip.left .hint-arrow,
+    .hint-tooltip.right .hint-arrow {
+      @apply bottom-auto right-auto left-1/2 top-[-4px] -translate-x-1/2 rotate-45;
+    }
   }
 }
