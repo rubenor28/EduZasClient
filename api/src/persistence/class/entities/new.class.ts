@@ -1,10 +1,23 @@
 import { Class } from "./class";
 
 /**
- * Representa los datos necesarios para crear una nueva clase.
+ * Representa los que debe ingresar un usuario
+ * para crear una nueva clase.
  *
  * Se basa en {@link Class} pero omite:
- * - `id`: porque se genera automáticamente.
- * - `ownerId`: porque se asigna internamente según el usuario autenticado.
+ * - `id`, `createdAt` y `modifiedAt`: porque se
+ *   genera automáticamente.
+ *
  */
-export type PublicNewClass = Omit<Class, "id">;
+export type NewClass = Omit<Class, "createdAt" | "modifiedAt">;
+
+/**
+ * Representa los que debe ingresar un usuario
+ * para crear una nueva clase.
+ *
+ * Se basa en {@link Class} pero omite:
+ * - `id`, `createdAt` y `modifiedAt`: porque se
+ *   genera automáticamente.
+ *
+ */
+export type PublicNewClass = Omit<NewClass, "id">;

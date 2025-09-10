@@ -38,4 +38,4 @@ import { Class, ClassCriteria, ClassUpdate, NewClass } from "../entities";
  * });
  */
 export interface ClassRepository
-  extends Repository<string, Class, Class, ClassUpdate, ClassCriteria> {}
+  extends Repository<string, Class, NewClass, ClassUpdate, ClassCriteria> {}
