@@ -73,17 +73,16 @@ class InMemoryUserRepository
         return false;
       if (!this.matchesStringQuery(u.email, email)) return false;
 
-      // si hay otros filtros en rest, ignoramos o podrías extender
       return true;
     });
 
-    return this.paginate(criteria as UserCriteria, results);
+    return this.paginate(criteria, results);
   }
 
   /**
    * Completa campos faltantes al crear una entidad User.
    * - Autogenera el id (ya lo hace la base), asigna createdAt/modifiedAt,
-   *   default role y active = true si faltan.
+   *   y establece rol por defecto como STUDENT.
    */
   autoGenerateRemainingFields(data: NewUser): User {
     const now = new Date();
@@ -91,7 +90,7 @@ class InMemoryUserRepository
     const user: User = {
       ...data,
       id: this.autoGenerateId(data),
-      role: UserType.STUDENT as UserType,
+      role: UserType.STUDENT,
       createdAt: now,
       modifiedAt: now,
     };
