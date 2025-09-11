@@ -42,7 +42,7 @@ class InMemoryUserRepository
       fatherLastname,
       motherLastname,
       email,
-    } = criteria as any;
+    } = criteria;
 
     const results = this.all().filter((u) => {
       if (gender && u.gender !== gender) return false;
@@ -91,9 +91,9 @@ class InMemoryUserRepository
     const user: User = {
       ...data,
       id: this.autoGenerateId(data),
-      role: (data as any).role ?? (UserType.STUDENT as UserType),
-      createdAt: (data as any).createdAt ?? now,
-      modifiedAt: (data as any).modifiedAt ?? now,
+      role: UserType.STUDENT as UserType,
+      createdAt: now,
+      modifiedAt: now,
     };
 
     // Asegura el id si la base lo generó (por si caller no pasó id)
