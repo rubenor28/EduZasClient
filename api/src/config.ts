@@ -11,4 +11,8 @@ if (process.env.JWT_SECRET === undefined) {
   throw Error("JWT_SECRET must be defined");
 }
 
+if (process.env.DATABASE_URL === undefined) {
+  throw Error("DATABASE_URL must be defined");
+}
+
 export const JWT_SECRET = `${process.env.JWT_SECRET}`;
