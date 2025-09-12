@@ -1,10 +1,14 @@
 import { Router } from "express";
-import type { UserRepository } from "persistence/users/repositories";
-import { logInUseCase } from "business/auth/useCase/log.in.use.case";
+
 import { ObjectTypeValidator } from "business/common/validators";
+import type { UserRepository } from "persistence/users/repositories";
 import { UserCredentials } from "persistence/users/entities";
+
+import { logInUseCase, isLoginUseCase } from "business/auth/useCase";
+import { userToPublicUser } from "persistence/users/mappers";
 import { userPrismaRepository } from "persistence/users/repositories";
-import { userCredentialsZodValidator } from "business/auth/validators/user.credentials.zod.validator";
+import { userCredentialsZodValidator } from "business/auth/validators";
+
 import {
   bcryptHasher,
   Hasher,
@@ -12,15 +16,30 @@ import {
   SignedTokenExpirationTime,
   SignedTokenService,
 } from "business/auth/services";
-import { userToPublicUser } from "persistence/users/mappers";
 
+/**
+ * Mapeo de tiempos de expiración de los tokens a milisegundos.
+ *
+ * Usado para configurar la cookie de sesión JWT.
+ */
 const mapCookieExpirationTime = {
-  [SignedTokenExpirationTime.Minutes15]: 15 * 60 * 1000, // 15 minutos en ms
-  [SignedTokenExpirationTime.Minutes30]: 30 * 60 * 1000, // 30 minutos en ms
-  [SignedTokenExpirationTime.Hours1]: 60 * 60 * 1000, // 1 hora en ms
-  [SignedTokenExpirationTime.Hours24]: 24 * 60 * 60 * 1000, // 24 horas en ms
+  [SignedTokenExpirationTime.Minutes15]: 15 * 60 * 1000, // 15 minutos
+  [SignedTokenExpirationTime.Minutes30]: 30 * 60 * 1000, // 30 minutos
+  [SignedTokenExpirationTime.Hours1]: 60 * 60 * 1000, // 1 hora
+  [SignedTokenExpirationTime.Hours24]: 24 * 60 * 60 * 1000, // 24 horas
 };
 
+/**
+ * Crea un controlador de autenticación para Express.
+ *
+ * @param opts - Dependencias necesarias para configurar el controlador.
+ * @param opts.repository - Repositorio de usuarios para acceder a datos de persistencia.
+ * @param opts.hasher - Servicio para hashear credenciales (ej. `bcrypt`).
+ * @param opts.tokenService - Servicio para firmar y validar tokens JWT.
+ * @param opts.userCredentialsValidator - Validador de las credenciales de entrada.
+ *
+ * @returns Un {@link Router} de Express listo para montar en la aplicación.
+ */
 export function createAuthExpressController(opts: {
   repository: UserRepository;
   hasher: Hasher;
@@ -28,9 +47,21 @@ export function createAuthExpressController(opts: {
   userCredentialsValidator: ObjectTypeValidator<UserCredentials>;
 }) {
   const { repository, hasher, tokenService, userCredentialsValidator } = opts;
-  const router = Router();
   const expiresIn = SignedTokenExpirationTime.Hours24;
+  const router = Router();
 
+  const { httpOnly, secure, sameSite } = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict" as const,
+  };
+
+  /**
+   * POST `/`
+   *
+   * Autentica al usuario con sus credenciales, genera un JWT y lo guarda
+   * en una cookie con las banderas `HttpOnly`, `Secure` y `SameSite`.
+   */
   router.post("/", async (req, res) => {
     try {
       const validation = userCredentialsValidator.validate(req.body);
@@ -56,9 +87,9 @@ export function createAuthExpressController(opts: {
       return res
         .status(200)
         .cookie("jwt", result.val.token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "strict",
+          httpOnly,
+          secure,
+          sameSite,
           maxAge: mapCookieExpirationTime[expiresIn],
         })
         .json({
@@ -71,9 +102,59 @@ export function createAuthExpressController(opts: {
     }
   });
 
+  /**
+   * GET `/`
+   *
+   * Verifica si la sesión actual está autenticada validando la cookie `jwt`
+   * y devuelve el usuario almacenado en el payload del token.
+   */
+  router.get("/", (req, res) => {
+    try {
+      const token = req.cookies?.jwt;
+      if (!token) return res.status(401).json({ message: "Unauthenticated" });
+
+      const validation = isLoginUseCase.execute({ tokenService, token });
+
+      if (validation.err) {
+        switch (validation.val) {
+          case "TokenExpired":
+            return res.status(401).json({ message: "Token expirado" });
+          case "TokenInvalid":
+            return res.status(401).json({ message: "Token inválido" });
+          default:
+            throw Error("Unknown token error");
+        }
+      }
+
+      return res.status(200).json({ user: validation.val });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  /**
+   * DELETE `/logout`
+   *
+   * Cierra la sesión eliminando la cookie de autenticación.
+   */
+  router.delete("/logout", (_req, res) => {
+    res
+      .clearCookie("jwt", { httpOnly, sameSite, secure })
+      .status(200)
+      .json({ message: "Logged out" });
+  });
+
   return router;
 }
 
+/**
+ * Controlador de autenticación predeterminado con implementaciones concretas:
+ * - `userPrismaRepository` para persistencia.
+ * - `bcryptHasher` para verificación de credenciales.
+ * - `jwtService` para manejo de tokens.
+ * - `userCredentialsZodValidator` para validación de credenciales.
+ */
 export const authExpressController = createAuthExpressController({
   repository: userPrismaRepository,
   hasher: bcryptHasher,
