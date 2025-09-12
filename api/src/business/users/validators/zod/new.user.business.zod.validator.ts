@@ -33,7 +33,6 @@ const compositeNameValidation = (name: string) =>
  * Mensajes de error específicos se proporcionan en cada campo para facilitar
  * la retroalimentación.
  */
-// TODO: Validar cadenas vacias
 const schema = z.object({
   tuition: z.string().regex(tuitionRegex, "Formato de matricula inválida"),
   firstName: z.string().regex(simpleNameRegex, "Formato de nombre inválido"),

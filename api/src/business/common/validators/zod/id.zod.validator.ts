@@ -19,7 +19,7 @@ import { FieldTypeValidator } from "../type.validator";
  */
 export const idZodValidator: FieldTypeValidator<number> = {
   validate(input) {
-    const validation = uIntSchema.safeParse(input);
+    const validation = uIntZodSchema.safeParse(input);
 
     if (!validation.success) {
       return {
@@ -46,4 +46,7 @@ export const idZodValidator: FieldTypeValidator<number> = {
  * - Debe ser un entero (`.int()`).
  * - Debe ser mayor que cero (`.positive()`).
  */
-const uIntSchema = z.number().int().positive();
+export const uIntZodSchema = z
+  .number("Se debe proporcionar un entero positivo")
+  .int("Se debe proporcionar un entero positivo")
+  .positive("Se debe proporcionar un entero positivo");
