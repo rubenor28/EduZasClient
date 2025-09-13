@@ -45,7 +45,7 @@ export const authService = {
       validateStatus: (status) => status <= 500,
     });
 
-    if (response.status === 401) {
+    if (response.status >= 400) {
       const msg = `${response.data?.message ?? ""}`;
 
       switch (msg) {
