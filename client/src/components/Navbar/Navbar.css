@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+/* ===== LAYER: COMPONENTS ===== */
+@layer components {
+  .navbar {
+    @apply fixed top-0 left-0 w-full h-16 bg-white shadow-md flex items-center px-6 z-50;
+  }
+
+  .navbar-section {
+    @apply flex items-center;
+  }
+
+  .navbar-left {
+    @apply flex-1 justify-start;
+  }
+
+  .navbar-center {
+    @apply flex-1 justify-center;
+  }
+
+  .navbar-right {
+    @apply flex-1 justify-end;
+  }
+}

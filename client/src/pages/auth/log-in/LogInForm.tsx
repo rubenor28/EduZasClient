@@ -35,7 +35,6 @@ export function LogInForm() {
 
     try {
       if (result.err) {
-        console.log(`Error de auth service: ${result.val}`);
         const inputErrs =
           mapFieldErrorsToFieldMessageMapFromKeys<UserCredentials>(
             result.val,

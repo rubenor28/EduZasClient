@@ -1,19 +1,37 @@
-import "./Dashboard.css";
-import { appState } from "state/app.state";
+import { Navbar } from "components/Navbar/Navbar";
+import type { User } from "entities/users/entities";
+
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { authService } from "services/auth.service";
+
+import "./Dashboard.css";
 
 // Register.tsx
 export function Form() {
   const navigate = useNavigate();
-  const { auth } = appState();
+
+  const [user, setUser] = useState<User | undefined>(undefined);
+  const userName = `${user?.firstName ?? ""} ${user?.midName ?? ""}`;
+
+  const handleLogout = () => {
+    authService.logout().then(() => navigate("/login"));
+  };
 
   useEffect(() => {
-    if (!auth.isAuth) {
-      navigate("/login");
-      return;
-    }
+    authService.isAuth().then((validation) => {
+      if (validation.err) {
+        navigate("/login");
+        return;
+      }
+
+      setUser(validation.val);
+    });
   }, []);
 
-  return <h1>Hello world</h1>;
+  return (
+    <>
+      <Navbar userName={userName} logout={handleLogout} />
+    </>
+  );
 }

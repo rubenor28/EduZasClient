@@ -29,6 +29,7 @@ export const authService = {
     credentials: UserCredentials,
   ): Promise<Result<User, FieldError[]>> {
     const response = await axios.post(authEndpoint, credentials, {
+      withCredentials: true,
       validateStatus: (status) => status <= 500,
     });
 
@@ -64,6 +65,8 @@ export const authService = {
   },
 
   async logout() {
-    await axios.delete(authEndpoint);
+    await axios.delete(authEndpoint, {
+      withCredentials: true,
+    });
   },
 };
