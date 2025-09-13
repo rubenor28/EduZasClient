@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authService } from "services/auth.service";
 import { mapFieldErrorsToFieldMessageMapFromKeys } from "services";
 import { Alert, AlertType, FieldWrapper, FormInput } from "components";
-import { appState } from "state/app.state";
+
 import {
   USER_CREDENTIALS_KEYS,
   type UserCredentials,
 } from "entities/users/entities/user.credentials";
-import { authService } from "services/auth.service";
 
 type InputError = {
   email?: string;
@@ -19,7 +19,6 @@ type FormState =
   | ({ state: "input_error" } & InputError);
 
 export function LogInForm() {
-  const { login } = appState();
   const navigate = useNavigate();
 
   const [credentials, setCredentials] = useState<UserCredentials>({
@@ -32,7 +31,7 @@ export function LogInForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const result = await authService.createUser(credentials);
+    const result = await authService.login(credentials);
 
     try {
       if (result.err) {
@@ -47,7 +46,6 @@ export function LogInForm() {
         return;
       }
 
-      login(result.val);
       setFormState({ state: "success" });
       navigate("/");
     } catch (error) {
