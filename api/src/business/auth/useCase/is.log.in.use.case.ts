@@ -15,6 +15,7 @@ import { publicUserTypeZodValidator } from "business/users/validators/zod/public
 type IsLoginInput = {
   token: string;
   tokenService: SignedTokenService;
+  publicUserValidator: ObjectTypeValidator<PublicUser>
 };
 
 /**
@@ -35,7 +36,7 @@ type IsLoginOutput = Result<PublicUser, SignedTokenErrors>;
  * - `IsLoginOutput`: resultado esperado de la operación.
  */
 export const isLoginUseCase: UseCase<IsLoginInput, IsLoginOutput> = {
-  execute({ tokenService, token }) {
-    return tokenService.isValid(token, JWT_SECRET, publicUserTypeZodValidator);
+  execute({ tokenService, token, publicUserValidator }) {
+    return tokenService.isValid(token, JWT_SECRET, publicUserValidator);
   },
 };

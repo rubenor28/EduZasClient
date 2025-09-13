@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import { ObjectTypeValidator } from "business/common/validators";
 import type { UserRepository } from "persistence/users/repositories";
-import { UserCredentials } from "persistence/users/entities";
+import { PublicUser, UserCredentials } from "persistence/users/entities";
 
 import { logInUseCase, isLoginUseCase } from "business/auth/useCase";
 import { userToPublicUser } from "persistence/users/mappers";
@@ -17,6 +17,7 @@ import {
   SignedTokenExpirationTime,
   SignedTokenService,
 } from "business/auth/services";
+import { publicUserTypeZodValidator } from "business/users/validators/zod/public.user.type.zod.validator";
 
 /**
  * Mapeo de tiempos de expiración de los tokens a milisegundos.
@@ -42,12 +43,19 @@ const mapCookieExpirationTime = {
  * @returns Un {@link Router} de Express listo para montar en la aplicación.
  */
 export function createAuthExpressController(opts: {
-  repository: UserRepository;
   hasher: Hasher;
+  repository: UserRepository;
   tokenService: SignedTokenService;
-  userCredentialsValidator: ObjectTypeValidator<UserCredentials>;
+  credentialsValidator: ObjectTypeValidator<UserCredentials>;
+  publicUserValidator: ObjectTypeValidator<PublicUser>;
 }) {
-  const { repository, hasher, tokenService, userCredentialsValidator } = opts;
+  const {
+    repository,
+    hasher,
+    tokenService,
+    credentialsValidator,
+    publicUserValidator,
+  } = opts;
   const expiresIn = SignedTokenExpirationTime.Hours24;
   const router = Router();
 
@@ -65,7 +73,7 @@ export function createAuthExpressController(opts: {
    */
   router.post("/", async (req, res) => {
     try {
-      const validation = userCredentialsValidator.validate(req.body);
+      const validation = credentialsValidator.validate(req.body);
 
       if (!validation.success) {
         return res
@@ -114,7 +122,11 @@ export function createAuthExpressController(opts: {
       const token = req.cookies?.jwt;
       if (!token) return res.status(401).json({ message: "Unauthenticated" });
 
-      const validation = isLoginUseCase.execute({ tokenService, token });
+      const validation = isLoginUseCase.execute({
+        tokenService,
+        token,
+        publicUserValidator,
+      });
 
       if (validation.err) {
         if (validation.val === SignedTokenErrors.Unknown)
@@ -135,7 +147,7 @@ export function createAuthExpressController(opts: {
    *
    * Cierra la sesión eliminando la cookie de autenticación.
    */
-  router.delete("/logout", (_req, res) => {
+  router.delete("/", (_req, res) => {
     res
       .clearCookie("jwt", { httpOnly, sameSite, secure })
       .status(200)
@@ -156,5 +168,6 @@ export const authExpressController = createAuthExpressController({
   repository: userPrismaRepository,
   hasher: bcryptHasher,
   tokenService: jwtService,
-  userCredentialsValidator: userCredentialsZodValidator,
+  credentialsValidator: userCredentialsZodValidator,
+  publicUserValidator: publicUserTypeZodValidator,
 });

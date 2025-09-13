@@ -24,7 +24,9 @@ export const jwtService: SignedTokenService = {
     try {
       const decoded = jwt.verify(token, secret);
 
-      const validation = validator.validate(decoded);
+      const { iat, exp, ...payload } = decoded as any;
+
+      const validation = validator.validate(payload);
 
       if (!validation.success) {
         return Err(SignedTokenErrors.TokenInvalid);
@@ -38,11 +40,11 @@ export const jwtService: SignedTokenService = {
 };
 
 const mapJwtError = (error: unknown): SignedTokenErrors => {
-  if (error instanceof jwt.JsonWebTokenError)
-    return SignedTokenErrors.TokenInvalid;
-
   if (error instanceof jwt.TokenExpiredError)
     return SignedTokenErrors.TokenExpired;
+
+  if (error instanceof jwt.JsonWebTokenError)
+    return SignedTokenErrors.TokenInvalid;
 
   if (error instanceof jwt.NotBeforeError)
     return SignedTokenErrors.TokenInvalid;
