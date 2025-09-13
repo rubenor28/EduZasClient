@@ -13,6 +13,7 @@ import {
   bcryptHasher,
   Hasher,
   jwtService,
+  SignedTokenErrors,
   SignedTokenExpirationTime,
   SignedTokenService,
 } from "business/auth/services";
@@ -116,14 +117,10 @@ export function createAuthExpressController(opts: {
       const validation = isLoginUseCase.execute({ tokenService, token });
 
       if (validation.err) {
-        switch (validation.val) {
-          case "TokenExpired":
-            return res.status(401).json({ message: "Token expirado" });
-          case "TokenInvalid":
-            return res.status(401).json({ message: "Token inválido" });
-          default:
-            throw Error("Unknown token error");
-        }
+        if (validation.val === SignedTokenErrors.Unknown)
+          throw new Error("Unknown token error");
+
+        return res.status(401).json({ message: validation.val });
       }
 
       return res.status(200).json({ user: validation.val });
