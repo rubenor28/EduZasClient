@@ -4,6 +4,7 @@ export const BUN_ENV = process.env.BUN_ENV;
 export const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 export const PAGE_SIZE = Number(process.env.PAGE_SIZE) ?? 10;
 export const SALT_OR_ROUNDS = Number(process.env.SALT_ROUNDS) ?? 10;
+export const FRONTEND_URL = process.env.FRONTEND_URL;
 
 export const prisma = new PrismaClient();
 
@@ -12,6 +13,10 @@ if (process.env.JWT_SECRET === undefined) {
 }
 
 if (process.env.DATABASE_URL === undefined) {
+  throw Error("DATABASE_URL must be defined");
+}
+
+if (process.env.FRONTEND_URL === undefined) {
   throw Error("DATABASE_URL must be defined");
 }
 
