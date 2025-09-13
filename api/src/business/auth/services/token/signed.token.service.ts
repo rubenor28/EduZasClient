@@ -1,39 +1,6 @@
 import { ObjectTypeValidator } from "business/common/validators";
+import { SignedTokenErrors } from "persistence/common/enums";
 import { Result } from "persistence/common/valueObjects";
-
-/**
- * Tiempos de expiración predefinidos para tokens firmados.
- */
-export const SignedTokenExpirationTime = {
-  Minutes15: "15m",
-  Minutes30: "30m",
-  Hours1: "1h",
-  Hours24: "24h",
-} as const;
-
-/**
- * Tipo que representa los tiempos de expiración disponibles para tokens firmados.
- */
-export type SignedTokenExpirationTime =
-  (typeof SignedTokenExpirationTime)[keyof typeof SignedTokenExpirationTime];
-
-/**
- * Errores estandarizados para operaciones con tokens firmados.
- */
-export const SignedTokenErrors = {
-  /** Error desconocido o no categorizado */
-  Unknown: "UnknownError",
-  /** El token ha expirado según su timestamp de expiración */
-  TokenExpired: "TokenExpired",
-  /** El token es inválido (firma incorrecta, formato erróneo, manipulación) */
-  TokenInvalid: "TokenInvalid",
-} as const;
-
-/**
- * Tipo que representa los posibles errores al trabajar con tokens firmados.
- */
-export type SignedTokenErrors =
-  (typeof SignedTokenErrors)[keyof typeof SignedTokenErrors];
 
 /**
  * Interfaz que define el contrato para un servicio de tokens firmados.

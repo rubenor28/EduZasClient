@@ -10,11 +10,14 @@ import { userPrismaRepository } from "persistence/users/repositories";
 import { userCredentialsZodValidator } from "business/auth/validators";
 
 import {
+  SignedTokenErrors,
+  SignedTokenExpirationTime,
+} from "persistence/common/enums";
+
+import {
   bcryptHasher,
   Hasher,
   jwtService,
-  SignedTokenErrors,
-  SignedTokenExpirationTime,
   SignedTokenService,
 } from "business/auth/services";
 import { publicUserTypeZodValidator } from "business/users/validators/zod/public.user.type.zod.validator";

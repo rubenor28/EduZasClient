@@ -1,5 +1,6 @@
 import express from "express";
 import request from "supertest";
+import cookieParser from "cookie-parser";
 
 import { Gender } from "persistence/users/enums";
 import { NewUser } from "persistence/users/entities";
@@ -27,17 +28,18 @@ describe("Test controlador autenticacion", () => {
   const testNew: NewUser = {
     ...credentialsTest,
     tuition: "RSRO220228",
-    firstName: "Ruben".toUpperCase(),
+    firstName: "RUBEN",
     midName: undefined,
-    fatherLastname: "Roman".toUpperCase(),
+    fatherLastname: "ROMAN",
     motherLastname: undefined,
     gender: Gender.MALE,
   };
 
   const app = express();
   app.use(express.json());
+  app.use(cookieParser()); // <-- NECESARIO
   app.use(
-    endpoint,
+    `/${endpoint}`,
     createAuthExpressController({
       credentialsValidator,
       publicUserValidator,
@@ -46,6 +48,9 @@ describe("Test controlador autenticacion", () => {
       hasher,
     }),
   );
+
+  // usar agent para mantener cookies entre requests
+  const agent = request.agent(app);
 
   beforeAll(async () => {
     await addUserUseCase.execute({
@@ -57,9 +62,8 @@ describe("Test controlador autenticacion", () => {
   });
 
   test("Login exitoso", async () => {
-    const res = await request(app).post(`/${endpoint}`).send(credentialsTest);
-
-    if (res.ok === false) console.error(res.body);
+    const res = await agent.post(`/${endpoint}`).send(credentialsTest);
+    if (!res.ok) console.error(res.body);
     expect(res.ok).toBe(true);
   });
 
@@ -67,31 +71,22 @@ describe("Test controlador autenticacion", () => {
     const res = await request(app)
       .post(`/${endpoint}`)
       .send({ email: "test@gmail.com", password: "1234" });
-
-    if (res.ok === true) console.error(res.body);
-    expect(res.ok).toBe(false);
-  });
-
-  test("Cerrar sesión", async () => {
-    const res = await request(app).delete(`/${endpoint}`);
-
-    if (res.ok === false) console.error(res.body);
-    expect(res.ok).toBe(true);
-  });
-
-  test("Está autenticado erroneo", async () => {
-    const res = await request(app).get(`/${endpoint}`);
-
-    if (res.ok === true) console.error(res.body);
     expect(res.ok).toBe(false);
   });
 
   test("Está autenticado exitoso", async () => {
-    await request(app).post(`/${endpoint}`).send(credentialsTest);
-
-    const res = await request(app).get(`/${endpoint}`);
-
-    if (res.ok) console.error(res.body);
+    // usa agent con cookie almacenada del login previo
+    const res = await agent.get(`/${endpoint}`);
     expect(res.ok).toBe(true);
+  });
+
+  test("Cerrar sesión", async () => {
+    const res = await agent.delete(`/${endpoint}`);
+    expect(res.ok).toBe(true);
+  });
+
+  test("Está autenticado erroneo después de logout", async () => {
+    const res = await agent.get(`/${endpoint}`);
+    expect(res.ok).toBe(false);
   });
 });

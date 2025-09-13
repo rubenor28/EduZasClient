@@ -1,6 +1,7 @@
-import { jwtService, SignedTokenExpirationTime } from "business/auth/services";
-import { publicUserTypeZodValidator } from "business/users/validators/zod/public.user.type.zod.validator";
+import { jwtService } from "business/auth/services";
 import { PublicUser } from "persistence/users/entities";
+import { SignedTokenExpirationTime } from "persistence/common/enums";
+import { publicUserTypeZodValidator } from "business/users/validators/zod/public.user.type.zod.validator";
 
 describe("Test servicio JWT", () => {
   const expiresIn = SignedTokenExpirationTime.Minutes15;

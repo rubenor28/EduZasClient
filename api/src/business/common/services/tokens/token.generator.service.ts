@@ -1,4 +1,4 @@
-import { OpaqueTokenGenerator } from "./token.service";
+import { OpaqueTokenGenerator } from "./opaque.token.generator";
 
 /**
  * Fábrica para crear una instancia configurable de un generador de tokens.

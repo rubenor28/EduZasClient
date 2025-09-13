@@ -1,14 +1,11 @@
-import { logInUseCase } from "business/auth/useCase/log.in.use.case";
-import { inMemoryUserRepository } from "../../../persistence/users/repositories/user.testing.repository";
-import { NewUser } from "persistence/users/entities";
 import { Gender } from "persistence/users/enums";
-import {
-  bcryptHasher,
-  jwtService,
-  SignedTokenExpirationTime,
-} from "business/auth/services";
+import { NewUser } from "persistence/users/entities";
 import { addUserUseCase } from "business/users/useCases";
+import { bcryptHasher, jwtService } from "business/auth/services";
+import { SignedTokenExpirationTime } from "persistence/common/enums";
+import { logInUseCase } from "business/auth/useCase/log.in.use.case";
 import { newUserBusinessZodValidator } from "business/users/validators/zod";
+import { inMemoryUserRepository } from "../../../persistence/users/repositories/user.testing.repository";
 
 describe("Test caso de uso: Autenticación", () => {
   const expiresIn = SignedTokenExpirationTime.Minutes15;

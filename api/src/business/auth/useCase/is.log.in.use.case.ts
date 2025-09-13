@@ -1,10 +1,10 @@
-import { UseCase } from "business/common/useCases";
 import { JWT_SECRET } from "config";
+import { SignedTokenService } from "../services";
+import { UseCase } from "business/common/useCases";
 import { PublicUser } from "persistence/users/entities";
-import { SignedTokenErrors, SignedTokenService } from "../services";
-import { ObjectTypeValidator } from "business/common/validators";
 import { Result } from "persistence/common/valueObjects";
-import { publicUserTypeZodValidator } from "business/users/validators/zod/public.user.type.zod.validator";
+import { SignedTokenErrors } from "persistence/common/enums";
+import { ObjectTypeValidator } from "business/common/validators";
 
 /**
  * Entrada para el caso de uso `isLoginUseCase`.
@@ -15,7 +15,7 @@ import { publicUserTypeZodValidator } from "business/users/validators/zod/public
 type IsLoginInput = {
   token: string;
   tokenService: SignedTokenService;
-  publicUserValidator: ObjectTypeValidator<PublicUser>
+  publicUserValidator: ObjectTypeValidator<PublicUser>;
 };
 
 /**
