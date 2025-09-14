@@ -1,6 +1,6 @@
 import express from "express";
 import request from "supertest";
-import { Gender } from "persistence/users/enums";
+import { Gender, UserType } from "persistence/users/enums";
 import { bcryptHasher } from "business/auth/services/hasher";
 import { NewUser, PublicUser } from "persistence/users/entities";
 import { createUserExpressController } from "presentation/users/controllers";
@@ -32,6 +32,7 @@ describe("Test endpoint usuarios: Creacion de usuarios", () => {
     firstName: testNew.firstName,
     fatherLastname: testNew.fatherLastname,
     gender: testNew.gender,
+    role: UserType.STUDENT,
   };
 
   const app = express();

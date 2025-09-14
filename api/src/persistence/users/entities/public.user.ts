@@ -7,5 +7,5 @@ import { User } from "./user";
  */
 export type PublicUser = Omit<
   User,
-  "password" | "role" | "createdAt" | "modifiedAt"
+  "password" | "createdAt" | "modifiedAt"
 >;

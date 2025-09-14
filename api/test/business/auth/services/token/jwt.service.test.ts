@@ -2,6 +2,7 @@ import { jwtService } from "business/auth/services";
 import { PublicUser } from "persistence/users/entities";
 import { SignedTokenExpirationTime } from "persistence/common/enums";
 import { publicUserTypeZodValidator } from "business/users/validators/zod/public.user.type.zod.validator";
+import { UserType } from "persistence/users/enums";
 
 describe("Test servicio JWT", () => {
   const expiresIn = SignedTokenExpirationTime.Minutes15;
@@ -15,6 +16,7 @@ describe("Test servicio JWT", () => {
     firstName: "Test",
     fatherLastname: "Test",
     tuition: "1",
+    role: UserType.STUDENT,
   };
 
   test("Crear token", () => {

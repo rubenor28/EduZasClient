@@ -9,4 +9,5 @@ export const userToPublicUser = (user: User): PublicUser => ({
   gender: user.gender,
   midName: user.midName,
   motherLastname: user.motherLastname,
+  role: user.role,
 });

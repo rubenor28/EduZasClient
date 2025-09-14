@@ -1,5 +1,6 @@
 import z from "zod";
 import { createZodObjectTypeValidator } from "business/common/validators/zod/zod.validator";
+import { UserType } from "persistence/users/enums";
 
 /**
  * Esquema de validación de tipos para `PublicUser`.
@@ -49,6 +50,7 @@ const schema = z.object({
   fatherLastname: z.string(),
   motherLastname: z.string().optional(),
   email: z.string(),
+  role: z.enum(UserType),
 });
 
 /**
@@ -75,5 +77,4 @@ const schema = z.object({
  * }
  * ```
  */
-export const publicUserTypeZodValidator =
-  createZodObjectTypeValidator(schema);
+export const publicUserTypeZodValidator = createZodObjectTypeValidator(schema);
