@@ -1,4 +1,3 @@
-// Navbar.tsx
 import { useState } from "react";
 import { capitalize } from "services";
 import type { NavbarTab } from "./navbar.types";
@@ -6,67 +5,61 @@ import type { User } from "entities/users/entities";
 
 import "./Navbar.css";
 
+/**
+ * Propiedades del componente Navbar.
+ * @template T - Tipo de las claves de las pestañas (debe ser string)
+ */
 type NavbarProps<T extends string> = {
-  /** Usuario actual (se usa para saludo). */
+  /** Información del usuario autenticado */
   user: User;
-  /** Callback que cierra sesión. */
+  /** Función para cerrar sesión */
   logout: () => void;
-  /**
-   * Callback que se ejecuta al cambiar de pestaña.
-   * Recibe el valor fuertemente tipado del tab seleccionado.
-   */
+  /** Callback opcional que se ejecuta al cambiar de pestaña */
   onTabChange?: (tab: T) => void;
-  /**
-   * Lista de pestañas a mostrar.
-   * Cada elemento debe cumplir la forma de {@link NavbarTab}<T>.
-   */
+  /** Array de pestañas de navegación */
   tabs: NavbarTab<T>[];
-  /**
-   * Pestaña inicial activa. Si no se provee se toma la primera de `tabs`.
-   */
+  /** Pestaña activa inicial (opcional) */
   initialActiveTab?: T;
 };
 
 /**
- * Componente de navegación principal.
+ * Componente de barra de navegación responsive con soporte para pestañas,
+ * usuario autenticado y menú móvil desplegable.
  *
- * Renderiza una barra con:
- * - Zona izquierda (vacía por defecto).
- * - Zona central con pestañas clickables derivadas de `tabs`.
- * - Zona derecha con saludo al usuario y botón de logout.
+ * @template T - Tipo de las claves de las pestañas (extiende string)
  *
- * Características importantes:
- * - Genérico en `T extends string` para tipar fuertemente las claves de pestaña.
- * - La pestaña activa se infiere de `initialActiveTab` o `tabs[0].key`.
- * - Solo muestra pestañas con `visible !== false`.
- * - A11y: `role="tablist"` en el contenedor y `role="tab"` en cada botón.
- *
- * @template T - Unión literal de strings que representa las claves de pestaña.
- * @param props.user - Usuario actual.
- * @param props.logout - Función para cerrar sesión.
- * @param props.onTabChange - Callback ejecutado cuando cambia la pestaña.
- * @param props.tabs - Array de pestañas tipo {@link NavbarTab}<T>.
- * @param props.initialActiveTab - Pestaña activa inicial (opcional).
- * @returns JSX.Element
+ * @param props - Propiedades del componente
+ * @returns Componente de barra de navegación
  *
  * @example
- * ```tsx
- * // Ejemplo mínimo de NavbarTab expected shape:
- * // type NavbarTab<T extends string> = { key: T; label: string; visible?: boolean };
- *
- * const tabs = [
- *   { key: "MyClasses", label: "Mis clases" },
- *   { key: "EnrolledClasses", label: "Clases inscritas" },
- * ] as const;
- *
+ * // Ejemplo básico de uso
  * <Navbar
- *   user={user}
- *   logout={() => {}}
- *   tabs={tabs}
- *   initialActiveTab={tabs[0].key}
- *   onTabChange={(tab) => console.log("cambio a", tab)}
+ *   user={currentUser}
+ *   logout={handleLogout}
+ *   tabs={[
+ *     { key: 'dashboard', label: 'Dashboard', visible: true },
+ *     { key: 'profile', label: 'Perfil', visible: true }
+ *   ]}
+ *   onTabChange={(tab) => console.log('Tab changed:', tab)}
+ *   initialActiveTab="dashboard"
  * />
- * ```
+ *
+ * @example
+ * // Ejemplo con tipos específicos para las pestañas
+ * type AppTabs = 'home' | 'products' | 'contact';
+ *
+ * const tabs: NavbarTab<AppTabs>[] = [
+ *   { key: 'home', label: 'Inicio' },
+ *   { key: 'products', label: 'Productos' },
+ *   { key: 'contact', label: 'Contacto' }
+ * ];
+ *
+ * <Navbar<AppTabs>
+ *   user={user}
+ *   logout={logout}
+ *   tabs={tabs}
+ *   onTabChange={(tab) => handleNavigation(tab)}
+ * />
  */
 export function Navbar<T extends string>({
   user,
@@ -78,6 +71,7 @@ export function Navbar<T extends string>({
   const [active, setActive] = useState<T>(
     initialActiveTab || (tabs[0]?.key as T),
   );
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const firstName = capitalize(user.firstName ?? "");
   const midName = capitalize(user.midName ?? "");
@@ -85,18 +79,24 @@ export function Navbar<T extends string>({
     ? `¡Hola ${firstName} ${midName}!`
     : `¡Hola ${firstName}!`;
 
+  /**
+   * Maneja el cambio de pestaña y cierra el menú móvil si está abierto
+   * @param key - Clave de la pestaña seleccionada
+   */
   const handleOnTabChange = (key: T): void => {
     setActive(key);
     if (onTabChange) onTabChange(key);
+    setIsMenuOpen(false);
   };
 
-  // Filtrar pestañas visibles (por defecto todas son visibles)
   const visibleTabs = tabs.filter((tab) => tab.visible !== false);
 
   return (
     <nav className="navbar">
+      {/* Sección izquierda - Logo o espacio vacío */}
       <div className="navbar-section navbar-left" />
 
+      {/* Sección central - Tabs (visible en desktop) */}
       <div className="navbar-section navbar-center">
         <div
           className="navbar-center-tabs"
@@ -121,12 +121,71 @@ export function Navbar<T extends string>({
         </div>
       </div>
 
+      {/* Sección derecha - Saludo y botón de logout */}
       <div className="navbar-section navbar-right">
         <p className="navbar-greeting">{helloMessage}</p>
         <button className="blue-button" onClick={logout} type="button">
           Cerrar sesión
         </button>
       </div>
+
+      {/* Menú hamburguesa para móviles */}
+      <div className="navbar-mobile-toggle">
+        <button
+          className="mobile-menu-button"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Abrir menú de navegación"
+          aria-expanded={isMenuOpen}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      {/* Menú desplegable para móviles */}
+      <div
+        className={`navbar-mobile-menu ${isMenuOpen ? "navbar-mobile-menu--open" : ""}`}
+      >
+        <div className="mobile-menu-header">
+          <p className="mobile-greeting">{helloMessage}</p>
+          <button
+            className="mobile-close-button"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Cerrar menú"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="mobile-menu-tabs">
+          {visibleTabs.map((tab) => {
+            const isActive = active === tab.key;
+            return (
+              <button
+                key={String(tab.key)}
+                type="button"
+                className={`mobile-nav-tab ${isActive ? "mobile-nav-tab--active" : ""}`}
+                onClick={() => handleOnTabChange(tab.key)}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mobile-menu-footer">
+          <button className="mobile-logout-button" onClick={logout}>
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+
+      {/* Overlay para cerrar el menú al hacer clic fuera */}
+      {isMenuOpen && (
+        <div className="navbar-overlay" onClick={() => setIsMenuOpen(false)} />
+      )}
     </nav>
   );
 }
