@@ -68,6 +68,10 @@
 /* ===== LAYER: UTILITIES ===== */
 /* Clases utilitarias para layout y estructura */
 @layer utilities {
+  .main-content {
+    @apply mt-16 min-h-[calc(100vh-4rem)] p-4;
+  }
+
   /**
    * Contenedor que ocupa la mitad del ancho y altura completa
    * Resultado visual: Estructura que divide el espacio en dos mitades verticales

@@ -9,10 +9,12 @@ import { authService } from "services/auth.service";
 
 import { type NavbarTab, Navbar } from "components";
 import { DashboardTabs } from "./dashboard.types";
+import { EnrolledClasses } from "./tabs/EnrolledClasses";
 
 // Register.tsx
 export function Dashboard() {
-  const [_, setCurrentTab] = useState<DashboardTabs>("EnrolledClasses");
+  const [currentTab, setCurrentTab] =
+    useState<DashboardTabs>("EnrolledClasses");
   const navigate = useNavigate();
 
   const tabs: NavbarTab<DashboardTabs>[] = [
@@ -55,6 +57,10 @@ export function Dashboard() {
         user={user as User}
         logout={handleLogout}
       />
+
+      <main className="main-content">
+        {currentTab === DashboardTabs.EnrolledClasses && <EnrolledClasses />}
+      </main>
     </>
   );
 }
