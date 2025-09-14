@@ -1,5 +1,5 @@
 import type { Identifiable } from "entities/common/entities";
-import type { Gender } from "../enums";
+import type { Gender, UserType } from "../enums";
 
 /**
  * Representa un usuario completo dentro del sistema, incluyendo
@@ -20,6 +20,8 @@ export type User = Identifiable<number> & {
   motherLastname?: string;
   /** Género del usuario. */
   gender?: Gender;
+  /** Tipo de usuario */
+  role: UserType;
   /** Dirección de correo electrónico del usuario. */
   email: string;
 };

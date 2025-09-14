@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import { RegisterPage, NotFoundPage } from "pages";
-import { Form } from "pages/dashboard/Dashboard";
+import { Dashboard } from "pages/dashboard/Dashboard";
 import { LogInPage } from "pages/auth";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Form />} />
+      <Route path="/" element={<Dashboard />} />
       <Route path="/sign-up" element={<RegisterPage />} />
       <Route path="/login" element={<LogInPage />} />
 
