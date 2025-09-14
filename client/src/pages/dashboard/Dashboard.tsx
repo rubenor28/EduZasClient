@@ -1,21 +1,18 @@
 import "./Dashboard.css";
 
 import { UserType } from "entities/users/enums";
-import { Navbar } from "components/Navbar/Navbar";
 import type { User } from "entities/users/entities";
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authService } from "services/auth.service";
 
+import { type NavbarTab, Navbar } from "components";
 import { DashboardTabs } from "./dashboard.types";
-import type { NavbarTab } from "components/Navbar/navbar.types";
 
 // Register.tsx
 export function Dashboard() {
-  const [_, setCurrentTab] = useState<DashboardTabs>(
-    DashboardTabs.EnrolledClasses,
-  );
+  const [_, setCurrentTab] = useState<DashboardTabs>("EnrolledClasses");
   const navigate = useNavigate();
 
   const tabs: NavbarTab<DashboardTabs>[] = [
