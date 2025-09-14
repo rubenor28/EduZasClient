@@ -49,6 +49,20 @@
   .centered-panel {
     @apply flex items-center justify-center w-1/2 p-8 bg-gray-50;
   }
+
+  /**
+   * Botón primario con fondo azul
+   * Resultado visual: Botón rectangular con esquinas redondeadas, fondo azul
+   *                   (indigo), texto blanco y efectos de hover/focus
+   * Uso: Acciones principales en formularios, diálogos o vistas donde se requiere
+   *      llamar la atención del usuario hacia una acción (ej. "Guardar", "Enviar")
+   * Ejemplo: <button class="blue-button">Iniciar sesión</button>
+   */
+  .blue-button {
+    @apply px-4 py-2 bg-indigo-600 text-white rounded-md 
+           text-xs hover:bg-indigo-700 focus:outline-none 
+           focus:ring-2 focus:ring-indigo-500;
+  }
 }
 
 /* ===== LAYER: UTILITIES ===== */
