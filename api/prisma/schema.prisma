@@ -18,216 +18,134 @@ enum UserType {
   STUDENT   @map("STUDENT")
 }
 
-enum Gender {
-  MALE   @map("MALE")
-  FEMALE @map("FEMALE")
-  OTHER  @map("OTHER")
-}
-
-enum LogType {
-  SYSTEM_ERROR      @map("SYSTEM_ERROR")
-  VALIDATION_ERROR  @map("VALIDATION_ERROR")
-  USER_ACTION       @map("USER_ACTION")
-  ADMIN_ACTION      @map("ADMIN_ACTION")
-  DATA_MODIFICATION @map("DATA_MODIFICATION")
-  SECURITY_EVENT    @map("SECURITY_EVENT")
-  EXTERNAL_SERVICE  @map("EXTERNAL_SERVICE")
-}
-
-model Log {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  timestamp  DateTime @default(now())
-  type       LogType
-  message    String   @db.Text
-  stacktrace String?  @db.Text
-  metadata   Json?    @db.Json
-  userId     BigInt?  @map("user_id") @db.UnsignedBigInt
-
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-
-  @@map("logs")
-}
-
 model User {
-  id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  tuition        String   @unique @db.VarChar(10)
+  id             BigInt   @id @default(autoincrement()) @map("user_id") @db.UnsignedBigInt
+  active         Boolean  @default(true)
+  role           UserType @default(STUDENT)
   firstName      String   @map("first_name") @db.VarChar(20)
   midName        String?  @map("mid_name") @db.VarChar(20)
   fatherLastname String   @map("father_lastname") @db.VarChar(20)
   motherLastname String?  @map("mother_lastname") @db.VarChar(20)
-  gender         Gender?
-  email          String   @unique @db.VarChar(30)
+  email          String   @db.VarChar(30)
   password       String   @db.VarChar(60)
-  role           UserType @default(STUDENT)
   createdAt      DateTime @default(now()) @map("created_at")
   modifiedAt     DateTime @updatedAt @map("modified_at")
 
-  teachingClasses     ClassProfessor[]
-  enrolledClasses     ClassStudent[]
-  ownedClasses        Class[]               @relation("ClassOwner")
-  ownedResources      ClassResource[]
-  contactList         AgendaContact[]       @relation("AgendaOwnerContacts")
-  inOtherAgendas      AgendaContact[]       @relation("UserInOtherAgendas")
-  Log                 Log[]
-  NotificationPerUser NotificationPerUser[]
-  Answer              Answer[]
-  ClassTest           ClassTest[]
+  ownedClasses    Class[]
+  taughtClasses   ClassProfessor[]
+  enrolledClasses ClassStudentLink[]
+  notifications   NotificationUserLink[]
+  ownedResources  Resource[]
+  ownedTests      Test[]
 
   @@map("users")
 }
 
 model Class {
-  id         String   @id @db.VarChar(20)
+  id         String   @id @map("class_id") @db.VarChar(20)
+  active     Boolean  @default(true)
   className  String   @map("class_name") @db.VarChar(100)
   subject    String   @db.VarChar(100)
   section    String   @db.VarChar(100)
-  ownerId    BigInt?  @map("owner_id") @db.UnsignedBigInt
+  ownerId    BigInt   @map("owner_id") @db.UnsignedBigInt
   createdAt  DateTime @default(now()) @map("created_at")
   modifiedAt DateTime @updatedAt @map("modified_at")
 
-  owner        User?               @relation("ClassOwner", fields: [ownerId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  professors   ClassProfessor[]
-  students     ClassStudent[]
-  resources    ClassResourceLink[]
-  tests        ClassTestLink[]
-  Notification Notification[]
+  owner         User               @relation(fields: [ownerId], references: [id])
+  students      ClassStudentLink[]
+  professors    ClassProfessor[]
+  notifications Notification[]
 
   @@map("classes")
 }
 
 model ClassProfessor {
-  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  classId     String?  @map("class_id") @db.VarChar(20)
-  professorId BigInt?  @map("professor_id") @db.UnsignedBigInt
+  classId     String   @map("class_id") @db.VarChar(20)
+  professorId BigInt   @map("student_id") @db.UnsignedBigInt
   createdAt   DateTime @default(now()) @map("created_at")
-  modifiedAt  DateTime @updatedAt @map("modified_at")
 
-  class     Class? @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  professor User?  @relation(fields: [professorId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  professor User  @relation(fields: [professorId], references: [id])
+  class     Class @relation(fields: [classId], references: [id])
 
-  @@map("classes_professors")
+  @@id([classId, professorId])
+  @@map("class_professors")
 }
 
-model ClassStudent {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  classId    String?  @map("class_id") @db.VarChar(20)
-  studentId  BigInt?  @map("student_id") @db.UnsignedBigInt
-  createdAt  DateTime @default(now()) @map("created_at")
-  modifiedAt DateTime @updatedAt @map("modified_at")
+model ClassStudentLink {
+  classId   String   @map("class_id") @db.VarChar(20)
+  studentId BigInt   @map("student_id") @db.UnsignedBigInt
+  createdAt DateTime @default(now()) @map("created_at")
 
-  class   Class? @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  student User?  @relation(fields: [studentId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  student User  @relation(fields: [studentId], references: [id])
+  class   Class @relation(fields: [classId], references: [id])
 
-  @@map("classes_students")
-}
-
-model AgendaContact {
-  id            BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  agendaOwnerId BigInt?  @map("agenda_owner_id") @db.UnsignedBigInt
-  contactId     BigInt?  @map("contact_id") @db.UnsignedBigInt
-  alias         String   @db.VarChar(40)
-  tag           String   @db.VarChar(10)
-  notes         String?  @db.Text
-  createdAt     DateTime @default(now()) @map("created_at")
-  modifiedAt    DateTime @updatedAt @map("modified_at")
-
-  agendaOwner User? @relation("AgendaOwnerContacts", fields: [agendaOwnerId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  contact     User? @relation("UserInOtherAgendas", fields: [contactId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-
-  @@map("agenda_contacts")
-}
-
-model ClassResource {
-  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  title       String   @db.VarChar(40)
-  content     Json     @db.Json
-  professorId BigInt?  @map("professor_id") @db.UnsignedBigInt
-  createdAt   DateTime @default(now()) @map("created_at")
-  modifiedAt  DateTime @updatedAt @map("modified_at")
-
-  professor     User?               @relation(fields: [professorId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  linkedClasses ClassResourceLink[]
-
-  @@map("class_resources")
-}
-
-model ClassResourceLink {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  published  Boolean  @default(false)
-  classId    String?  @db.VarChar(20)
-  resourceId BigInt?  @map("resource_id") @db.UnsignedBigInt
-  createdAt  DateTime @default(now()) @map("created_at")
-  modifiedAt DateTime @updatedAt @map("modified_at")
-
-  class    Class?         @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  resource ClassResource? @relation(fields: [resourceId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-
-  @@map("classes_resources_link")
-}
-
-model ClassTest {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  title      String   @db.VarChar(40)
-  password   String?  @db.VarChar(25)
-  content    Json     @db.Json
-  userId     BigInt?  @map("user_id") @db.UnsignedBigInt
-  createdAt  DateTime @default(now()) @map("created_at")
-  modifiedAt DateTime @updatedAt @map("modified_at")
-
-  linkedClasses ClassTestLink[]
-  owner         User?           @relation(fields: [userId], references: [id])
-
-  @@map("class_tests")
-}
-
-model ClassTestLink {
-  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  classId    String?  @db.VarChar(20)
-  testId     BigInt?  @map("test_id") @db.UnsignedBigInt
-  createdAt  DateTime @default(now()) @map("created_at")
-  modifiedAt DateTime @updatedAt @map("modified_at")
-
-  class   Class?     @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  test    ClassTest? @relation(fields: [testId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  answers Answer[]
-
-  @@map("classes_tests_link")
+  @@id([classId, studentId])
+  @@map("class_students")
 }
 
 model Notification {
-  id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  title     String   @db.VarChar(30)
+  id        BigInt   @id @map("notification_id") @db.UnsignedBigInt
+  active    Boolean  @default(true)
+  title     String   @db.VarChar(20)
+  classId   String   @map("class_id") @db.VarChar(20)
   createdAt DateTime @default(now()) @map("created_at")
-  classId   String?  @map("class_id") @db.VarChar(20)
 
-  class        Class?                @relation(fields: [classId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  statePerUser NotificationPerUser[]
+  class         Class                  @relation(fields: [classId], references: [id])
+  notifiedUsers NotificationUserLink[]
 
   @@map("notifications")
 }
 
-model NotificationPerUser {
-  id             BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+model NotificationUserLink {
+  notificationId BigInt   @map("notification_id") @db.UnsignedBigInt
+  userId         BigInt   @map("user_id") @db.UnsignedBigInt
   readed         Boolean  @default(false)
-  userId         BigInt?  @map("user_id") @db.UnsignedBigInt
-  notificationId BigInt?  @map("notification_id") @db.UnsignedBigInt
-  createdAt      DateTime @default(now()) @map("created_at")
   modifiedAt     DateTime @updatedAt @map("modified_at")
 
-  user         User?         @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  notification Notification? @relation(fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  notification Notification @relation(fields: [notificationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
 
-  @@map("notifications_per_user")
+  @@id([notificationId, userId])
+  @@map("notification_per_user")
 }
 
-model Answer {
-  id              BigInt  @id @default(autoincrement()) @db.UnsignedBigInt
-  answers         Json
-  userId          BigInt? @db.UnsignedBigInt
-  classTestLinkId BigInt? @db.UnsignedBigInt
+model Resource {
+  id          BigInt  @id @map("resource_id") @db.UnsignedBigInt
+  active      Boolean @default(true)
+  title       String  @db.VarChar(35)
+  content     Json    @db.Json
+  professorId BigInt  @map("professor_id") @db.UnsignedBigInt
 
-  test    ClassTestLink? @relation(fields: [classTestLinkId], references: [id], onUpdate: Cascade, onDelete: SetNull)
-  creator User?          @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: SetNull)
+  owner User @relation(fields: [professorId], references: [id])
 
-  @@map("answers")
+  @@map("resources")
+}
+
+model ResourceClassLink {
+  classId     String @map("class_id") @db.VarChar(20)
+  professorId BigInt @map("professor_id") @db.UnsignedBigInt
+
+  @@id([classId, professorId])
+  @@map("resources_per_class")
+}
+
+model Test {
+  id               BigInt @id @map("test_id") @db.UnsignedBigInt
+  title            String @db.VarChar(35)
+  content          Json   @db.Json
+  timeLimitMinutes Int?   @map("time_limit_minutes") @db.UnsignedInt
+  professorId      BigInt @map("professor_id") @db.UnsignedBigInt
+
+  owner User @relation(fields: [professorId], references: [id])
+
+  @@map("tests")
+}
+
+model TestClassLink {
+  visible Boolean @default(false)
+  testId  BigInt  @map("test_id") @db.UnsignedBigInt
+  classId String  @map("class_id") @db.VarChar(20)
+
+  @@id([testId, classId])
+  @@map("tests_per_class")
 }
