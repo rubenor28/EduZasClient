@@ -4,7 +4,7 @@
   "service": "dev",
   "workspaceFolder": "/workspace",
   "shutdownAction": "none",
-  "forwardPorts": [3000, 3001, 3306],
+  "forwardPorts": [3000],
   "postCreateCommand": "bun install",
   "remoteUser": "root",
   "customizations": {
