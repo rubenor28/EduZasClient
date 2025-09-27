@@ -1,2 +1,2 @@
-export * from "./EnvVars"
-export * from "./Services"
+export * from "./Services";
+export * from "./EnvVars";
