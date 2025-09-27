@@ -47,7 +47,7 @@
    * Uso: Secciones laterales de formularios, paneles de información, áreas destacadas
    */
   .centered-panel {
-    @apply flex items-center justify-center w-1/2 p-8 bg-gray-50;
+    @apply flex items-center justify-center p-8 bg-gray-50;
   }
 
   /**

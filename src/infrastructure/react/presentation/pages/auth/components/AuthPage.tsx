@@ -12,12 +12,12 @@ export function AuthPage({ children }: AuthPageProps) {
   return (
     <div className="split-layout-container">
       {/* Mitad izquierda: Formulario */}
-      <div className="centered-panel">{children}</div>
+      <div className="centered-panel w-2/3">{children}</div>
 
       {/* Mitad derecha: Imagen con cuadro */}
       <ImageCard
         imageUrl={background}
-        className="half-horizontal-media-container"
+        className="half-horizontal-media-container w-1/2"
       >
         <h2 className="image-card-title">Bienvenido a Edu-zas</h2>
         <p className="image-card-subtitle">

@@ -1,4 +1,5 @@
 import type { AlertType } from "./AlertType";
+import "./Alert.css";
 
 /**
  * Componente de alerta reutilizable para mostrar mensajes de estado al usuario.

@@ -51,7 +51,7 @@ export function FieldWrapper({
 }: FieldWrapperProps) {
   return (
     <div className={`mb-4 ${className}`}>
-      <div className="min-h-[1.25rem] mb-1">{alert}</div>
+      <div className="min-h-[2.2rem] mb-1">{alert}</div>
       <div>{children}</div>
     </div>
   );

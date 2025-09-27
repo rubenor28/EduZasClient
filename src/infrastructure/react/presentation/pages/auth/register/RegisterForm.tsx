@@ -8,7 +8,7 @@ type InputError = Partial<Record<keyof NewUserDTO, string>> & {
 };
 
 type FormState =
-  | { state: "idle" | "success" | "unexpected_error" }
+  | { state: "idle" | "loading" | "success" | "unexpected_error" }
   | ({ state: "input_error" } & InputError);
 
 // Register.tsx
@@ -62,10 +62,12 @@ export function RegisterForm() {
     if ((password ?? "") !== confirmPassword) {
       setFormState({
         state: "input_error",
-        matchingPassword: "Las contraseñas no coinciden",
+        matchingPassword: "Contraseñas no coinciden",
       });
       return;
     }
+
+    setFormState({ state: "loading" });
 
     authService
       .signIn({
@@ -134,7 +136,6 @@ export function RegisterForm() {
             formState.state === "input_error" &&
             formState.firstName && (
               <Alert
-                className="text-sm"
                 type={AlertType.WARNING}
                 message={formState.firstName}
               />
@@ -154,7 +155,6 @@ export function RegisterForm() {
             formState.state === "input_error" &&
             formState.midName && (
               <Alert
-                className="text-sm"
                 type={AlertType.WARNING}
                 message={formState.midName}
               />
@@ -276,20 +276,24 @@ export function RegisterForm() {
         </FieldWrapper>
       </div>
 
-      {formState.state === "unexpected_error" && (
-        <Alert
-          className="text-sm"
-          type="error"
-          message="Ocurrió un error, intente más tarde"
-        />
-      )}
-
-      <div className="horizontal-group">
+      <div className="min-h-[2.2rem] mb-1">
         {formState.state === "success" && (
           <Alert
-            className="text-xl"
-            type="error"
+            className="text-xl text-center"
+            type="success"
             message="Se registró correctamente"
+          />
+        )}
+
+        {formState.state === "loading" && (
+          <Alert className="text-xl text-center" type="info" message="Procesando..." />
+        )}
+
+        {formState.state === "unexpected_error" && (
+          <Alert
+            className="text-xl text-center"
+            type="danger"
+            message="Ocurrió un error, intente más tarde"
           />
         )}
       </div>

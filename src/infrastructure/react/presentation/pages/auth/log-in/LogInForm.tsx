@@ -11,7 +11,7 @@ type InputError = {
 };
 
 type FormState =
-  | { state: "idle" | "success" | "unexpected_error" }
+  | { state: "idle" | "loading" | "success" | "unexpected_error" }
   | ({ state: "input_error" } & InputError);
 
 export function LogInForm() {
@@ -27,22 +27,27 @@ export function LogInForm() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    authService.login(credentials).then((result) => {
-      console.log("AuthService result:", result);
+    setFormState({ state: "loading" });
 
-      if (result.err) {
-        const inputErrs: InputError = result.val.reduce(
-          (acc, curr) => ({ ...acc, [curr.field]: curr.message }),
-          {},
-        );
+    authService
+      .login(credentials)
+      .then((result) => {
+        console.log("AuthService result:", result);
 
-        setFormState({ state: "input_error", ...inputErrs });
-        return;
-      }
+        if (result.err) {
+          const inputErrs: InputError = result.val.reduce(
+            (acc, curr) => ({ ...acc, [curr.field]: curr.message }),
+            {},
+          );
 
-      setFormState({ state: "success" });
-      navigate("/");
-    });
+          setFormState({ state: "input_error", ...inputErrs });
+          return;
+        }
+
+        setFormState({ state: "success" });
+        navigate("/");
+      })
+      .catch(() => setFormState({ state: "unexpected_error" }));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,11 +74,7 @@ export function LogInForm() {
           alert={
             formState.state === "input_error" &&
             formState.email && (
-              <Alert
-                className="text-xs"
-                type={AlertType.WARNING}
-                message={formState.email}
-              />
+              <Alert type={AlertType.WARNING} message={formState.email} />
             )
           }
         >
@@ -88,11 +89,7 @@ export function LogInForm() {
           alert={
             formState.state === "input_error" &&
             formState.password && (
-              <Alert
-                className="text-xs"
-                type={AlertType.WARNING}
-                message={formState.password}
-              />
+              <Alert type={AlertType.WARNING} message={formState.password} />
             )
           }
         >
@@ -105,21 +102,31 @@ export function LogInForm() {
         </FieldWrapper>
       </div>
 
-      {formState.state === "unexpected_error" && (
-        <Alert
-          className="text-xs"
-          type="error"
-          message="Ocurrió un error, intente más tarde"
-        />
-      )}
+      <div className="min-h-[2.2rem] mb-1">
+        {formState.state === "success" && (
+          <Alert
+            className="text-xl text-center"
+            type="success"
+            message="Se registró correctamente"
+          />
+        )}
 
-      {formState.state === "success" && (
-        <Alert
-          className="text-xs"
-          type="error"
-          message="Se registró correctamente"
-        />
-      )}
+        {formState.state === "loading" && (
+          <Alert
+            className="text-xl text-center"
+            type="info"
+            message="Procesando..."
+          />
+        )}
+
+        {formState.state === "unexpected_error" && (
+          <Alert
+            className="text-xl text-center"
+            type="danger"
+            message="Ocurrió un error, intente más tarde"
+          />
+        )}
+      </div>
 
       <a
         href="/sign-up"

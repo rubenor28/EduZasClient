@@ -1,6 +1,6 @@
 import { authService } from "@dependencies";
 import { LogInForm } from "./LogInForm";
-import { AuthPage } from "../components/PageDecoration";
+import { AuthPage } from "../components/AuthPage";
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";

@@ -24,7 +24,7 @@
  */
 export const AlertType = {
   SUCCESS: "success",
-  DANGER: "error",
+  DANGER: "danger",
   WARNING: "warning",
   INFO: "info",
 } as const;

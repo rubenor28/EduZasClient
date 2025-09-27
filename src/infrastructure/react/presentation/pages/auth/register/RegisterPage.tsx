@@ -1,5 +1,5 @@
 import { RegisterForm } from "./RegisterForm";
-import { AuthPage } from "../components/PageDecoration";
+import { AuthPage } from "../components/AuthPage";
 
 export function RegisterPage() {
   return (

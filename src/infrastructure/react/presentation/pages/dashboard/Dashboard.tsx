@@ -36,7 +36,7 @@ export function Dashboard() {
     authService.isAuth().then((validation) => {
       console.log(validation);
       if (validation === undefined) {
-        // navigate("/login");
+        navigate("/login");
         console.error("No autenticado");
         return;
       }
