@@ -3,14 +3,21 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-// https://vite.dev/config/
 export default defineConfig({
+  root: path.resolve(__dirname, "src/infrastructure/react/presentation"),
   plugins: [react(), tailwindcss()],
+  build: {
+    outDir: path.resolve(__dirname, "dist"),
+    emptyOutDir: true,
+  },
   resolve: {
     alias: {
-      domain: path.resolve(__dirname, "src/Domain"),
-      application: path.resolve(__dirname, "src/Application"),
-      infraestructure: path.resolve(__dirname, "src/Infraestructure"),
+      "@application": path.resolve(__dirname, "src/application"),
+      "@domain": path.resolve(__dirname, "src/domain"),
+      "@dependencies": path.resolve(__dirname,"src/infrastructure/dependencies"),
+      "@infrastructure-fetch": path.resolve(__dirname,"src/infrastructure/fetch"),
+      "@components": path.resolve(__dirname,"./src/infrastructure/react/presentation/components"),
+      "@pages": path.resolve(__dirname,"./src/infrastructure/react/presentation/pages"),
     },
   },
 });

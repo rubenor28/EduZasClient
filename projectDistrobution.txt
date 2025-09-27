@@ -1,0 +1,148 @@
+.
+├── public
+│   ├── images
+│   │   └── jellyfish.jpg
+│   └── vite.svg
+├── src
+│   ├── application
+│   │   ├── dtos
+│   │   │   ├── common
+│   │   │   │   ├── CriteriaDTO.ts
+│   │   │   │   ├── FieldErrorDTO.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── PaginatedQueryDTO.ts
+│   │   │   │   └── StringQueryDTO.ts
+│   │   │   ├── users
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── NewUserDTO.ts
+│   │   │   │   ├── RolChangeDTO.ts
+│   │   │   │   ├── UserCredentialsDTO.ts
+│   │   │   │   └── UserCriteriaDTO.ts
+│   │   │   └── index.ts
+│   │   ├── ports
+│   │   │   ├── services
+│   │   │   │   ├── AuthService.ts
+│   │   │   │   └── index.ts
+│   │   │   └── index.ts
+│   │   └── index.ts
+│   ├── domain
+│   │   ├── entities
+│   │   │   ├── index.ts
+│   │   │   └── User.ts
+│   │   ├── enums
+│   │   │   ├── common
+│   │   │   │   ├── index.ts
+│   │   │   │   └── StringSearchType.ts
+│   │   │   ├── users
+│   │   │   │   ├── index.ts
+│   │   │   │   └── UserType.ts
+│   │   │   └── index.ts
+│   │   ├── value_objects
+│   │   │   ├── Identifiable.ts
+│   │   │   ├── index.ts
+│   │   │   └── Result.ts
+│   │   └── index.ts
+│   └── infrastructure
+│       ├── dependencies
+│       │   ├── dependencies.ts
+│       │   ├── EnvVars.ts
+│       │   ├── index.ts
+│       │   └── Services.ts
+│       ├── fetch
+│       │   ├── application
+│       │   │   ├── dtos
+│       │   │   │   ├── FieldErrorResponseDTO.ts
+│       │   │   │   ├── index.ts
+│       │   │   │   ├── MessageResponseDTO.ts
+│       │   │   │   └── WithDataResponse.ts
+│       │   │   ├── ports
+│       │   │   │   ├── services
+│       │   │   │   │   ├── AuthFetchService.ts
+│       │   │   │   │   └── index.ts
+│       │   │   │   └── index.ts
+│       │   │   └── index.ts
+│       │   └── index.ts
+│       └── react
+│           ├── application
+│           │   └── services
+│           │       └── AppStateService.ts
+│           └── presentation
+│               ├── assets
+│               │   └── react.svg
+│               ├── components
+│               │   ├── Alert
+│               │   │   ├── Alert.css
+│               │   │   ├── Alert.tsx
+│               │   │   ├── AlertType.ts
+│               │   │   ├── colors.ts
+│               │   │   └── index.ts
+│               │   ├── Card
+│               │   │   ├── Card.css
+│               │   │   ├── Card.tsx
+│               │   │   ├── CardGrid.css
+│               │   │   ├── CardGrid.tsx
+│               │   │   └── index.ts
+│               │   ├── FieldWrapper
+│               │   │   ├── FieldWrapper.css
+│               │   │   └── FieldWrapper.tsx
+│               │   ├── Hint
+│               │   │   ├── Hint.css
+│               │   │   ├── Hint.tsx
+│               │   │   └── index.ts
+│               │   ├── ImageCard
+│               │   │   └── ImageCard.tsx
+│               │   ├── Input
+│               │   │   ├── FormComponents
+│               │   │   │   ├── FormInput
+│               │   │   │   │   ├── FormInput.css
+│               │   │   │   │   └── FormInput.tsx
+│               │   │   │   ├── FormSelect
+│               │   │   │   │   ├── FormSelect.css
+│               │   │   │   │   └── FormSelect.tsx
+│               │   │   │   ├── FormComponents.css
+│               │   │   │   └── index.ts
+│               │   │   └── index.ts
+│               │   ├── Navbar
+│               │   │   ├── index.ts
+│               │   │   ├── Navbar.css
+│               │   │   ├── Navbar.tsx
+│               │   │   └── navbar.types.ts
+│               │   └── index.ts
+│               ├── pages
+│               │   ├── auth
+│               │   │   ├── components
+│               │   │   │   ├── PageDecoration.tsx
+│               │   │   │   └── Register.css
+│               │   │   ├── log-in
+│               │   │   │   ├── LogInForm.tsx
+│               │   │   │   └── LogInPage.tsx
+│               │   │   ├── register
+│               │   │   │   ├── RegisterForm.tsx
+│               │   │   │   └── RegisterPage.tsx
+│               │   │   └── index.ts
+│               │   ├── common
+│               │   │   ├── 404.tsx
+│               │   │   └── index.ts
+│               │   ├── dashboard
+│               │   │   ├── tabs
+│               │   │   │   └── EnrolledClasses.tsx
+│               │   │   ├── Dashboard.css
+│               │   │   ├── Dashboard.tsx
+│               │   │   ├── dashboard.types.ts
+│               │   │   └── index.ts
+│               │   └── index.ts
+│               ├── App.tsx
+│               ├── index.html
+│               ├── main.css
+│               └── main.tsx
+├── bun.lock
+├── Dockerfile
+├── eslint.config.js
+├── global.d.ts
+├── package.json
+├── projectDistrobution.txt
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vite-env.d.ts
+└── vite.config.ts
