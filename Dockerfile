@@ -1,39 +1,30 @@
-FROM oven/bun:1.2.20-alpine AS base
+FROM oven/bun:1.2.21-alpine AS builder
 
-ENV DIR=/home/app
-WORKDIR $DIR
+WORKDIR /app
 
-FROM base AS build
-
-RUN apk update && apk add --no-cache dumb-init
-
-# Copiar solo los archivos necesarios para instalar dependencias
-COPY package.json .
-COPY ./.env .
+COPY package.json ./
+COPY bun.lockb* ./
 
 RUN bun install --frozen-lockfile
 
-COPY tsconfig*.json .
-COPY vite.config.ts .
-COPY index.html .
-COPY public ./public/
-COPY src ./src
+COPY . .
 
-RUN bun run build && \
-  bun run prune
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 
-FROM base AS production
+RUN bun run build
 
-COPY --from=build /usr/bin/dumb-init /usr/bin/dumb-init
+FROM oven/bun:1.2.21-alpine
 
-COPY --from=build $DIR/package.json ./package.json
+WORKDIR /app
 
-COPY --from=build $DIR/public ./public
-COPY --from=build $DIR/tsconfig*.json ./tsconfig*.json
-COPY --from=build $DIR/node_modules ./node_modules
-COPY --from=build $DIR/dist ./dist
+RUN bun add -g serve
+
+COPY --from=builder /app/dist ./dist
 
 EXPOSE 3000
 
-ENTRYPOINT [ "dumb-init" ]
-CMD ["sh", "-c", "bun run start"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD bunx -y http-get http://localhost:3000/ > /dev/null || exit 1
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
