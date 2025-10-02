@@ -5,8 +5,8 @@ import { isAdmin, isProfessorOrAdmin } from "@application";
 import { authService } from "@dependencies";
 import { type NavbarTab, Navbar } from "@components";
 
-import { DashboardTabs } from "./dashboard.types";
-import { EnrolledClasses } from "./tabs/EnrolledClasses";
+import { DashboardTabs, defaultTab } from "./dashboard.types";
+import { EnrolledClasses, AssignedClasses } from "./tabs";
 import { ProtectedRoute } from "../auth";
 import "./Dashboard.css";
 
@@ -22,29 +22,26 @@ export function Dashboard() {
   return (
     <ProtectedRoute>
       {(user) => {
-        console.log(`IsAdmin ${isAdmin(user)}`);
-        console.log(`IsProfesorOrDamin ${isProfessorOrAdmin(user)}`);
-
         const tabs: NavbarTab<DashboardTabs>[] = [
           {
             key: DashboardTabs.SystemClasses,
             label: "Clases registradas",
-            visible: isAdmin(user),
+            visible: isAdmin(user.role),
           },
           {
             key: DashboardTabs.MyClasses,
             label: "Clases asesoradas",
-            visible: isProfessorOrAdmin(user),
+            visible: isProfessorOrAdmin(user.role),
           },
           {
             key: DashboardTabs.Resources,
             label: "Recursos académicos",
-            visible: isProfessorOrAdmin(user),
+            visible: isProfessorOrAdmin(user.role),
           },
           {
             key: DashboardTabs.Tests,
             label: "Evaluaciones",
-            visible: isProfessorOrAdmin(user),
+            visible: isProfessorOrAdmin(user.role),
           },
           { key: DashboardTabs.EnrolledClasses, label: "Clases Inscritas" },
         ];
@@ -53,7 +50,7 @@ export function Dashboard() {
           <>
             <Navbar<DashboardTabs>
               onTabChange={(tab) => setCurrentTab(tab)}
-              initialActiveTab="EnrolledClasses"
+              initialActiveTab={defaultTab(user.role)}
               tabs={tabs}
               user={user}
               logout={handleLogout}
@@ -61,8 +58,10 @@ export function Dashboard() {
 
             <main className="main-content">
               {currentTab === DashboardTabs.EnrolledClasses && (
-                <EnrolledClasses />
+                <EnrolledClasses userId={user.id} />
               )}
+
+              {currentTab === DashboardTabs.MyClasses && <AssignedClasses />}
             </main>
           </>
         );
