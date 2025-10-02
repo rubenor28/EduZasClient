@@ -51,7 +51,7 @@ export interface AuthService {
   logout(): Promise<void>;
 }
 
-export const isProfessorOrAdmin = (u: UserDomain) =>
-  u.role === UserType.PROFESSOR || u.role === UserType.ADMIN;
+export const isProfessorOrAdmin = (role: UserType) =>
+  role === UserType.PROFESSOR || role === UserType.ADMIN;
 
-export const isAdmin = (u: UserDomain) => u.role === UserType.ADMIN;
+export const isAdmin = (role: UserType) => role === UserType.ADMIN;
