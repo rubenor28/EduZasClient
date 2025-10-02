@@ -13,14 +13,13 @@ export function ServerErrorPage() {
           <div className="w-2 h-6 bg-red-100 rounded-sm absolute top-4 left-3"></div>
         </div>
       </div>
-      
+
       <h1 className="text-6xl font-bold text-gray-800 mb-4">500</h1>
       <h2 className="text-2xl font-semibold text-gray-700 mb-4">
         Error del Servidor
       </h2>
       <p className="text-lg text-gray-600 mb-8 max-w-md">
-        Algo salió mal en nuestro servidor. Por favor, intenta nuevamente 
-        en unos momentos.
+        Algo salió mal. Por favor, intenta nuevamente en unos momentos.
       </p>
       <div className="flex gap-4 flex-wrap justify-center">
         <button
