@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import type { UserDomain } from "@domain";
 import { authService } from "@dependencies";
-import { LoadingPage, ForbiddenPage, ServerErrorPage } from "@pages";
+import { LoadingPage, ForbiddenPage, ServerErrorPage } from "@components";
 
 const PageStates = {
   LOADING: "loading",

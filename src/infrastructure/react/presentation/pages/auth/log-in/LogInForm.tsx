@@ -1,5 +1,11 @@
 import { type UserCredentialsDTO } from "@application";
-import { Alert, AlertType, FieldWrapper, FormInput } from "@components";
+import {
+  Alert,
+  AlertType,
+  FieldWrapper,
+  FormInput,
+  InlineLoading,
+} from "@components";
 import { authService } from "@dependencies";
 
 import { useState } from "react";
@@ -111,13 +117,7 @@ export function LogInForm() {
           />
         )}
 
-        {formState.state === "loading" && (
-          <Alert
-            className="text-xl text-center"
-            type="info"
-            message="Procesando..."
-          />
-        )}
+        {formState.state === "loading" && <InlineLoading />}
 
         {formState.state === "unexpected_error" && (
           <Alert

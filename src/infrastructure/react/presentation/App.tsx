@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
-import { NotFoundPage, RegisterPage, Dashboard, LogInPage } from "./pages";
+import { RegisterPage, Dashboard, LogInPage } from "@pages";
+import { NotFoundPage } from "@components";
 
 function App() {
   return (
