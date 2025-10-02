@@ -1,11 +1,19 @@
 import { Routes, Route } from "react-router-dom";
 import { RegisterPage, Dashboard, LogInPage } from "@pages";
 import { NotFoundPage } from "@components";
+import { ProtectedRoute } from "./pages/auth";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/sign-up" element={<RegisterPage />} />
       <Route path="/login" element={<LogInPage />} />
 
