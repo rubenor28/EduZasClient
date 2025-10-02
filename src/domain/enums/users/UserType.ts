@@ -6,11 +6,11 @@
  */
 export const UserType = {
   /** Usuario con todos los permisos administrativos */
-  ADMIN: "ADMIN",
+  ADMIN: 2,
   /** Profesor, con permisos de gestión docente */
-  PROFESSOR: "PROFESSOR",
+  PROFESSOR: 1,
   /** Estudiante, con acceso restringido a su propio perfil y materias */
-  STUDENT: "STUDENT",
+  STUDENT: 0,
 } as const;
 
 /**
