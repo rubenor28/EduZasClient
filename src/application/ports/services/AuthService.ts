@@ -1,4 +1,9 @@
-import type { Result, UserDomain } from "@domain";
+import {
+  UserType,
+  type AuthErrors,
+  type Result,
+  type UserDomain,
+} from "@domain";
 import type {
   FieldErrorDTO,
   NewUserDTO,
@@ -35,12 +40,18 @@ export interface AuthService {
   /**
    * Verifica si el usuario actual está autenticado.
    *
-   * @returns El usuario autenticado si existe, `undefined` si no hay sesión activa
+   * @returns El usuario autenticado si existe, variante de `AuthErrors` para indicar
+   * una sesión inactiva o falta de permisos
    */
-  isAuth(): Promise<UserDomain | undefined>;
+  isAuth(): Promise<Result<UserDomain, AuthErrors>>;
 
   /**
    * Cierra la sesión del usuario actual.
    */
   logout(): Promise<void>;
 }
+
+export const isProfessorOrAdmin = (u: UserDomain) =>
+  u.role === UserType.PROFESSOR || u.role === UserType.ADMIN;
+
+export const isAdmin = (u: UserDomain) => u.role === UserType.ADMIN;
