@@ -51,7 +51,24 @@ export interface AuthService {
   logout(): Promise<void>;
 }
 
+/**
+ * Verifica si el rol de usuario es Profesor o Administrador
+ * @param role - Tipo de usuario a verificar
+ * @returns `true` si el rol es Profesor o Administrador, `false` en caso contrario
+ */
 export const isProfessorOrAdmin = (role: UserType) =>
   role === UserType.PROFESSOR || role === UserType.ADMIN;
 
+/**
+ * Verifica si el rol de usuario es exclusivamente Administrador
+ * @param role - Tipo de usuario a verificar
+ * @returns `true` si el rol es Administrador, `false` en caso contrario
+ */
 export const isAdmin = (role: UserType) => role === UserType.ADMIN;
+
+/**
+ * Verifica si el rol de usuario es exclusivamente Profesor
+ * @param role - Tipo de usuario a verificar
+ * @returns `true` si el rol es Profesor, `false` en caso contrario
+ */
+export const isProfessor = (role: UserType) => role === UserType.PROFESSOR;
