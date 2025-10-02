@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { NewUserDTO } from "@application";
 import { authService } from "@dependencies";
 import { FieldWrapper, Alert, AlertType, FormInput } from "@components";
+import { useNavigate } from "react-router-dom";
 
 type InputError = Partial<Record<keyof NewUserDTO, string>> & {
   matchingPassword?: string;
@@ -13,6 +14,8 @@ type FormState =
 
 // Register.tsx
 export function RegisterForm() {
+  const navigate = useNavigate();
+
   const [newUser, setNewUser] = useState<NewUserDTO>({
     email: "",
     fatherLastName: "",
@@ -97,6 +100,8 @@ export function RegisterForm() {
         }
 
         setFormState({ state: "success" });
+
+        setTimeout(() => navigate("/login"), 1000);
       })
       .catch(() => setFormState({ state: "unexpected_error" }));
   };
@@ -135,10 +140,7 @@ export function RegisterForm() {
           alert={
             formState.state === "input_error" &&
             formState.firstName && (
-              <Alert
-                type={AlertType.WARNING}
-                message={formState.firstName}
-              />
+              <Alert type={AlertType.WARNING} message={formState.firstName} />
             )
           }
         >
@@ -154,10 +156,7 @@ export function RegisterForm() {
           alert={
             formState.state === "input_error" &&
             formState.midName && (
-              <Alert
-                type={AlertType.WARNING}
-                message={formState.midName}
-              />
+              <Alert type={AlertType.WARNING} message={formState.midName} />
             )
           }
         >
@@ -286,7 +285,11 @@ export function RegisterForm() {
         )}
 
         {formState.state === "loading" && (
-          <Alert className="text-xl text-center" type="info" message="Procesando..." />
+          <Alert
+            className="text-xl text-center"
+            type="info"
+            message="Procesando..."
+          />
         )}
 
         {formState.state === "unexpected_error" && (

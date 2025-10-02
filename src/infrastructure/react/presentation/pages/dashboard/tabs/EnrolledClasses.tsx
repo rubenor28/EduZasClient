@@ -1,6 +1,12 @@
 import { CardGrid, Card } from "@components";
 
-export function EnrolledClasses() {
+type EnrolledClassesProps = {
+  userId: number;
+};
+
+export function EnrolledClasses({ userId }: EnrolledClassesProps) {
+  
+
   return (
     <CardGrid>
       <Card

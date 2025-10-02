@@ -1,9 +1,10 @@
 import { mapStringToEnum } from "@application";
 
 export const DashboardTabs = {
+  SystemClasses: "SystemClasses",
   EnrolledClasses: "EnrolledClasses",
   MyClasses: "MyClasses",
-  Resources: "Resources",
+  Resources: "AcademicResources",
   Tests: "Tests",
 } as const;
 

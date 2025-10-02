@@ -1,63 +1,72 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserType, type UserDomain } from "@domain";
+
+import { isAdmin, isProfessorOrAdmin } from "@application";
 import { authService } from "@dependencies";
 import { type NavbarTab, Navbar } from "@components";
+
 import { DashboardTabs } from "./dashboard.types";
 import { EnrolledClasses } from "./tabs/EnrolledClasses";
+import { ProtectedRoute } from "../auth";
 import "./Dashboard.css";
 
-// Register.tsx
 export function Dashboard() {
   const [currentTab, setCurrentTab] =
     useState<DashboardTabs>("EnrolledClasses");
   const navigate = useNavigate();
 
-  const tabs: NavbarTab<DashboardTabs>[] = [
-    { key: DashboardTabs.EnrolledClasses, label: "Clases Inscritas" },
-    { key: DashboardTabs.MyClasses, label: "Mis Clases" },
-    { key: DashboardTabs.Resources, label: "Recursos" },
-    { key: DashboardTabs.Tests, label: "Pruebas" },
-  ];
-
-  const [user, setUser] = useState<UserDomain>({
-    id: 0,
-    email: "",
-    fatherLastName: "",
-    firstName: "",
-    role: UserType.STUDENT,
-  });
-
   const handleLogout = () => {
     authService.logout().then(() => navigate("/login"));
   };
 
-  useEffect(() => {
-    authService.isAuth().then((validation) => {
-      console.log(validation);
-      if (validation === undefined) {
-        navigate("/login");
-        console.error("No autenticado");
-        return;
-      }
-
-      setUser(validation);
-    });
-  }, []);
-
   return (
-    <>
-      <Navbar<DashboardTabs>
-        onTabChange={(tab) => setCurrentTab(tab)}
-        initialActiveTab="EnrolledClasses"
-        tabs={tabs}
-        user={user as UserDomain}
-        logout={handleLogout}
-      />
+    <ProtectedRoute>
+      {(user) => {
+        console.log(`IsAdmin ${isAdmin(user)}`);
+        console.log(`IsProfesorOrDamin ${isProfessorOrAdmin(user)}`);
 
-      <main className="main-content">
-        {currentTab === DashboardTabs.EnrolledClasses && <EnrolledClasses />}
-      </main>
-    </>
+        const tabs: NavbarTab<DashboardTabs>[] = [
+          {
+            key: DashboardTabs.SystemClasses,
+            label: "Clases registradas",
+            visible: isAdmin(user),
+          },
+          {
+            key: DashboardTabs.MyClasses,
+            label: "Clases asesoradas",
+            visible: isProfessorOrAdmin(user),
+          },
+          {
+            key: DashboardTabs.Resources,
+            label: "Recursos académicos",
+            visible: isProfessorOrAdmin(user),
+          },
+          {
+            key: DashboardTabs.Tests,
+            label: "Evaluaciones",
+            visible: isProfessorOrAdmin(user),
+          },
+          { key: DashboardTabs.EnrolledClasses, label: "Clases Inscritas" },
+        ];
+
+        return (
+          <>
+            <Navbar<DashboardTabs>
+              onTabChange={(tab) => setCurrentTab(tab)}
+              initialActiveTab="EnrolledClasses"
+              tabs={tabs}
+              user={user}
+              logout={handleLogout}
+            />
+
+            <main className="main-content">
+              {currentTab === DashboardTabs.EnrolledClasses && (
+                <EnrolledClasses />
+              )}
+            </main>
+          </>
+        );
+      }}
+    </ProtectedRoute>
   );
 }

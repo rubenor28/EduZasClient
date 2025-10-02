@@ -10,7 +10,7 @@ export function LogInPage() {
 
   useEffect(() => {
     authService.isAuth().then((validation) => {
-      if (validation !== undefined) {
+      if (validation.ok) {
         navigate("/");
       }
     });
