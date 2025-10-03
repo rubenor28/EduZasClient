@@ -14,6 +14,12 @@
   }
 
   /**
+   */
+  .form-legend {
+    @apply text-3xl font-bold mb-4 text-center;
+  }
+
+  /**
    * Contenedor flexible para agrupar elementos en disposición horizontal
    * Resultado visual: Elementos alineados en fila con espaciado consistente
    * Uso: Grupos de campos de formulario, botones, iconos, o cualquier elemento que necesite disposición horizontal

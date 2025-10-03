@@ -4,12 +4,12 @@ import { classService } from "@dependencies";
 import type { ClassDomain } from "@domain";
 import { useEffect, useState } from "react";
 
-export function AssignedClasses() {
+export function EnrolledClasses() {
   const [classes, setClasses] = useState<ClassDomain[]>([]);
   const [criteria, setCriteria] = useState<ClassCriteriaDTO>({ page: 1 });
 
   useEffect(() => {
-    classService.getMyAssignedClasses(criteria).then((result) => {
+    classService.getEnrolledClasses(criteria).then((result) => {
       if (result.err) {
         console.error("Internal server error");
         return;
@@ -23,9 +23,7 @@ export function AssignedClasses() {
   return (
     <CardGrid>
       {classes.map((c) => (
-        <Card title={c.className} subtitle={c.subject}>
-          {c.section}
-        </Card>
+        <Card title={c.className} subtitle={c.subject}></Card>
       ))}
     </CardGrid>
   );

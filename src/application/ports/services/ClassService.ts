@@ -1,9 +1,10 @@
-import type { AuthErrors, ClassDomain, Result } from "@domain";
+import type { ClassDomain, Result } from "@domain";
 import type {
   ClassCriteriaDTO,
   NewClassDTO,
   PaginatedQuery,
 } from "@application";
+import type { ServiceError } from "domain/errors/ServiceErrors";
 
 /**
  * Interfaz que define los servicios disponibles para la gestión de clases académicas
@@ -15,7 +16,9 @@ export interface ClassService {
    * @param newClass - Datos de la nueva clase a crear
    * @returns Promesa que resuelve con el dominio de la clase creada
    */
-  createClass(newClass: NewClassDTO): Promise<Result<ClassDomain, AuthErrors>>;
+  createClass(
+    newClass: NewClassDTO,
+  ): Promise<Result<ClassDomain, ServiceError>>;
 
   /**
    * Obtiene las clases asignadas al usuario autenticado
@@ -27,7 +30,15 @@ export interface ClassService {
    * - Agregar automáticamente el ID del usuario como criterio de filtro adicional
    * - Devolver error 403 si un alumno intenta acceder a este endpoint
    */
-  getMyAssignedClasses(
+  getAssignedClasses(
     criteria: ClassCriteriaDTO,
-  ): Promise<Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, AuthErrors>>;
+  ): Promise<
+    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, ServiceError>
+  >;
+
+  getEnrolledClasses(
+    criteria: ClassCriteriaDTO,
+  ): Promise<
+    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, ServiceError>
+  >;
 }

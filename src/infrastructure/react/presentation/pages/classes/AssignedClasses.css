@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@layer components {
+  .dialog-overlay {
+    @apply fixed inset-0 z-[9999] flex items-center justify-center;
+    @apply bg-black/50;
+  }
+
+  .dialog-content {
+    @apply bg-white rounded-lg shadow-xl p-6 w-full max-w-lg;
+    @apply relative;
+  }
+
+  .dialog-close {
+    @apply absolute top-3 right-3 text-gray-500 hover:text-gray-800;
+  }
+}

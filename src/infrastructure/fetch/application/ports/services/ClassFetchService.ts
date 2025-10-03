@@ -1,6 +1,9 @@
-import type { ClassCriteriaDTO, PaginatedQuery } from "@application";
-import { AuthErrors, Err, Ok, type ClassDomain } from "@domain";
-import type { ClassService } from "application/ports/services/ClassService";
+import { serviceErrorResponseParser, Err, Ok, type ClassDomain } from "@domain";
+import type {
+  ClassService,
+  ClassCriteriaDTO,
+  PaginatedQuery,
+} from "@application";
 
 export function createFetchClassService(apiUrl: string): ClassService {
   const service: ClassService = {
@@ -12,8 +15,8 @@ export function createFetchClassService(apiUrl: string): ClassService {
         body: JSON.stringify(newClass),
       });
 
-      if (response.status === 403) return Err(AuthErrors.Forbidden);
-      if (response.status === 401) return Err(AuthErrors.Unauthorized);
+      const error = await serviceErrorResponseParser(response);
+      if (error) return Err(error);
 
       if (response.status === 200) {
         const parseRed: ClassDomain = await response.json();
@@ -23,7 +26,7 @@ export function createFetchClassService(apiUrl: string): ClassService {
       throw new Error("Internal server error");
     },
 
-    async getMyAssignedClasses(criteria) {
+    async getAssignedClasses(criteria) {
       const response = await fetch(`${apiUrl}/classes/assigned`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,8 +34,28 @@ export function createFetchClassService(apiUrl: string): ClassService {
         body: JSON.stringify(criteria),
       });
 
-      if (response.status === 403) return Err(AuthErrors.Forbidden);
-      if (response.status === 401) return Err(AuthErrors.Unauthorized);
+      const error = await serviceErrorResponseParser(response);
+      if (error) return Err(error);
+
+      if (response.status === 200) {
+        const parseRed: PaginatedQuery<ClassDomain, ClassCriteriaDTO> =
+          await response.json();
+        return Ok(parseRed);
+      }
+
+      throw new Error("Internal server error");
+    },
+
+    async getEnrolledClasses(criteria) {
+      const response = await fetch(`${apiUrl}/classes/enrolled`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(criteria),
+      });
+
+      const error = await serviceErrorResponseParser(response);
+      if (error) return Err(error);
 
       if (response.status === 200) {
         const parseRed: PaginatedQuery<ClassDomain, ClassCriteriaDTO> =

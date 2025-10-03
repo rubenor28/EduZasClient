@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { RegisterPage, Dashboard, LogInPage } from "@pages";
-import { NotFoundPage } from "@components";
-import { ProtectedRoute } from "./pages/auth";
+import { NotFoundPage, ProtectedRoute } from "@components";
 
 function App() {
   return (
