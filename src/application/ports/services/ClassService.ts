@@ -1,6 +1,7 @@
 import type { ClassDomain, Result } from "@domain";
 import type {
   ClassCriteriaDTO,
+  ClassUpdateDTO,
   NewClassDTO,
   PaginatedQuery,
 } from "@application";
@@ -19,6 +20,13 @@ export interface ClassService {
   createClass(
     newClass: NewClassDTO,
   ): Promise<Result<ClassDomain, ServiceError>>;
+
+  /**
+   * Actualiza una clase académica existente en el sistema.
+   * @param data - Datos para actualizar la clase.
+   * @returns Una promesa que se resuelve con el dominio de la clase actualizada o un error de servicio.
+   */
+  updateClass(data: ClassUpdateDTO): Promise<Result<ClassDomain, ServiceError>>;
 
   /**
    * Obtiene las clases asignadas al usuario autenticado

@@ -26,6 +26,25 @@ export function createFetchClassService(apiUrl: string): ClassService {
       throw new Error("Internal server error");
     },
 
+    async updateClass(data) {
+      const response = await fetch(`${apiUrl}/classes`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const error = await serviceErrorResponseParser(response);
+      if (error) return Err(error);
+
+      if (response.status === 200) {
+        const parseRed: ClassDomain = await response.json();
+        return Ok(parseRed);
+      }
+
+      throw new Error("Internal server error");
+    },
+
     async getAssignedClasses(criteria) {
       const response = await fetch(`${apiUrl}/classes/assigned`, {
         method: "POST",
@@ -40,6 +59,8 @@ export function createFetchClassService(apiUrl: string): ClassService {
       if (response.status === 200) {
         const parseRed: PaginatedQuery<ClassDomain, ClassCriteriaDTO> =
           await response.json();
+
+        console.log(parseRed);
         return Ok(parseRed);
       }
 
