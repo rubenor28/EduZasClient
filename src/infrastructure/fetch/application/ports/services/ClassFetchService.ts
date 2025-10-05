@@ -18,7 +18,7 @@ export function createFetchClassService(apiUrl: string): ClassService {
       const error = await serviceErrorResponseParser(response);
       if (error) return Err(error);
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         const parseRed: ClassDomain = await response.json();
         return Ok(parseRed);
       }

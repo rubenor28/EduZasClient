@@ -41,6 +41,14 @@ export function AssignedClasses() {
 
   return (
     <>
+      <nav className="flex justify-end items-center gap-x-4">
+        <button
+          className="submit-button"
+          onClick={() => setFormMode({ type: "create", open: true })}
+        >
+          Nueva clase
+        </button>
+      </nav>
       <Dialog open={formMode.open} onClose={handleCloseForm}>
         <ClassForm mode={formMode} onSubmit={handleCloseForm} />
       </Dialog>

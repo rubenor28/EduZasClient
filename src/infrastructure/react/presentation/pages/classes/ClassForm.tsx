@@ -57,7 +57,11 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
 
     const serviceCall =
       mode.type === "create"
-        ? classService.createClass(input)
+        ? classService.createClass({
+            ...input,
+            section: input.section === "" ? undefined : input.section,
+            subject: input.subject === "" ? undefined : input.subject,
+          })
         : classService.updateClass({
             id: mode.data.id,
             active: mode.data.active,
