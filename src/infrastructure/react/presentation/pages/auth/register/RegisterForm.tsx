@@ -85,15 +85,11 @@ export function RegisterForm() {
         password,
       })
       .then((result) => {
-        console.log(typeof result.val);
         if (result.err) {
           const inputErrs: InputError = result.val.reduce(
             (acc, curr) => ({ ...acc, [curr.field]: curr.message }),
             {},
           );
-
-          console.log("A");
-          console.log(result.val);
 
           setFormState({ state: "input_error", ...inputErrs });
           return;

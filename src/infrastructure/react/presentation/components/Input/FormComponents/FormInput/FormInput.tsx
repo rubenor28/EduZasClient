@@ -16,6 +16,8 @@ type FormInputProps<T = string> = {
   required?: boolean;
   /** Nombre del campo (clave en el objeto T cuando T es un objeto) */
   name?: T extends string ? string : keyof T;
+  /** Valor actual del input */
+  value?: string;
   /** Callback ejecutado cuando cambia el valor */
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   /** Clases CSS adicionales para el contenedor */
@@ -53,6 +55,7 @@ export function FormInput<T = string>({
   placeholder,
   name,
   required = false,
+  value,
   onChange,
   className = "",
   hint,
@@ -69,6 +72,7 @@ export function FormInput<T = string>({
         type={effectiveType}
         name={name?.toString()}
         className={inputClass}
+        value={value}
         onChange={onChange}
         required={required}
         placeholder=" "

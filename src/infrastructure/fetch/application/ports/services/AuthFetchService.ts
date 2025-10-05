@@ -47,8 +47,6 @@ export function createFetchAuthService(apiUrl: string): AuthService {
         body: JSON.stringify(creds),
       });
 
-      console.log("Response status ", response.status);
-
       if (response.status >= 500) throw Error("Internal server error");
 
       if (response.status >= 400) {

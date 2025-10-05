@@ -16,9 +16,10 @@ export type ClassFormMode =
 
 export type ClassFormProps = {
   mode: ClassFormMode;
+  onSubmit?: () => void;
 };
 
-export function ClassForm({ mode }: ClassFormProps) {
+export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
   const [formState, setFormState] = useState<ClassFormState>({ state: "idle" });
   const [input, setInput] = useState<NewClassDTO>({
     className: "",
@@ -39,7 +40,7 @@ export function ClassForm({ mode }: ClassFormProps) {
   useEffect(() => {
     if (mode.type !== "update") return;
     setInput({ ...mode.data });
-  }, []);
+  }, [mode]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -57,7 +58,13 @@ export function ClassForm({ mode }: ClassFormProps) {
     const serviceCall =
       mode.type === "create"
         ? classService.createClass(input)
-        : classService.createClass(input);
+        : classService.updateClass({
+            id: mode.data.id,
+            active: mode.data.active,
+            className: input.className,
+            section: input.section === "" ? undefined : input.section,
+            subject: input.subject === "" ? undefined : input.subject,
+          });
 
     serviceCall
       .then((result) => {
@@ -71,19 +78,24 @@ export function ClassForm({ mode }: ClassFormProps) {
             state: "input_error",
             ...fieldErrorsToErrorDictionary(err.error),
           });
+
+          return;
         }
+
+        onSubmit();
       })
       .catch(() => setFormState({ state: "unexpected_error" }));
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="class-form-layout">
       <legend className="form-legend">{legend[mode.type]}</legend>
 
       <FieldWrapper alert={alertIfInputError(formState, "className")}>
         <FormInput<NewClassDTO>
           name="className"
           placeholder="Nombre de la clase"
+          value={input.className}
           onChange={handleChange}
         />
       </FieldWrapper>
@@ -92,6 +104,7 @@ export function ClassForm({ mode }: ClassFormProps) {
         <FormInput<NewClassDTO>
           name="subject"
           placeholder="Materia"
+          value={input.subject}
           onChange={handleChange}
         />
       </FieldWrapper>
@@ -100,6 +113,7 @@ export function ClassForm({ mode }: ClassFormProps) {
         <FormInput<NewClassDTO>
           name="section"
           placeholder="Sección"
+          value={input.section}
           onChange={handleChange}
         />
       </FieldWrapper>

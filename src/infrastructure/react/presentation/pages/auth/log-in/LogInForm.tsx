@@ -38,8 +38,6 @@ export function LogInForm() {
     authService
       .login(credentials)
       .then((result) => {
-        console.log("AuthService result:", result);
-
         if (result.err) {
           const inputErrs: InputError = result.val.reduce(
             (acc, curr) => ({ ...acc, [curr.field]: curr.message }),

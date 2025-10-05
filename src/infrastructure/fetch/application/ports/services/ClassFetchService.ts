@@ -60,7 +60,6 @@ export function createFetchClassService(apiUrl: string): ClassService {
         const parseRed: PaginatedQuery<ClassDomain, ClassCriteriaDTO> =
           await response.json();
 
-        console.log(parseRed);
         return Ok(parseRed);
       }
 

@@ -16,7 +16,7 @@ export function Dialog({
   if (!open) return null;
 
   return (
-    <div className="dialog-overlay" onClick={onClose}>
+    <div className="dialog-overlay">
       <div
         className={`dialog-content ${className}`}
         onClick={(e) => e.stopPropagation()}

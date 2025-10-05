@@ -9,15 +9,17 @@ import { Dialog } from "../../components/Dialog/Dialog";
 type FormMode = ClassFormMode & { open: boolean };
 
 export function AssignedClasses() {
+  const defaultCriteria: ClassCriteriaDTO = { page: 1, active: true };
+
   const [classes, setClasses] = useState<ClassDomain[]>([]);
-  const [criteria, setCriteria] = useState<ClassCriteriaDTO>({ page: 1 });
+  const [criteria, setCriteria] = useState<ClassCriteriaDTO>(defaultCriteria);
   const [formMode, setFormMode] = useState<FormMode>({
     type: "create",
     open: false,
   });
 
-  const refreshClasses = () => {
-    classService.getAssignedClasses(criteria).then((result) => {
+  const refreshClasses = (criteriaToUse: ClassCriteriaDTO) => {
+    classService.getAssignedClasses(criteriaToUse).then((result) => {
       if (result.err) {
         console.error("Internal server error");
         return;
@@ -29,20 +31,23 @@ export function AssignedClasses() {
   };
 
   useEffect(() => {
-    refreshClasses;
+    refreshClasses(criteria);
   }, []);
+
+  const handleCloseForm = () => {
+    setFormMode((prev) => ({ ...prev, open: false }));
+    refreshClasses(defaultCriteria);
+  };
 
   return (
     <>
-      <Dialog
-        open={formMode.open}
-        onClose={() => setFormMode((prev) => ({ ...prev, open: false }))}
-      >
-        <ClassForm mode={formMode} />
+      <Dialog open={formMode.open} onClose={handleCloseForm}>
+        <ClassForm mode={formMode} onSubmit={handleCloseForm} />
       </Dialog>
       <CardGrid>
         {classes.map((c) => (
           <Card
+            key={c.id}
             title={c.className}
             subtitle={c.subject}
             showActions={true}

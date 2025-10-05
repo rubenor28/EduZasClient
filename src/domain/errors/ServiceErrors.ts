@@ -10,7 +10,7 @@ const ServiceErrors: Record<number, (res: Response) => Promise<ServiceError>> =
   {
     [403]: async () => ({ type: "authError", error: AuthErrors.Forbidden }),
     [401]: async () => ({ type: "authError", error: AuthErrors.Unauthorized }),
-    [404]: async (res) => {
+    [400]: async (res) => {
       const value: FieldErrorResponseDTO = await res.json();
       return { type: "inputError", error: value.errors };
     },
