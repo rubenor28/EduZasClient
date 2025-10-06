@@ -1,6 +1,6 @@
 import type { ClassDomain } from "@domain";
 import type { ClassCriteriaDTO } from "@application";
-import { CardGrid, Card } from "@components";
+import { CardGrid, Card, FormInput } from "@components";
 import { classService } from "@dependencies";
 import { useEffect, useState } from "react";
 import { ClassForm, type ClassFormMode } from "./ClassForm";
@@ -41,7 +41,10 @@ export function AssignedClasses() {
 
   return (
     <>
-      <nav className="flex justify-end items-center gap-x-4">
+      <nav className="flex justify-start items-center gap-x-4">
+        <FormInput placeholder="Nombre de clase" />
+        <FormInput placeholder="Materia" />
+        <FormInput placeholder="Sección" />
         <button
           className="submit-button"
           onClick={() => setFormMode({ type: "create", open: true })}
@@ -58,6 +61,7 @@ export function AssignedClasses() {
             key={c.id}
             title={c.className}
             subtitle={c.subject}
+            headerColor={c.color}
             showActions={true}
             actions={[
               {

@@ -9,6 +9,8 @@ export type ClassUpdateDTO = {
   active: boolean;
   /** Nuevo nombre para la clase */
   className: string;
+  /** Color de la carta de la clase */
+  color: string;
   /** Nueva materia o asignatura asociada (opcional) */
   subject?: string;
   /** Nueva sección o grupo de la clase (opcional) */

@@ -9,6 +9,8 @@ export type ClassDomain = {
   active: boolean;
   /** Nombre descriptivo de la clase */
   className: string;
+  /** Color de la carta */
+  color: string;
   /** Materia o asignatura asociada a la clase (opcional) */
   subject?: string;
   /** Sección o grupo específico de la clase (opcional) */

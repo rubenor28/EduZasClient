@@ -19,7 +19,7 @@ export interface CardProps {
 }
 
 export function Card({
-  headerColor = "bg-blue-500",
+  headerColor = "#007bff",
   title,
   subtitle,
   children,
@@ -70,7 +70,8 @@ export function Card({
     >
       <div
         ref={headerRef}
-        className={`card-header ${headerColor} flex items-start justify-between`}
+        className={`card-header flex items-start justify-between`}
+        style={{ backgroundColor: headerColor }}
       >
         <div className="flex-1 min-w-0 pr-3">
           <h2 className="card-title truncate" title={title}>

@@ -6,7 +6,7 @@ import {
 } from "@domain";
 import type { NewClassDTO } from "@application";
 import { classService } from "@dependencies";
-import { FieldWrapper, FormInput } from "@components";
+import { FieldWrapper, FormInput, ColorPicker } from "@components";
 import { useEffect, useState } from "react";
 
 type ClassFormState = FormState<NewClassDTO>;
@@ -25,6 +25,7 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
     className: "",
     subject: "",
     section: "",
+    color: "#007bff",
   });
 
   const legend = {
@@ -39,7 +40,14 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
 
   useEffect(() => {
     if (mode.type !== "update") return;
-    setInput({ ...mode.data });
+
+    const { className, color, subject, section } = mode.data;
+    setInput({
+      className,
+      color,
+      subject: (subject as any)?.value || "",
+      section: (section as any)?.value || "",
+    });
   }, [mode]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +74,7 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
             id: mode.data.id,
             active: mode.data.active,
             className: input.className,
+            color: input.color,
             section: input.section === "" ? undefined : input.section,
             subject: input.subject === "" ? undefined : input.subject,
           });
@@ -118,6 +127,15 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
           name="section"
           placeholder="Sección"
           value={input.section}
+          onChange={handleChange}
+        />
+      </FieldWrapper>
+
+      <FieldWrapper alert={alertIfInputError(formState, "color")}>
+        <ColorPicker
+          name="color"
+          label="Color de la clase"
+          value={input.color || "#FFFFFF"}
           onChange={handleChange}
         />
       </FieldWrapper>
