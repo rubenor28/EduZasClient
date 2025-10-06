@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Hint } from "../../../Hint";
 import "../FormComponents.css";
-import "./FormInput.css"
+import "./FormInput.css";
 
 /**
  * Propiedades del componente FormInput.
@@ -12,6 +12,7 @@ type FormInputProps<T = string> = {
   type?: string;
   /** Texto placeholder que se muestra como etiqueta flotante */
   placeholder: string;
+  placeholderType?: "normal" | "floating";
   /** Indica si el campo es obligatorio */
   required?: boolean;
   /** Nombre del campo (clave en el objeto T cuando T es un objeto) */
@@ -53,6 +54,7 @@ type FormInputProps<T = string> = {
 export function FormInput<T = string>({
   type = "text",
   placeholder,
+  placeholderType = "floating",
   name,
   required = false,
   value,
@@ -67,7 +69,11 @@ export function FormInput<T = string>({
   const inputClass = `form-input-base ${isPassword ? "pr-10" : ""}`;
 
   return (
-    <div className={`form-input-wrapper relative ${className}`}>
+    <div
+      className={`form-input-wrapper relative ${className} ${
+        placeholderType === "floating" ? "pb-2" : ""
+      }`}
+    >
       <input
         type={effectiveType}
         name={name?.toString()}
@@ -75,14 +81,16 @@ export function FormInput<T = string>({
         value={value}
         onChange={onChange}
         required={required}
-        placeholder=" "
+        placeholder={placeholderType === "floating" ? " " : placeholder}
         aria-label={placeholder}
       />
 
-      <div className="form-field-placeholder">
-        {placeholder}
-        {hint && <Hint text={hint} className="ml-1" />}
-      </div>
+      {placeholderType === "floating" && (
+        <div className="form-field-placeholder">
+          {placeholder}
+          {hint && <Hint text={hint} className="ml-1" />}
+        </div>
+      )}
 
       {isPassword && (
         <button

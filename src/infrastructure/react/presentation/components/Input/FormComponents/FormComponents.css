@@ -26,9 +26,3 @@
     @apply pointer-events-auto;
   }
 }
-
-/* Espaciado adicional en la parte inferior del contenedor */
-.form-input-wrapper,
-.form-select-wrapper {
-  padding-bottom: 0.5rem;
-}

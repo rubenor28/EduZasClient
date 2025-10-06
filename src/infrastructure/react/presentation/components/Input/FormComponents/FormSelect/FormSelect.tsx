@@ -28,7 +28,7 @@ type FormSelectProps<T = string> = {
    * Texto que describe el propósito del campo.
    * Se muestra como etiqueta flotante (placeholder).
    */
-  placeholder: string;
+  placeholder?: string;
 
   /**
    * Indica si el campo es obligatorio en el formulario.
@@ -118,10 +118,12 @@ export function FormSelect<T = string>({
         ))}
       </select>
 
-      <div className="form-field-placeholder">
-        {placeholder}
-        {hint && <Hint text={hint} className="ml-1" />}
-      </div>
+      {placeholder && (
+        <div className="form-field-placeholder">
+          {placeholder}
+          {hint && <Hint text={hint} className="ml-1" />}
+        </div>
+      )}
     </div>
   );
 }

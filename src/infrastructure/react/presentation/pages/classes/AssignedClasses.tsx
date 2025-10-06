@@ -1,10 +1,10 @@
-import type { ClassDomain } from "@domain";
-import type { ClassCriteriaDTO } from "@application";
-import { CardGrid, Card, FormInput } from "@components";
+import { StringSearchType, type ClassDomain } from "@domain";
+import type { ClassCriteriaDTO, StringQueryDTO } from "@application";
+import { CardGrid, Card, Dialog } from "@components";
 import { classService } from "@dependencies";
 import { useEffect, useState } from "react";
 import { ClassForm, type ClassFormMode } from "./ClassForm";
-import { Dialog } from "../../components/Dialog/Dialog";
+import { SearchClassForm } from "./SearchClassForm";
 
 type FormMode = ClassFormMode & { open: boolean };
 
@@ -39,17 +39,59 @@ export function AssignedClasses() {
     refreshClasses(defaultCriteria);
   };
 
+  const inputToStringQuery = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    const query: StringQueryDTO = {
+      searchType: StringSearchType.LIKE,
+      text: value.trim(),
+    };
+
+    setCriteria((prev) => ({
+      ...prev,
+      [name]: query,
+    }));
+  };
+
+  const selectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    setCriteria((prev) => ({
+      ...prev,
+      [name]: value === "true" ? true : false,
+    }));
+  };
+
   return (
     <>
-      <nav className="flex justify-start items-center gap-x-4">
-        <FormInput placeholder="Nombre de clase" />
-        <FormInput placeholder="Materia" />
-        <FormInput placeholder="Sección" />
+      <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
+        <SearchClassForm
+          onInputChange={inputToStringQuery}
+          onSelectChange={selectChange}
+          onSubmit={() => {
+            refreshClasses(criteria);
+            console.log(criteria);
+          }}
+        />
         <button
-          className="submit-button"
+          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           onClick={() => setFormMode({ type: "create", open: true })}
         >
-          Nueva clase
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 12H18M12 6V18"
+              stroke="#000000"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </button>
       </nav>
       <Dialog open={formMode.open} onClose={handleCloseForm}>
