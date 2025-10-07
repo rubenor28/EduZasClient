@@ -108,8 +108,7 @@ export function FormSelect<T = string>({
         className="form-input-base pr-8"
         onChange={onChange}
         required={required}
-        value={value}
-        defaultValue=""
+        value={value ?? ""}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

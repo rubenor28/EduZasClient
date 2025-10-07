@@ -40,6 +40,8 @@ export function AssignedClasses() {
         return;
       }
 
+      console.log(`WithStudent ${result.val.criteria.withStudent}`);
+
       setCriteria(result.val.criteria);
       setClasses(result.val.results);
     });
