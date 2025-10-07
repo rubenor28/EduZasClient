@@ -1,62 +1,48 @@
 import {
-  type ClassDomain,
   alertIfInputError,
   fieldErrorsToErrorDictionary,
+  type ClassDomain,
   type FormState,
 } from "@domain";
-import type { NewClassDTO } from "@application";
+import type { ClassUpdateDTO } from "@application";
 import { classService } from "@dependencies";
 import { FieldWrapper, FormInput, ColorPicker } from "@components";
-import { useEffect, useState } from "react";
+import { useClassPopUpFormContext, useClassViewContext } from "@context";
+import { useState } from "react";
 
-type ClassFormState = FormState<NewClassDTO>;
-export type ClassFormMode =
-  | { type: "create" }
-  | { type: "update"; data: ClassDomain };
-
-export type ClassFormProps = {
-  mode: ClassFormMode;
-  onSubmit?: () => void;
-};
-
-export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
-  const [formState, setFormState] = useState<ClassFormState>({ state: "idle" });
-  const [input, setInput] = useState<NewClassDTO>({
-    className: "",
-    subject: "",
-    section: "",
-    color: "#007bff",
+export function ClassForm() {
+  const [formState, setFormState] = useState<FormState<ClassUpdateDTO>>({
+    state: "idle",
   });
+
+  const { refreshClasses } = useClassViewContext();
+  const { setOpen, input, setInput } = useClassPopUpFormContext();
+  const { mode, data } = input;
 
   const legend = {
     ["create"]: "Crear clase",
-    ["update"]: "Actualizar clase",
+    ["modify"]: "Actualizar clase",
   };
 
   const buttonText = {
     ["create"]: "Crear",
-    ["update"]: "Actualizar",
+    ["modify"]: "Actualizar",
   };
-
-  useEffect(() => {
-    if (mode.type !== "update") return;
-
-    const { className, color, subject, section } = mode.data;
-    setInput({
-      className,
-      color,
-      subject: (subject as any)?.value || "",
-      section: (section as any)?.value || "",
-    });
-  }, [mode]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setInput((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (input.mode === "create") {
+      setInput({
+        mode: "create",
+        data: { ...input.data, [name]: value.trim() },
+      });
+    } else {
+      setInput({
+        mode: "modify",
+        data: { ...input.data, [name]: value.trim() },
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,19 +50,16 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
     setFormState({ state: "loading" });
 
     const serviceCall =
-      mode.type === "create"
+      mode === "create"
         ? classService.createClass({
-            ...input,
-            section: input.section === "" ? undefined : input.section,
-            subject: input.subject === "" ? undefined : input.subject,
+            ...data,
+            section: data.section === "" ? undefined : data.section,
+            subject: data.subject === "" ? undefined : data.subject,
           })
         : classService.updateClass({
-            id: mode.data.id,
-            active: mode.data.active,
-            className: input.className,
-            color: input.color,
-            section: input.section === "" ? undefined : input.section,
-            subject: input.subject === "" ? undefined : input.subject,
+            ...data,
+            section: data.section === "" ? undefined : data.section,
+            subject: data.subject === "" ? undefined : data.subject,
           });
 
     serviceCall
@@ -95,38 +78,50 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
           return;
         }
 
-        onSubmit();
+        setFormState({ state: "success" });
+        refreshClasses();
+        setOpen(false);
+
+        setInput({
+          mode: "create",
+          data: { className: "", color: "#000000", subject: "", section: "" },
+        });
+
+        setInput({
+          mode: "create",
+          data: { className: "", color: "#000000", subject: "", section: "" },
+        });
       })
       .catch(() => setFormState({ state: "unexpected_error" }));
   };
 
   return (
     <form onSubmit={handleSubmit} className="class-form-layout">
-      <legend className="form-legend">{legend[mode.type]}</legend>
+      <legend className="form-legend">{legend[mode]}</legend>
 
       <FieldWrapper alert={alertIfInputError(formState, "className")}>
-        <FormInput<NewClassDTO>
+        <FormInput<ClassDomain>
           name="className"
           placeholder="Nombre de la clase"
-          value={input.className}
+          value={data.className}
           onChange={handleChange}
         />
       </FieldWrapper>
 
       <FieldWrapper alert={alertIfInputError(formState, "subject")}>
-        <FormInput<NewClassDTO>
+        <FormInput<ClassUpdateDTO>
           name="subject"
           placeholder="Materia"
-          value={input.subject}
+          value={data.subject || ""}
           onChange={handleChange}
         />
       </FieldWrapper>
 
       <FieldWrapper alert={alertIfInputError(formState, "section")}>
-        <FormInput<NewClassDTO>
+        <FormInput<ClassUpdateDTO>
           name="section"
           placeholder="Sección"
-          value={input.section}
+          value={data.section || ""}
           onChange={handleChange}
         />
       </FieldWrapper>
@@ -135,14 +130,14 @@ export function ClassForm({ mode, onSubmit = () => {} }: ClassFormProps) {
         <ColorPicker
           name="color"
           label="Color de la clase"
-          value={input.color || "#FFFFFF"}
+          value={data.color || "#000000"}
           onChange={handleChange}
         />
       </FieldWrapper>
 
       <div className="flex justify-end">
         <button className="submit-button" type="submit">
-          {buttonText[mode.type]}
+          {buttonText[mode]}
         </button>
       </div>
     </form>

@@ -31,6 +31,10 @@ export default defineConfig({
         __dirname,
         "./src/infrastructure/react/presentation/pages",
       ),
+      "@context": path.resolve(
+        __dirname,
+        "./src/infrastructure/react/presentation/context",
+      ),
     },
   },
 });

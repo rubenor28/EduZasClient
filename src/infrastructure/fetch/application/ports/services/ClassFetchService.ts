@@ -34,8 +34,6 @@ export function createFetchClassService(apiUrl: string): ClassService {
         body: JSON.stringify(data),
       });
 
-      console.log(data);
-
       const error = await serviceErrorResponseParser(response);
       if (error) return Err(error);
 

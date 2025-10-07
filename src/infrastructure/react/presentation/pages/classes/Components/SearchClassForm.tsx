@@ -1,45 +1,29 @@
 import { type ClassCriteriaDTO } from "@application";
 import { FormInput, FormSelect } from "@components";
 
-type SearchClassFormProps = {
-  onSubmit: () => void;
-  onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onSelectChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-};
-
-export function SearchClassForm({
-  onSubmit,
-  onInputChange,
-  onSelectChange,
-}: SearchClassFormProps) {
+export function SearchClassForm() {
   return (
     <form
       className="flex flex-col md:flex-row gap-4 md:items-end"
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit();
-      }}
+      onSubmit={(e) => e.preventDefault()}
     >
       <FormInput<ClassCriteriaDTO>
         name="className"
         placeholder="Nombre de clase"
         placeholderType="normal"
         className="mb-0"
-        onChange={onInputChange}
       />
       <FormInput<ClassCriteriaDTO>
         name="subject"
         placeholder="Materia"
         placeholderType="normal"
         className="mb-0"
-        onChange={onInputChange}
       />
       <FormInput<ClassCriteriaDTO>
         name="section"
         placeholder="Sección"
         placeholderType="normal"
         className="mb-0"
-        onChange={onInputChange}
       />
 
       <FormSelect
@@ -48,7 +32,6 @@ export function SearchClassForm({
           { label: "Activas", value: "true" },
           { label: "Archivadas", value: "false" },
         ]}
-        onChange={onSelectChange}
       />
 
       <button className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">

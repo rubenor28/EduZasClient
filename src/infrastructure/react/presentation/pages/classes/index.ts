@@ -1,2 +1,2 @@
-export * from "./AssignedClasses";
-export * from "./EnrolledClasses"
+export * from "./Pages/AssignedClasses";
+export * from "./Pages/EnrolledClasses"

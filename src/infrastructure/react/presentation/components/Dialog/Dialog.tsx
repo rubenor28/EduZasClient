@@ -2,7 +2,7 @@ import "./Dialog.css";
 
 interface DialogProps {
   open: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   children: React.ReactNode;
   className?: string;
 }
