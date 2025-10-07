@@ -7,7 +7,7 @@ export type ClassViewContext = {
   classes: ClassDomain[];
   setCriteria: (criteria: ClassCriteriaDTO) => void;
   setClasses: (classes: ClassDomain[]) => void;
-  refreshClasses: (criteria: ClassCriteriaDTO) => void;
+  refreshClasses: () => void;
 };
 
 // Context sin garantizar no undefined, siempre debe tener un valor default

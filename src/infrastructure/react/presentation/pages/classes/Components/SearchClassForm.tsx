@@ -3,8 +3,12 @@ import { FormInput, FormSelect } from "@components";
 import { useClassViewContext } from "@context";
 import { StringSearchType } from "@domain";
 
-export function SearchClassForm() {
-  const { criteria, setCriteria, refreshClasses } = useClassViewContext();
+type SearchClassFormProps = {
+  onSubmit: () => void;
+};
+
+export function SearchClassForm({ onSubmit }: SearchClassFormProps) {
+  const { criteria, setCriteria } = useClassViewContext();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -12,7 +16,7 @@ export function SearchClassForm() {
       ...criteria,
       [name]: {
         text: value,
-        searchType: StringSearchType.EQ,
+        searchType: StringSearchType.LIKE,
       },
     });
   };
@@ -22,9 +26,9 @@ export function SearchClassForm() {
     setCriteria({ ...criteria, active: value === "true" });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    refreshClasses();
+    onSubmit();
   };
 
   return (
@@ -88,4 +92,3 @@ export function SearchClassForm() {
     </form>
   );
 }
-

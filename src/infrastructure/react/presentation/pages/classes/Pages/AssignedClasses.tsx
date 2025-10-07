@@ -1,5 +1,6 @@
-import type { ClassCriteriaDTO } from "@application";
-import { CardGrid, Card, Dialog } from "@components";
+import type { ClassDomain } from "@domain";
+import type { ClassCriteriaDTO, ClassUpdateDTO } from "@application";
+import { CardGrid, Card, Dialog, type CardAction } from "@components";
 import { classService } from "@dependencies";
 import { useEffect, useState } from "react";
 
@@ -12,7 +13,6 @@ import {
 
 import { ClassForm } from "../Components/ClassForm";
 import { SearchClassForm } from "../Components/SearchClassForm";
-import type { ClassDomain } from "@domain";
 
 export function AssignedClasses() {
   const defaultCriteria = { page: 1, active: true };
@@ -31,6 +31,60 @@ export function AssignedClasses() {
     setOpen: (open: boolean) => setFormState((prev) => ({ ...prev, open })),
     setInput: (input: ClassFormInput) =>
       setFormState((prev) => ({ ...prev, input })),
+  };
+
+  const handleArchive = (c: ClassUpdateDTO) => {
+    classService
+      .updateClass({
+        ...c,
+        active: !c.active,
+      })
+      .then((result) => {
+        if (result.err) {
+          console.error("Internal server error");
+          return;
+        }
+        refreshClasses();
+      });
+  };
+
+  const handleDelete = (id: string) => {
+    classService.deleteClass(id).then((result) => {
+      if (result.err) {
+        console.error("Internal server error");
+        return;
+      }
+      refreshClasses();
+    });
+  };
+
+  const getCardActions = (c: ClassDomain): CardAction[] => {
+    const archive = {
+      label: criteria.active ? "Archivar" : "Desarchivar",
+      onClick: () => handleArchive(c),
+    };
+
+    const modify = {
+      label: "Modificar",
+      onClick: () =>
+        setFormState({
+          open: true,
+          input: { mode: "modify", data: c },
+        }),
+    };
+
+    const deleteAction = {
+      label: "Eliminar",
+      onClick: () => handleDelete(c.id),
+    };
+
+    // Opciones clases archivadas
+    if (!criteria.active) {
+      return [archive, deleteAction];
+    }
+
+    // Opciones clases activas
+    return [modify, archive];
   };
 
   const refreshClasses = () => {
@@ -58,7 +112,7 @@ export function AssignedClasses() {
       >
         <ClassPopUpFormContext.Provider value={cvCtxValue}>
           <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
-            <SearchClassForm />
+            <SearchClassForm onSubmit={refreshClasses} />
             <button
               className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={() =>
@@ -85,7 +139,10 @@ export function AssignedClasses() {
               </svg>
             </button>
           </nav>
-          <Dialog open={formState.open}>
+          <Dialog
+            open={formState.open}
+            onClose={() => setFormState({ ...formState, open: false })}
+          >
             <ClassForm />
           </Dialog>
           <CardGrid>
@@ -96,17 +153,7 @@ export function AssignedClasses() {
                 subtitle={c.subject}
                 headerColor={c.color}
                 showActions={true}
-                actions={[
-                  {
-                    label: "Modificar",
-                    onClick: () =>
-                      setFormState({
-                        open: true,
-                        input: { mode: "modify", data: c },
-                      }),
-                  },
-                  { label: "Archivar", onClick: () => console.log("Algo") },
-                ]}
+                actions={getCardActions(c)}
               >
                 {c.section}
               </Card>

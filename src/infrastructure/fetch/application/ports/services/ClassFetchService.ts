@@ -45,6 +45,10 @@ export function createFetchClassService(apiUrl: string): ClassService {
       throw new Error("Internal server error");
     },
 
+    async deleteClass(_) {
+      throw Error("Not implemented yet");
+    },
+
     async getAssignedClasses(criteria) {
       const response = await fetch(`${apiUrl}/classes/assigned`, {
         method: "POST",

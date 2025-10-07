@@ -29,6 +29,13 @@ export interface ClassService {
   updateClass(data: ClassUpdateDTO): Promise<Result<ClassDomain, ServiceError>>;
 
   /**
+   * Elimina una clase académica existente en el sistema
+   * @param id - ID de la clase
+   * @returns Una promesa que se resuelve con los datos de la clase eliminada o un error de servicio
+   */
+  deleteClass(id: string): Promise<Result<ClassDomain, ServiceError>>;
+
+  /**
    * Obtiene las clases asignadas al usuario autenticado
    * @param criteria - Criterios de búsqueda y paginación para filtrar las clases
    * @returns Promesa que resuelve con el resultado paginado de clases o error de autenticación
