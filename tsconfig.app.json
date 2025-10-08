@@ -32,7 +32,7 @@
       "@dependencies": ["infrastructure/dependencies"],
       "@infrastructure-fetch": ["infrastructure/fetch"],
       "@pages": ["infrastructure/react/presentation/pages"],
-      "@components": ["infrastructure/react/presentation/components"]
+      "@components": ["infrastructure/react/presentation/components"],
       "@context": ["infrastructure/react/presentation/context"]
     }
   },
