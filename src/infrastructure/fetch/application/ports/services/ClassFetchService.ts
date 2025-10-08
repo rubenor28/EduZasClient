@@ -45,8 +45,22 @@ export function createFetchClassService(apiUrl: string): ClassService {
       throw new Error("Internal server error");
     },
 
-    async deleteClass(_) {
-      throw Error("Not implemented yet");
+    async deleteClass(id) {
+      const response = await fetch(`${apiUrl}/classes/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      const error = await serviceErrorResponseParser(response);
+      if (error) return Err(error);
+
+      if (response.status === 200) {
+        const parseRed: ClassDomain = await response.json();
+        return Ok(parseRed);
+      }
+
+      throw new Error("Internal server error");
     },
 
     async getAssignedClasses(criteria) {
