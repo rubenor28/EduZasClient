@@ -4,30 +4,55 @@ import { useClassViewContext } from "@context";
 import { StringSearchType } from "@domain";
 
 type SearchClassFormProps = {
+  mode?: "professor" | "student";
   onSubmit: () => void;
 };
 
-export function SearchClassForm({ onSubmit }: SearchClassFormProps) {
+export function SearchClassForm({
+  mode = "professor",
+  onSubmit,
+}: SearchClassFormProps) {
   const { criteria, setCriteria } = useClassViewContext();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
+    console.log(`Value: ${value}`);
+    if (value.trim() === "") {
+      setCriteria({
+        ...criteria,
+        [name]: undefined,
+      });
+
+      return;
+    }
+
     setCriteria({
       ...criteria,
       [name]: {
-        text: value,
+        text: value.trim(),
         searchType: StringSearchType.LIKE,
       },
     });
   };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-    setCriteria({ ...criteria, active: value === "true" });
+    const { name, value } = e.target;
+    if (name === "active") {
+      setCriteria({ ...criteria, active: value === "true" });
+    } else if (name === "withStudentHidden") {
+      setCriteria({
+        ...criteria,
+        withStudent: criteria.withStudent
+          ? { id: criteria.withStudent.id, hidden: value === "true" }
+          : undefined,
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    console.log(criteria);
     onSubmit();
   };
 
@@ -59,6 +84,7 @@ export function SearchClassForm({ onSubmit }: SearchClassFormProps) {
       />
 
       <FormSelect
+        name="active"
         className="mb-0"
         options={[
           { label: "Activas", value: "true" },
@@ -67,6 +93,19 @@ export function SearchClassForm({ onSubmit }: SearchClassFormProps) {
         value={String(criteria.active)}
         onChange={handleSelectChange}
       />
+
+      {mode === "student" && (
+        <FormSelect
+          name="withStudentHidden"
+          className="mb-0"
+          options={[
+            { label: "Visibles", value: "true" },
+            { label: "Ocultas", value: "false" },
+          ]}
+          value={String(criteria.withStudent?.hidden)}
+          onChange={handleSelectChange}
+        />
+      )}
 
       <button
         type="submit"

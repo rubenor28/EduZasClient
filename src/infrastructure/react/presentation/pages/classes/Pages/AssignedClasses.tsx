@@ -1,6 +1,6 @@
 import type { ClassDomain } from "@domain";
 import type { ClassCriteriaDTO, ClassUpdateDTO } from "@application";
-import { CardGrid, Card, Dialog, type CardAction } from "@components";
+import { CardGrid, Card, Dialog, type CardAction, PlusSvg } from "@components";
 import { classService } from "@dependencies";
 import { useEffect, useState } from "react";
 
@@ -94,8 +94,6 @@ export function AssignedClasses() {
         return;
       }
 
-      console.log(`WithStudent ${result.val.criteria.withStudent}`);
-
       setCriteria(result.val.criteria);
       setClasses(result.val.results);
     });
@@ -112,7 +110,7 @@ export function AssignedClasses() {
       >
         <ClassPopUpFormContext.Provider value={cvCtxValue}>
           <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
-            <SearchClassForm onSubmit={refreshClasses} />
+            <SearchClassForm mode="professor" onSubmit={refreshClasses} />
             <button
               className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               onClick={() =>
@@ -122,21 +120,7 @@ export function AssignedClasses() {
                 })
               }
             >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6 12H18M12 6V18"
-                  stroke="#000000"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <PlusSvg />
             </button>
           </nav>
           <Dialog

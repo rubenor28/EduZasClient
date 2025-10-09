@@ -8,3 +8,4 @@ export * from "./Card";
 export * from "./States"
 export { ProtectedRoute, type ProtectedElementProps } from "./ProtectedRoute.tsx";
 export * from "./Dialog"
+export * from "./Svgs"
