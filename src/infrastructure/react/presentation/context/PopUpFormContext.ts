@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 
 export type PopUpFormContextType = {
   open: boolean;
-  setPopUpState: (open: boolean) => void;
+  setPopUpOpen: (open: boolean) => void;
 };
 
 export const PopUpFormContext = createContext<PopUpFormContextType | undefined>(

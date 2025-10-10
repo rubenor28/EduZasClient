@@ -52,7 +52,6 @@ export function SearchClassForm({
 
   const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    console.log(criteria);
     onSubmit();
   };
 

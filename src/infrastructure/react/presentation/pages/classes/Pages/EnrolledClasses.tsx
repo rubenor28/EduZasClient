@@ -1,16 +1,18 @@
 import type { ClassDomain } from "@domain";
 import type { ClassCriteriaDTO } from "@application";
 import { useState } from "react";
-import { Card, CardGrid, PlusSvg } from "@components";
-import { ClassViewContext } from "@context";
+import { Card, CardGrid, Dialog, PlusSvg } from "@components";
+import { ClassViewContext, PopUpFormContext } from "@context";
 import { SearchClassForm } from "../Components/SearchClassForm";
 import { classService } from "@dependencies";
+import { EnrolledClassesForm } from "../Components/EnrolledClassForm";
 
 export function EnrolledClasses() {
   const defaultCriteria = { page: 1, active: true };
 
   const [classes, setClasses] = useState<ClassDomain[]>([]);
   const [criteria, setCriteria] = useState<ClassCriteriaDTO>(defaultCriteria);
+  const [formOpen, setFormOpen] = useState(false);
 
   const refreshClasses = () => {
     classService.getEnrolledClasses(criteria).then((result) => {
@@ -28,35 +30,34 @@ export function EnrolledClasses() {
     <ClassViewContext.Provider
       value={{ classes, criteria, setClasses, setCriteria, refreshClasses }}
     >
-      <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
-        <SearchClassForm mode="professor" onSubmit={refreshClasses} />
+      <PopUpFormContext value={{ open: formOpen, setPopUpOpen: setFormOpen, }}>
+        <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
+          <SearchClassForm mode="professor" onSubmit={refreshClasses} />
 
-        <button
-          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onClick={() =>
-            setFormState({
-              open: true,
-              input: { mode: "create", data: defaultNewClass },
-            })
-          }
-        >
-          <PlusSvg />
-        </button>
-      </nav>
-      <CardGrid>
-        {classes.map((c) => (
-          <Card
-            key={c.id}
-            title={c.className}
-            subtitle={c.subject}
-            headerColor={c.color}
-            showActions={true}
-            actions={[]}
+          <button
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onClick={() => setFormOpen(true)}
           >
-            {c.section}
-          </Card>
-        ))}
-      </CardGrid>
+            <PlusSvg />
+          </button>
+        </nav>
+        <Dialog open={formOpen} onClose={() => setFormOpen(false)}>
+          <EnrolledClassesForm />
+        </Dialog>
+        <CardGrid>
+          {classes.map((c) => (
+            <Card
+              key={c.id}
+              title={c.className}
+              subtitle={c.subject}
+              headerColor={c.color}
+              showActions={false}
+            >
+              {c.section}
+            </Card>
+          ))}
+        </CardGrid>
+      </PopUpFormContext>
     </ClassViewContext.Provider>
   );
 }
