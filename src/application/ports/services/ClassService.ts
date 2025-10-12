@@ -36,6 +36,20 @@ export interface ClassService {
   deleteClass(id: string): Promise<Result<ClassDomain, ServiceError>>;
 
   /**
+   * Inscribe al usuario actual a una clase
+   * @param id - ID de la clase
+   * @returns Una promesa que se resuelve un error o una confirmacion sin datos
+   */
+  enrollClass(id: string): Promise<Result<void, ServiceError>>;
+
+  /**
+   * El usuario actual abandona una clase
+   * @param id - ID de la clase
+   * @returns Una promesa que se resuelve un error o una confirmacion sin datos
+   */
+  unenrollClass(id: string): Promise<Result<void, ServiceError>>;
+
+  /**
    * Obtiene las clases asignadas al usuario autenticado
    * @param criteria - Criterios de búsqueda y paginación para filtrar las clases
    * @returns Promesa que resuelve con el resultado paginado de clases o error de autenticación

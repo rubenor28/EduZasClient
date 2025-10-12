@@ -103,6 +103,41 @@ export function createFetchClassService(apiUrl: string): ClassService {
 
       throw new Error("Internal server error");
     },
+
+    async enrollClass(classId) {
+      const response = await fetch(`${apiUrl}/classes/enroll`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ classId }),
+      });
+
+      const error = await serviceErrorResponseParser(response);
+      if (error) return Err(error);
+
+      if (response.status === 200) {
+        return Ok(undefined);
+      }
+
+      throw new Error("Internal server error");
+    },
+
+    async unenrollClass(classId) {
+      const response = await fetch(`${apiUrl}/classes/enroll/${classId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      const error = await serviceErrorResponseParser(response);
+      if (error) return Err(error);
+
+      if (response.status === 200) {
+        return Ok(undefined);
+      }
+
+      throw new Error("Internal server error");
+    },
   };
 
   return service;
