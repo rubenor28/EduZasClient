@@ -1,40 +1,81 @@
-import { Alert, FieldWrapper, FormInput } from "@components";
-import { usePopUpFormContext } from "@context";
+import { Alert, FormInput } from "@components";
+import { useClassViewContext, usePopUpFormContext } from "@context";
 import { useState } from "react";
+import { classService } from "@dependencies";
 
-const FormState = {
-  Idle: "idle",
-  InputError: "input_error",
-  UnexpectedError: "unexpected_error",
-  Loading: "loading",
-  Success: "success"
-} as const;
-
-type FormState = typeof FormState[keyof typeof FormState];
+type FormState =
+  | {
+      state: "idle" | "unexpected_error" | "loading" | "success";
+    }
+  | { state: "input_error"; error: string };
 
 export function EnrolledClassesForm() {
   const { setPopUpOpen } = usePopUpFormContext();
+  const { refreshClasses } = useClassViewContext();
   const [input, setInput] = useState("");
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [formState, setFormState] = useState<FormState>(FormState.Idle);
+  const [formState, setFormState] = useState<FormState>({ state: "idle" });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setInput(e.target.value.trim());
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setPopUpOpen(false);
+
+    classService
+      .enrollClass(input)
+      .then((result) => {
+        console.log(`Error? ${result.err}`);
+
+        if (result.err) {
+          const { type, error } = result.val;
+
+          console.log(`Tipo de error ${type}`);
+
+          if (type === "authError") {
+            setFormState({ state: "unexpected_error" });
+            return;
+          }
+
+          error.forEach((err) => {
+            if (err.field === "classId")
+              setFormState({ state: "input_error", error: err.message });
+          });
+
+          return;
+        }
+
+        refreshClasses();
+        setPopUpOpen(false);
+      })
+      .catch(() => setFormState({ state: "unexpected_error" }));
   };
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <legend className="form-legend">Inscribirse a una clase</legend>
-      <FieldWrapper alert={error && <Alert message={error} type="warning" />} className="mb-15">
-        <FormInput placeholder="Código de invitación de la clase" onChange={handleChange} />
-      </FieldWrapper>
-      <button className="mb-0 submit-button text-lg" type="submit" onClick={handleSubmit}>Inscribirse</button>
+
+      {formState.state === "input_error" && (
+        <Alert message={formState.error} type="warning" className="mb-10" />
+      )}
+
+      {formState.state === "unexpected_error" && (
+        <Alert
+          message="Ocurrió un error, intente más tarde"
+          type="danger"
+          className="mb-10"
+        />
+      )}
+
+      <FormInput
+        placeholder="Código de invitación de la clase"
+        onChange={handleChange}
+      />
+
+      <button className="mt-10 submit-button text-lg" type="submit">
+        Inscribirse
+      </button>
     </form>
   );
 }

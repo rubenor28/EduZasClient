@@ -1,6 +1,6 @@
 import type { ClassDomain } from "@domain";
 import type { ClassCriteriaDTO } from "@application";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardGrid, Dialog, PlusSvg } from "@components";
 import { ClassViewContext, PopUpFormContext } from "@context";
 import { SearchClassForm } from "../Components/SearchClassForm";
@@ -26,11 +26,15 @@ export function EnrolledClasses() {
     });
   };
 
+  useEffect(()=>{
+    refreshClasses();
+  }, [])
+
   return (
     <ClassViewContext.Provider
       value={{ classes, criteria, setClasses, setCriteria, refreshClasses }}
     >
-      <PopUpFormContext value={{ open: formOpen, setPopUpOpen: setFormOpen, }}>
+      <PopUpFormContext.Provider value={{ open: formOpen, setPopUpOpen: setFormOpen }}>
         <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
           <SearchClassForm mode="professor" onSubmit={refreshClasses} />
 
@@ -57,7 +61,7 @@ export function EnrolledClasses() {
             </Card>
           ))}
         </CardGrid>
-      </PopUpFormContext>
+      </PopUpFormContext.Provider>
     </ClassViewContext.Provider>
   );
 }
