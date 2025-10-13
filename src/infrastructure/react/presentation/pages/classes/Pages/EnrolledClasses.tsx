@@ -36,7 +36,7 @@ export function EnrolledClasses() {
     >
       <PopUpFormContext.Provider value={{ open: formOpen, setPopUpOpen: setFormOpen }}>
         <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
-          <SearchClassForm mode="professor" onSubmit={refreshClasses} />
+          <SearchClassForm mode="student" onSubmit={refreshClasses} />
 
           <button
             className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"

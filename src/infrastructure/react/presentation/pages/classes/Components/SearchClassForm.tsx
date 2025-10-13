@@ -1,4 +1,4 @@
-import type { ClassCriteriaDTO } from "@application";
+import type { ClassCriteriaDTO, WithStudent } from "@application";
 import { FormInput, FormSelect } from "@components";
 import { useClassViewContext } from "@context";
 import { StringSearchType } from "@domain";
@@ -41,11 +41,15 @@ export function SearchClassForm({
     if (name === "active") {
       setCriteria({ ...criteria, active: value === "true" });
     } else if (name === "withStudentHidden") {
+      const withStudent: WithStudent | undefined = criteria.withStudent
+        ? { id: criteria.withStudent.id, hidden: value === "true" }
+        : undefined;
+
+      console.log(withStudent);
+
       setCriteria({
         ...criteria,
-        withStudent: criteria.withStudent
-          ? { id: criteria.withStudent.id, hidden: value === "true" }
-          : undefined,
+        withStudent,
       });
     }
   };
@@ -98,8 +102,8 @@ export function SearchClassForm({
           name="withStudentHidden"
           className="mb-0"
           options={[
-            { label: "Visibles", value: "true" },
-            { label: "Ocultas", value: "false" },
+            { label: "Visibles", value: "false" },
+            { label: "Ocultas", value: "true" },
           ]}
           value={String(criteria.withStudent?.hidden)}
           onChange={handleSelectChange}

@@ -85,6 +85,9 @@ export function createFetchClassService(apiUrl: string): ClassService {
     },
 
     async getEnrolledClasses(criteria) {
+      console.log("CRITERIO ENVIADO");
+      console.log(criteria);
+
       const response = await fetch(`${apiUrl}/classes/enrolled`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
