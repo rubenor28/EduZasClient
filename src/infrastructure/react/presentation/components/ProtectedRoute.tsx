@@ -1,19 +1,20 @@
+import type { AuthErrors, Result, UserDomain } from "@domain";
+
+import { authService } from "@dependencies";
+import {
+  LoadingPage,
+  ForbiddenPage,
+  ServerErrorPage,
+  NotFoundPage,
+} from "@components";
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@context";
 
-import type { UserDomain } from "@domain";
-import { authService } from "@dependencies";
-import { LoadingPage, ForbiddenPage, ServerErrorPage } from "@components";
+export type AuthPageError = "forbid" | "not_found" | "server_error";
 
-const PageStates = {
-  LOADING: "loading",
-  OK: "ok",
-  FORBID: "forbid",
-  ERROR: "error",
-} as const;
-
-type PageStates = (typeof PageStates)[keyof typeof PageStates];
-
+export type PageStates = "loading" | "ok" | AuthPageError;
 
 export type ProtectedElementProps = {
   user: UserDomain;
@@ -23,53 +24,54 @@ type ProtectedRouteProps = {
   children: React.ReactElement<ProtectedElementProps>;
 };
 
-
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const [pageState, setPageState] = useState<PageStates>(PageStates.LOADING);
-  const [user, setUser] = useState<UserDomain | undefined>();
+  const [pageState, setPageState] = useState<PageStates>("loading");
   const navigate = useNavigate();
 
+  const getUser = async (): Promise<Result<UserDomain, AuthErrors>> => {
+    try {
+      return await authService.isAuth();
+    } catch (_) {
+      setPageState("server_error");
+      throw Error;
+    }
+  };
+
+  const loginValidation = () => {
+    getUser().then((result) => {
+      if (result.err && result.val === "unauthorized") {
+        navigate("/login");
+        return;
+      }
+
+      if (result.ok) {
+        setPageState("ok");
+      }
+    });
+  };
+
   useEffect(() => {
-    authService
-      .isAuth()
-      .then((result) => {
-        if (result.err) {
-          switch (result.val) {
-            case "unauthorized":
-              navigate("/login");
-              break;
-            case "forbidden":
-              setPageState(PageStates.FORBID);
-              break;
-            default:
-              setPageState(PageStates.ERROR);
-              console.error("Internal server error");
-          }
-        } else {
-          setUser(result.val);
-          setPageState("ok");
-        }
-      })
-      .catch(() => {
-        setPageState(PageStates.ERROR);
-        console.error("Internal server error");
-      });
+    loginValidation();
   }, []);
 
-  switch (pageState) {
-    case PageStates.LOADING:
-      return <LoadingPage />;
+  const viewPerState: Record<PageStates, React.ReactNode> = {
+    ok: children,
+    loading: <LoadingPage />,
+    not_found: <NotFoundPage />,
+    forbid: <ForbiddenPage />,
+    server_error: <ServerErrorPage />,
+  };
 
-    case PageStates.OK:
-      return React.cloneElement(children, { user });
-
-    case PageStates.FORBID:
-      return <ForbiddenPage />;
-
-    case PageStates.ERROR:
-      return <ServerErrorPage />;
-
-    default:
-      return <ServerErrorPage />;
-  }
+  return (
+    <AuthContext.Provider
+      value={{
+        getUser,
+        setInternalServerError: () => setPageState("server_error"),
+        setForbid: () => setPageState("forbid"),
+        onUnauthorized: () => console.log()
+      }}
+    >
+      {viewPerState[pageState] ?? viewPerState["server_error"]}
+    </AuthContext.Provider>
+  );
 }

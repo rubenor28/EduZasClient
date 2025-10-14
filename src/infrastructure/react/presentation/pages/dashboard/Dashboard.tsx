@@ -1,57 +1,96 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { isAdmin, isProfessorOrAdmin } from "@application";
 import { authService } from "@dependencies";
 
-import {
-  type NavbarTab,
-  Navbar,
-  type ProtectedElementProps,
-} from "@components";
+import { type NavbarTab, Navbar } from "@components";
 
-import { DashboardTabs, defaultTab, AssignedClasses, EnrolledClasses } from "@pages";
+import {
+  DashboardTabs,
+  defaultTab,
+  AssignedClasses,
+  EnrolledClasses,
+} from "@pages";
 
 import "./Dashboard.css";
+import { useAuthContext } from "@context";
+import type { UserDomain } from "@domain";
 
-// WARNING: Se usa partial para evitar errores de paso directo
-// de user al usar <ProtectedRoute>children<ProtectedRoute> pues
-// Protected route inyecta el user
-type DashboardProps = Partial<ProtectedElementProps> & {};
+type DashboardState =
+  | {
+      state: "authenticated";
+      user: UserDomain;
+    }
+  | {
+      state: "unauthenticated";
+    };
 
-export function Dashboard({ user }: DashboardProps) {
-  // WARNING: Asumimos que no hay caso de user undefined, no supe
-  // arreglar esto jaja
-  const usr = user!;
+export function Dashboard() {
   const navigate = useNavigate();
+  const { getUser, setInternalServerError, setForbid, setUnauthorized } =
+    useAuthContext();
+
+  const [pageState, setPageState] = useState<DashboardState>({
+    state: "unauthenticated",
+  });
+
+  useEffect(() => {
+    getUser().then((result) => {
+      if (result.err && result.val === "unauthorized") {
+        setUnauthorized();
+        return;
+      }
+
+      if (result.err && result.val === "forbidden") {
+        setForbid();
+        return;
+      }
+
+      if (result.ok) {
+        setPageState({
+          state: "authenticated",
+          user: result.val,
+        });
+        return;
+      }
+
+      setInternalServerError();
+      throw Error;
+    });
+  }, []);
 
   const handleLogout = () => {
     authService.logout().then(() => navigate("/login"));
   };
 
-  const initialTab = defaultTab(usr.role);
+  if (pageState.state === "unauthenticated") throw Error;
+
+  const { user } = pageState;
+
+  const initialTab = defaultTab(user.role);
   const [currentTab, setCurrentTab] = useState<DashboardTabs>(initialTab);
 
   const tabs: NavbarTab<DashboardTabs>[] = [
     {
       key: DashboardTabs.SystemClasses,
       label: "Clases registradas",
-      visible: isAdmin(usr.role),
+      visible: isAdmin(user.role),
     },
     {
       key: DashboardTabs.MyClasses,
       label: "Clases asesoradas",
-      visible: isProfessorOrAdmin(usr.role),
+      visible: isProfessorOrAdmin(user.role),
     },
     {
       key: DashboardTabs.Resources,
       label: "Recursos académicos",
-      visible: isProfessorOrAdmin(usr.role),
+      visible: isProfessorOrAdmin(user.role),
     },
     {
       key: DashboardTabs.Tests,
       label: "Evaluaciones",
-      visible: isProfessorOrAdmin(usr.role),
+      visible: isProfessorOrAdmin(user.role),
     },
     { key: DashboardTabs.EnrolledClasses, label: "Clases Inscritas" },
   ];
@@ -62,7 +101,7 @@ export function Dashboard({ user }: DashboardProps) {
         onTabChange={(tab) => setCurrentTab(tab)}
         initialActiveTab={currentTab}
         tabs={tabs}
-        user={usr}
+        user={user}
         logout={handleLogout}
       />
 

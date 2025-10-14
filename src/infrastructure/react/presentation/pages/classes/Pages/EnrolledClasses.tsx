@@ -1,8 +1,8 @@
 import type { ClassDomain } from "@domain";
 import type { ClassCriteriaDTO } from "@application";
 import { useEffect, useState } from "react";
-import { Card, CardGrid, Dialog, PlusSvg } from "@components";
-import { ClassViewContext, PopUpFormContext } from "@context";
+import { Card, CardGrid, Dialog, PlusSvg, type CardAction } from "@components";
+import { ClassViewContext, PopUpFormContext, useAuthContext } from "@context";
 import { SearchClassForm } from "../Components/SearchClassForm";
 import { classService } from "@dependencies";
 import { EnrolledClassesForm } from "../Components/EnrolledClassForm";
@@ -26,15 +26,28 @@ export function EnrolledClasses() {
     });
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     refreshClasses();
-  }, [])
+  }, []);
+
+  // const getCardOpts = (c: ClassDomain): CardAction[] => {
+  //   const hide: CardAction = {
+  //     label: "Ocultar",
+  //     onClick: () => {
+  //       classService.updateClass()
+  //     },
+  //   }
+
+  //   return [hide, unenroll]
+  // };
 
   return (
     <ClassViewContext.Provider
       value={{ classes, criteria, setClasses, setCriteria, refreshClasses }}
     >
-      <PopUpFormContext.Provider value={{ open: formOpen, setPopUpOpen: setFormOpen }}>
+      <PopUpFormContext.Provider
+        value={{ open: formOpen, setPopUpOpen: setFormOpen }}
+      >
         <nav className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
           <SearchClassForm mode="student" onSubmit={refreshClasses} />
 
