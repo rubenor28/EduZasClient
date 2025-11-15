@@ -1,9 +1,11 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { RegisterPage, Dashboard, LogInPage } from "@pages";
 import { NotFoundPage, ProtectedRoute } from "@components";
+import { AppViewManager } from "./layouts";
 
 function App() {
   return (
+    <AppViewManager>
     <Routes>
       <Route
         path="/"
@@ -19,6 +21,7 @@ function App() {
       {/* CATCH-ALL: si no coincide ninguna, muestra 404 */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
+    </AppViewManager>
   );
 }
 

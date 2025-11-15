@@ -27,10 +27,12 @@
     // Path aliases
     "baseUrl": "src",
     "paths": {
+      "@adapters": ["adapters"],
       "@application": ["application"],
       "@domain": ["domain"],
       "@dependencies": ["infrastructure/dependencies"],
       "@infrastructure-fetch": ["infrastructure/fetch"],
+      "@infrastructure-zustand": ["infrastructure/zustand"],
       "@pages": ["infrastructure/react/presentation/pages"],
       "@components": ["infrastructure/react/presentation/components"],
       "@context": ["infrastructure/react/presentation/context"]

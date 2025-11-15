@@ -13,6 +13,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "@adapters": path.resolve(__dirname, "src/adapters"),
       "@application": path.resolve(__dirname, "src/application"),
       "@domain": path.resolve(__dirname, "src/domain"),
       "@dependencies": path.resolve(
@@ -22,6 +23,10 @@ export default defineConfig({
       "@infrastructure-fetch": path.resolve(
         __dirname,
         "src/infrastructure/fetch",
+      ),
+      "@infrastructure-zustand": path.resolve(
+        __dirname,
+        "src/infrastructure/zustand",
       ),
       "@components": path.resolve(
         __dirname,
