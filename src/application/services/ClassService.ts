@@ -5,13 +5,13 @@ import type {
   NewClassDTO,
   PaginatedQuery,
 } from "@application";
-import type { ServiceError } from "domain/errors/ServiceErrors";
+import type { APIService, APIServiceErrors } from "./APIServices";
 
 /**
  * Interfaz que define los servicios disponibles para la gestión de clases académicas
  * @interface ClassService
  */
-export interface ClassService {
+export interface ClassService extends APIService {
   /**
    * Crea una nueva clase académica en el sistema
    * @param newClass - Datos de la nueva clase a crear
@@ -19,35 +19,37 @@ export interface ClassService {
    */
   createClass(
     newClass: NewClassDTO,
-  ): Promise<Result<ClassDomain, ServiceError>>;
+  ): Promise<Result<ClassDomain, APIServiceErrors>>;
 
   /**
    * Actualiza una clase académica existente en el sistema.
    * @param data - Datos para actualizar la clase.
    * @returns Una promesa que se resuelve con el dominio de la clase actualizada o un error de servicio.
    */
-  updateClass(data: ClassUpdateDTO): Promise<Result<ClassDomain, ServiceError>>;
+  updateClass(
+    data: ClassUpdateDTO,
+  ): Promise<Result<ClassDomain, APIServiceErrors>>;
 
   /**
    * Elimina una clase académica existente en el sistema
    * @param id - ID de la clase
    * @returns Una promesa que se resuelve con los datos de la clase eliminada o un error de servicio
    */
-  deleteClass(id: string): Promise<Result<ClassDomain, ServiceError>>;
+  deleteClass(id: string): Promise<Result<ClassDomain, APIServiceErrors>>;
 
   /**
    * Inscribe al usuario actual a una clase
    * @param id - ID de la clase
    * @returns Una promesa que se resuelve un error o una confirmacion sin datos
    */
-  enrollClass(id: string): Promise<Result<void, ServiceError>>;
+  enrollClass(id: string): Promise<Result<void, APIServiceErrors>>;
 
   /**
    * El usuario actual abandona una clase
    * @param id - ID de la clase
    * @returns Una promesa que se resuelve un error o una confirmacion sin datos
    */
-  unenrollClass(id: string): Promise<Result<void, ServiceError>>;
+  unenrollClass(id: string): Promise<Result<void, APIServiceErrors>>;
 
   /**
    * Obtiene las clases asignadas al usuario autenticado
@@ -62,12 +64,12 @@ export interface ClassService {
   getAssignedClasses(
     criteria: ClassCriteriaDTO,
   ): Promise<
-    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, ServiceError>
+    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, APIServiceErrors>
   >;
 
   getEnrolledClasses(
     criteria: ClassCriteriaDTO,
   ): Promise<
-    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, ServiceError>
+    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, APIServiceErrors>
   >;
 }

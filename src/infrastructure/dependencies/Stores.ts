@@ -1,4 +1,4 @@
-import type { AppViewHook } from "@application";
-import { useAppViewZustandStore } from "@infrastructure-zustand";
+import type { AppHook } from "@application";
+import { useAppZustandStore } from "@infrastructure-zustand";
 
-export const useAppViewStore: AppViewHook = useAppViewZustandStore;
+export const useAppStore: AppHook = useAppZustandStore;

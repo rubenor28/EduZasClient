@@ -1,14 +1,6 @@
-import {
-  UserType,
-  type AuthErrors,
-  type Result,
-  type UserDomain,
-} from "@domain";
-import type {
-  FieldErrorDTO,
-  NewUserDTO,
-  UserCredentialsDTO,
-} from "@application";
+import type { Result, UserDomain } from "@domain";
+import type { NewUserDTO, UserCredentialsDTO } from "@application";
+import type { APIService, APIServiceErrors } from "./APIServices";
 
 /**
  * Define la interfaz para el servicio de autenticación de usuarios.
@@ -18,14 +10,14 @@ import type {
  * verificar el estado de autenticación y cerrar sesión.
  * Utiliza el tipo `Result` para un manejo seguro de errores.
  */
-export interface AuthService {
+export interface AuthService extends APIService {
   /**
    * Registra un nuevo usuario en el sistema.
    *
    * @param data - Datos requeridos para el registro del usuario
    * @returns Un `Result` con el usuario creado o una lista de errores de validación
    */
-  signIn(data: NewUserDTO): Promise<Result<UserDomain, FieldErrorDTO[]>>;
+  signIn(data: NewUserDTO): Promise<Result<UserDomain, APIServiceErrors>>;
 
   /**
    * Inicia sesión con las credenciales proporcionadas.
@@ -35,40 +27,18 @@ export interface AuthService {
    */
   login(
     creds: UserCredentialsDTO,
-  ): Promise<Result<UserDomain, FieldErrorDTO[]>>;
+  ): Promise<Result<UserDomain, APIServiceErrors>>;
 
   /**
-   * Verifica si el usuario actual está autenticado.
-   *
-   * @returns El usuario autenticado si existe, variante de `AuthErrors` para indicar
-   * una sesión inactiva o falta de permisos
+   * Verifica si el usuario está autenticado y obtiene los datos
+   * del usuario.
+   * @returns Un `Result` con los datos de usuario en caso de
+   * éxito o una lista de errores de validación
    */
-  isAuth(): Promise<Result<UserDomain, AuthErrors>>;
+  isAuth(): Promise<Result<UserDomain, APIServiceErrors>>;
 
   /**
    * Cierra la sesión del usuario actual.
    */
-  logout(): Promise<void>;
+  logout(): Promise<Result<void, APIServiceErrors>>;
 }
-
-/**
- * Verifica si el rol de usuario es Profesor o Administrador
- * @param role - Tipo de usuario a verificar
- * @returns `true` si el rol es Profesor o Administrador, `false` en caso contrario
- */
-export const isProfessorOrAdmin = (role: UserType) =>
-  role === UserType.PROFESSOR || role === UserType.ADMIN;
-
-/**
- * Verifica si el rol de usuario es exclusivamente Administrador
- * @param role - Tipo de usuario a verificar
- * @returns `true` si el rol es Administrador, `false` en caso contrario
- */
-export const isAdmin = (role: UserType) => role === UserType.ADMIN;
-
-/**
- * Verifica si el rol de usuario es exclusivamente Profesor
- * @param role - Tipo de usuario a verificar
- * @returns `true` si el rol es Profesor, `false` en caso contrario
- */
-export const isProfessor = (role: UserType) => role === UserType.PROFESSOR;

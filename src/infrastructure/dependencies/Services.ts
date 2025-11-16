@@ -5,6 +5,7 @@ import {
   createFetchAuthService,
   createFetchClassService,
 } from "@infrastructure-fetch";
+import { useAppStore } from "./Stores";
 
-export const authService: AuthService = createFetchAuthService(API_URL);
-export const classService: ClassService = createFetchClassService(API_URL);
+export const authService: AuthService = createFetchAuthService(API_URL, useAppStore);
+export const classService: ClassService = createFetchClassService(API_URL, useAppStore);
