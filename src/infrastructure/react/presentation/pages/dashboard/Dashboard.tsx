@@ -14,7 +14,6 @@ import {
 } from "@pages";
 
 import "./Dashboard.css";
-import { useAuthContext } from "@context";
 import type { UserDomain } from "@domain";
 
 type DashboardState =

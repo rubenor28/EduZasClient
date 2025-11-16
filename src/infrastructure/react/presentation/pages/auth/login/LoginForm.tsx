@@ -6,7 +6,8 @@ import {
   FormInput,
   InlineLoading,
 } from "@components";
-import { authService } from "@dependencies";
+import { api } from "@dependencies";
+import { handleApiErrorViewHelper } from "../../../../application";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -35,23 +36,24 @@ export function LogInForm() {
 
     setFormState({ state: "loading" });
 
-    authService
-      .login(credentials)
-      .then((result) => {
-        if (result.err) {
-          const inputErrs: InputError = result.val.reduce(
-            (acc, curr) => ({ ...acc, [curr.field]: curr.message }),
-            {},
-          );
+    const result = await api.post("/login", credentials, false);
 
-          setFormState({ state: "input_error", ...inputErrs });
-          return;
-        }
+    if (result.err) {
+      if (result.val.type === "input-error") {
+        const inputErrs: InputError = result.val.data.reduce(
+          (acc, curr) => ({ ...acc, [curr.field]: curr.message }),
+          {},
+        );
 
-        setFormState({ state: "success" });
-        navigate("/");
-      })
-      .catch(() => setFormState({ state: "unexpected_error" }));
+        setFormState({ state: "input_error", ...inputErrs });
+        return;
+      }
+
+      handleApiErrorViewHelper(result.val);
+    }
+
+    setFormState({ state: "success" });
+    navigate("/");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,14 +118,6 @@ export function LogInForm() {
         )}
 
         {formState.state === "loading" && <InlineLoading />}
-
-        {formState.state === "unexpected_error" && (
-          <Alert
-            className="text-xl text-center"
-            type="danger"
-            message="Ocurrió un error, intente más tarde"
-          />
-        )}
       </div>
 
       <a
@@ -134,7 +128,11 @@ export function LogInForm() {
       </a>
 
       <div className="flex justify-end">
-        <button type="submit" className="submit-button">
+        <button
+          type="submit"
+          className="submit-button"
+          disabled={formState.state === "loading"}
+        >
           Iniciar sesión
         </button>
       </div>

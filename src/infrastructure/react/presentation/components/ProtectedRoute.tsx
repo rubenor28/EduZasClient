@@ -1,77 +1,47 @@
-import type { AuthErrors, Result, UserDomain } from "@domain";
-
-import { authService } from "@dependencies";
-import {
-  LoadingPage,
-  ForbiddenPage,
-  ServerErrorPage,
-  NotFoundPage,
-} from "@components";
+import { authService, useAppViewStore, useAuthStore } from "@dependencies";
+import { LoadingPage } from "@components";
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "@context";
 
-export type AuthPageError = "forbid" | "not_found" | "server_error";
-
-export type PageStates = "loading" | "ok" | AuthPageError;
-
-export type ProtectedElementProps = {
-  user: UserDomain;
-};
+type ProtectedRouteState = "loading" | "ok";
 
 type ProtectedRouteProps = {
-  children: React.ReactElement<ProtectedElementProps>;
+  children: React.ReactElement;
 };
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const [pageState, setPageState] = useState<PageStates>("loading");
+  const [pageState, setPageState] = useState<ProtectedRouteState>("loading");
+  const appViewStore = useAppViewStore();
+  const authStore = useAuthStore();
   const navigate = useNavigate();
 
-  const getUser = async (): Promise<Result<UserDomain, AuthErrors>> => {
+  const loginValidation = async () => {
     try {
-      return await authService.isAuth();
-    } catch (_) {
-      setPageState("server_error");
-      throw Error;
-    }
-  };
+      let req = await authService.isAuth();
+      if (req.err) {
+        if (req.val.type !== "unauthorized") {
+          appViewStore.setStatus("interal_server_error");
+          throw Error("Unexpected error while checking auth");
+        }
 
-  const loginValidation = () => {
-    getUser().then((result) => {
-      if (result.err && result.val === "unauthorized") {
+        console.warn("Unauthorized");
         navigate("/login");
         return;
       }
 
-      if (result.ok) {
-        setPageState("ok");
-      }
-    });
+      // Update auth store state
+      authStore.setStatus({ type: "user", data: req.val });
+      setPageState("ok");
+    } catch (_) {
+      appViewStore.setStatus("interal_server_error");
+      throw Error("Unexpected error while checking auth");
+    }
   };
 
   useEffect(() => {
     loginValidation();
   }, []);
 
-  const viewPerState: Record<PageStates, React.ReactNode> = {
-    ok: children,
-    loading: <LoadingPage />,
-    not_found: <NotFoundPage />,
-    forbid: <ForbiddenPage />,
-    server_error: <ServerErrorPage />,
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        getUser,
-        setInternalServerError: () => setPageState("server_error"),
-        setForbid: () => setPageState("forbid"),
-        onUnauthorized: () => console.log()
-      }}
-    >
-      {viewPerState[pageState] ?? viewPerState["server_error"]}
-    </AuthContext.Provider>
-  );
+  return <>{pageState === "ok" ? children : <LoadingPage />}</>;
 }

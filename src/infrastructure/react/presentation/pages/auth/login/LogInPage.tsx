@@ -1,5 +1,5 @@
 import { authService } from "@dependencies";
-import { LogInForm } from "./LogInForm";
+import { LogInForm } from "./LoginForm";
 import { AuthPage } from "../components/AuthPage";
 
 import { useEffect } from "react";

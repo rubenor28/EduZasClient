@@ -1,4 +1,8 @@
-import type { AppHook } from "@application";
-import { useAppZustandStore } from "@infrastructure-zustand";
+import type { AppViewHook, AuthHook } from "@application";
+import {
+  useAppViewZustandStore,
+  useAuthZustandStore,
+} from "@infrastructure-zustand";
 
-export const useAppStore: AppHook = useAppZustandStore;
+export const useAppViewStore: AppViewHook = useAppViewZustandStore;
+export const useAuthStore: AuthHook = useAuthZustandStore;

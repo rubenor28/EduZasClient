@@ -1,7 +1,6 @@
 export type AppViewStatus =
   | "idle"
   | "forbid"
-  | "unauthorized"
   | "interal_server_error"
   | "not_found";
 
@@ -10,4 +9,4 @@ export interface AppViewStore {
   setStatus(state: AppViewStatus): void;
 }
 
-export type AppHook = () => AppViewStore;
+export type AppViewHook = () => AppViewStore;

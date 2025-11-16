@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { RegisterPage, Dashboard, LogInPage } from "@pages";
 import { NotFoundPage, ProtectedRoute } from "@components";
 import { AppViewManager } from "./layouts";

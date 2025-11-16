@@ -4,14 +4,14 @@ import type {
   ClassUpdateDTO,
   NewClassDTO,
   PaginatedQuery,
+  ServiceErrorsDTO,
 } from "@application";
-import type { APIService, APIServiceErrors } from "./APIServices";
 
 /**
  * Interfaz que define los servicios disponibles para la gestión de clases académicas
  * @interface ClassService
  */
-export interface ClassService extends APIService {
+export interface ClassService {
   /**
    * Crea una nueva clase académica en el sistema
    * @param newClass - Datos de la nueva clase a crear
@@ -19,7 +19,7 @@ export interface ClassService extends APIService {
    */
   createClass(
     newClass: NewClassDTO,
-  ): Promise<Result<ClassDomain, APIServiceErrors>>;
+  ): Promise<Result<ClassDomain, ServiceErrorsDTO>>;
 
   /**
    * Actualiza una clase académica existente en el sistema.
@@ -28,28 +28,28 @@ export interface ClassService extends APIService {
    */
   updateClass(
     data: ClassUpdateDTO,
-  ): Promise<Result<ClassDomain, APIServiceErrors>>;
+  ): Promise<Result<ClassDomain, ServiceErrorsDTO>>;
 
   /**
    * Elimina una clase académica existente en el sistema
    * @param id - ID de la clase
    * @returns Una promesa que se resuelve con los datos de la clase eliminada o un error de servicio
    */
-  deleteClass(id: string): Promise<Result<ClassDomain, APIServiceErrors>>;
+  deleteClass(id: string): Promise<Result<ClassDomain, ServiceErrorsDTO>>;
 
   /**
    * Inscribe al usuario actual a una clase
    * @param id - ID de la clase
    * @returns Una promesa que se resuelve un error o una confirmacion sin datos
    */
-  enrollClass(id: string): Promise<Result<void, APIServiceErrors>>;
+  enrollClass(id: string): Promise<Result<void, ServiceErrorsDTO>>;
 
   /**
    * El usuario actual abandona una clase
    * @param id - ID de la clase
    * @returns Una promesa que se resuelve un error o una confirmacion sin datos
    */
-  unenrollClass(id: string): Promise<Result<void, APIServiceErrors>>;
+  unenrollClass(id: string): Promise<Result<void, ServiceErrorsDTO>>;
 
   /**
    * Obtiene las clases asignadas al usuario autenticado
@@ -64,12 +64,12 @@ export interface ClassService extends APIService {
   getAssignedClasses(
     criteria: ClassCriteriaDTO,
   ): Promise<
-    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, APIServiceErrors>
+    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, ServiceErrorsDTO>
   >;
 
   getEnrolledClasses(
     criteria: ClassCriteriaDTO,
   ): Promise<
-    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, APIServiceErrors>
+    Result<PaginatedQuery<ClassDomain, ClassCriteriaDTO>, ServiceErrorsDTO>
   >;
 }
