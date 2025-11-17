@@ -1,2 +1,1 @@
-export * from "./AuthService";
-export * from "./ClassService";
+export * from "./error.service";

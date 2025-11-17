@@ -1,45 +1,16 @@
-import { defineConfig } from "vite";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 import path from "path";
 
+// https://vite.dev/config/
 export default defineConfig({
-  root: path.resolve(__dirname, "src/infrastructure/react/presentation"),
-  envDir: path.resolve(__dirname),
-  plugins: [react(), tailwindcss()],
-  build: {
-    outDir: path.resolve(__dirname, "dist"),
-    emptyOutDir: true,
-  },
+  plugins: [react()],
   resolve: {
-    alias: {
-      "@adapters": path.resolve(__dirname, "src/adapters"),
-      "@application": path.resolve(__dirname, "src/application"),
+    alias: { 
       "@domain": path.resolve(__dirname, "src/domain"),
-      "@dependencies": path.resolve(
-        __dirname,
-        "src/infrastructure/dependencies",
-      ),
-      "@infrastructure-fetch": path.resolve(
-        __dirname,
-        "src/infrastructure/fetch",
-      ),
-      "@infrastructure-zustand": path.resolve(
-        __dirname,
-        "src/infrastructure/zustand",
-      ),
-      "@components": path.resolve(
-        __dirname,
-        "./src/infrastructure/react/presentation/components",
-      ),
-      "@pages": path.resolve(
-        __dirname,
-        "./src/infrastructure/react/presentation/pages",
-      ),
-      "@context": path.resolve(
-        __dirname,
-        "./src/infrastructure/react/presentation/context",
-      ),
-    },
-  },
-});
+      "@application": path.resolve(__dirname, "src/application"),
+      "@adapters": path.resolve(__dirname, "src/adapters"),
+      "@presentation": path.resolve(__dirname, "src/presentation"),
+    }
+  }
+})
