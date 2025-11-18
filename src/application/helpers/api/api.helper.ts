@@ -1,4 +1,10 @@
-import { Err, Ok, type APIInputError, type Result } from "@application";
+import {
+  Err,
+  InternalServerError,
+  Ok,
+  type APIInputError,
+  type Result,
+} from "@application";
 import { apiErrorHandlers } from "./api.error.handlers";
 
 /**
@@ -90,7 +96,7 @@ export async function baseFetch<T>(
     const errorHandler =
       apiErrorHandlers[res.status] ??
       (() => {
-        throw new Error(`Unhandled status code: ${res.status}`);
+        throw new InternalServerError(`Unhandled status code: ${res.status}`);
       });
 
     // Si throwAll es true, el errorHandler lanzará una excepción y la ejecución se detendrá aquí.

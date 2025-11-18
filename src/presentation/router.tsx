@@ -1,24 +1,27 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Home, Layout } from "./pages";
-import { GlobalErrorDisplay, NotFound } from "@presentation";
+import { Home, Login } from "./pages";
+import { GlobalErrorDisplay, NotFound } from "./components/errors";
+import { AuthErrorAs500Boundary } from "./components/errors";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: (
       <GlobalErrorDisplay>
-        <Layout />
+        <Home />
       </GlobalErrorDisplay>
     ),
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "*",
-        element: <NotFound />,
-      },
-    ],
+  },
+  {
+    path: "/login",
+    element: (
+      <AuthErrorAs500Boundary>
+        <Login />
+      </AuthErrorAs500Boundary>
+    ),
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);

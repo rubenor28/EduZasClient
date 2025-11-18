@@ -24,24 +24,27 @@ window.addEventListener("error", (event: ErrorEvent) => {
 });
 
 // Captura promesas rechazadas no controladas
-window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
-  const reason = event.reason;
+window.addEventListener(
+  "unhandledrejection",
+  (event: PromiseRejectionEvent) => {
+    const reason = event.reason;
 
-  if (reason instanceof AppError) {
-    // Si ya es un error de nuestra aplicación, lo notificamos directamente.
-    errorService.notify(reason);
-  } else if (reason instanceof Error) {
-    // Si es un error genérico, lo envolvemos.
-    const error = new InternalServerError(reason.message, reason.stack);
-    errorService.notify(error);
-  } else {
-    // Si la promesa fue rechazada con algo que no es un error (ej. un string).
-    const error = new InternalServerError(
-      "Una promesa fue rechazada sin un error explícito.",
-    );
-    errorService.notify(error);
-  }
-});
+    if (reason instanceof AppError) {
+      // Si ya es un error de nuestra aplicación, lo notificamos directamente.
+      errorService.notify(reason);
+    } else if (reason instanceof Error) {
+      // Si es un error genérico, lo envolvemos.
+      const error = new InternalServerError(reason.message, reason.stack);
+      errorService.notify(error);
+    } else {
+      // Si la promesa fue rechazada con algo que no es un error (ej. un string).
+      const error = new InternalServerError(
+        "Una promesa fue rechazada sin un error explícito.",
+      );
+      errorService.notify(error);
+    }
+  },
+);
 
 // --- FIN MANEJO DE ERRORES GLOBALES ---
 
