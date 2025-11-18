@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Home, Login } from "./pages";
+import { Login, Register, Home } from "./pages";
 import { GlobalErrorDisplay, NotFound } from "./components/errors";
 import { AuthErrorAs500Boundary } from "./components/errors";
 
@@ -17,6 +17,14 @@ export const router = createBrowserRouter([
     element: (
       <AuthErrorAs500Boundary>
         <Login />
+      </AuthErrorAs500Boundary>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <AuthErrorAs500Boundary>
+        <Register />
       </AuthErrorAs500Boundary>
     ),
   },
