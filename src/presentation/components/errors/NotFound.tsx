@@ -8,7 +8,6 @@ interface NotFoundErrorProps {
 
 export function NotFound({ 
   resource = "página",
-  showRetry = false 
 }: NotFoundErrorProps) {
   const location = useLocation();
   
@@ -18,7 +17,6 @@ export function NotFound({
       subtitle="404 - No encontrado"
       code={404}
       description={`La ${resource} que estás buscando no existe o ha sido movida.`}
-      showRetry={showRetry}
       showHome={true}
     >
       <div className="text-sm text-gray-600 space-y-2">
