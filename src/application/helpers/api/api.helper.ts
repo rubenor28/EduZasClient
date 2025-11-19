@@ -90,7 +90,11 @@ export async function baseFetch<T>(
     ...options.headers,
   };
 
-  const res = await fetch(url, { ...options, headers: defaultHeaders });
+  const res = await fetch(url, {
+    ...options,
+    headers: defaultHeaders,
+    credentials: "include",
+  });
 
   if (!res.ok) {
     const errorHandler =

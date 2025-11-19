@@ -2,6 +2,7 @@ import {
   type FieldErrorDTO,
   InternalServerError,
   apiClient,
+  UnauthorizedError,
 } from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState, useEffect } from "react";
@@ -41,6 +42,17 @@ export function Login() {
       // Esto es crucial para evitar que el mensaje aparezca si el usuario recarga la página o navega a otra y vuelve.
       window.history.replaceState({}, document.title, location.pathname);
     }
+
+    const isAlreadyAuth = async () => {
+      try {
+        await apiClient.get<void>("/auth/me");
+        navigate("/");
+      } catch (e) {
+        if (!(e instanceof UnauthorizedError)) throw e;
+      }
+
+      isAlreadyAuth();
+    };
   }, [location]); // Dependencia solo en location para evitar bucles. location.state ya es un nuevo objeto en cada navegación.
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -64,15 +76,14 @@ export function Login() {
     setFormError(null);
     setSuccessMessage(null); // Clear success message on new submission
 
-    const result = await apiClient.inputHandle.post<void>(
-      "/auth/login",
-      { email, password },
-    );
+    const result = await apiClient.inputHandle.post<void>("/auth/login", {
+      email,
+      password,
+    });
 
     setIsSubmitting(false);
     result.match(
       (_successData) => {
-        // En un caso real, guardaríamos el token en el estado global/localStorage
         navigate("/");
       },
       (error) => {

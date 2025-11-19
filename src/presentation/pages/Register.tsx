@@ -74,6 +74,7 @@ export function Register() {
     const result = await apiClient.inputHandle.post<unknown>(
       "/auth/sign-in",
       payload,
+      false,
     );
 
     setIsSubmitting(false);
