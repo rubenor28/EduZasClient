@@ -18,12 +18,40 @@ import { apiErrorHandlers } from "./api.error.handlers";
 // --- Lógica de baseFetch ---
 
 const API_BASE_URL = "http://localhost:5018";
+
+/**
+ * Define cómo se debe procesar el cuerpo de una respuesta de la API.
+ * @property {'json'} json - Parsea el cuerpo de la respuesta como JSON. Es el valor por defecto.
+ * @property {'raw'} raw - Devuelve el objeto `Response` crudo, sin procesar.
+ * @property {'void'} void - Ignora el cuerpo de la respuesta. Útil para peticiones donde solo importa el código de estado.
+ */
 export type ParseResponse = "json" | "raw" | "void";
+
+/**
+ * Opciones extendidas para las peticiones fetch, incluyendo `parseResponse`.
+ */
 export interface FetchOptions extends RequestInit {
+  /**
+   * Determina cómo se debe procesar el cuerpo de la respuesta.
+   * @default 'json'
+   */
   parseResponse?: ParseResponse;
 }
 
 // Sobrecargas de baseFetch
+/**
+ * Realiza una petición fetch a la API, gestionando de forma centralizada la URL base,
+ * las credenciales, los errores y los modos de respuesta.
+ *
+ * @internal
+ * Esta función no está pensada para ser usada directamente fuera de este módulo.
+ * Utilizar las funciones exportadas `apiGet`, `apiPost`, etc. en su lugar.
+ *
+ * @param endpoint - La ruta del endpoint de la API (ej. `/users/1`).
+ * @param options - Opciones de la petición `fetch`, extendidas con `parseResponse`.
+ * @param mode - El modo de manejo de errores, que determina si se lanzan excepciones o se devuelve un `Result`.
+ * @returns El cuerpo de la respuesta procesado según `parseResponse` y `mode`.
+ */
 function baseFetch(
   endpoint: string,
   options: FetchOptions & { parseResponse: "void" },
@@ -80,11 +108,14 @@ async function baseFetch<T>(
   });
 
   if (!res.ok) {
+    // 1. Obtener el manejador de error apropiado para el código de estado.
     const errorHandler =
       apiErrorHandlers[res.status] ??
       (() => new InternalServerError(`Unhandled status code: ${res.status}`));
+    // 2. Crear la instancia del error (ej. InputError, NotFoundError).
     const errorInstance = await errorHandler(res);
 
+    // 3. Determinar si el error debe ser encapsulado en un `Result` o lanzado como excepción.
     const isInputError =
       errorInstance instanceof InputError ||
       errorInstance instanceof AlreadyExistError;
@@ -108,9 +139,11 @@ async function baseFetch<T>(
       return Err(resultError);
     }
 
+    // 4. Si el modo es estricto o el error no coincide con el modo no estricto, lanzar la excepción.
     throw errorInstance;
   }
 
+  // 5. Procesar la respuesta exitosa según la opción `parseResponse`.
   let data: T | Response | void;
   switch (parseResponse) {
     case "raw":
@@ -124,6 +157,7 @@ async function baseFetch<T>(
       break;
   }
 
+  // 6. Si el modo no es estricto, encapsular la respuesta exitosa en `Ok`.
   if (mode !== "strict") {
     return Ok(data);
   }
@@ -132,10 +166,19 @@ async function baseFetch<T>(
 
 // --- NUEVAS FUNCIONES EXPORTADAS ---
 
+/**
+ * Opciones para las funciones `api*` que excluyen propiedades manejadas internamente.
+ * @internal
+ */
 type ApiOptions = Omit<FetchOptions, "body" | "method">;
 
 // --- Modo Estricto (Lanza Excepciones) ---
 
+/**
+ * Realiza una petición GET en modo 'strict'. Lanza una excepción en caso de error HTTP.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiGet<T>(
   endpoint: string,
   options?: ApiOptions & { parseResponse?: "json" },
@@ -155,6 +198,12 @@ export function apiGet<T>(
   return baseFetch<T>(endpoint, { ...options, method: "GET" }, "strict");
 }
 
+/**
+ * Realiza una petición POST en modo 'strict'. Lanza una excepción en caso de error HTTP.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiPost<T>(
   endpoint: string,
   data: unknown,
@@ -182,6 +231,12 @@ export function apiPost<T>(
   );
 }
 
+/**
+ * Realiza una petición PUT en modo 'strict'. Lanza una excepción en caso de error HTTP.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiPut<T>(
   endpoint: string,
   data: unknown,
@@ -209,6 +264,11 @@ export function apiPut<T>(
   );
 }
 
+/**
+ * Realiza una petición DELETE en modo 'strict'. Lanza una excepción en caso de error HTTP.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiDelete<T>(
   endpoint: string,
   options?: ApiOptions & { parseResponse?: "json" },
@@ -230,6 +290,11 @@ export function apiDelete<T>(
 
 // --- Modo Input (Devuelve Result para 400/409) ---
 
+/**
+ * Realiza una petición GET en modo 'input'. Devuelve un `Result` en caso de error 400 o 409.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiGetInput<T>(
   endpoint: string,
   options?: ApiOptions & { parseResponse?: "json" },
@@ -253,6 +318,12 @@ export function apiGetInput<T>(
   );
 }
 
+/**
+ * Realiza una petición POST en modo 'input'. Devuelve un `Result` en caso de error 400 o 409.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiPostInput<T>(
   endpoint: string,
   data: unknown,
@@ -280,6 +351,12 @@ export function apiPostInput<T>(
   );
 }
 
+/**
+ * Realiza una petición PUT en modo 'input'. Devuelve un `Result` en caso de error 400 o 409.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiPutInput<T>(
   endpoint: string,
   data: unknown,
@@ -307,6 +384,11 @@ export function apiPutInput<T>(
   );
 }
 
+/**
+ * Realiza una petición DELETE en modo 'input'. Devuelve un `Result` en caso de error 400 o 409.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiDeleteInput<T>(
   endpoint: string,
   options?: ApiOptions & { parseResponse?: "json" },
@@ -332,6 +414,11 @@ export function apiDeleteInput<T>(
 
 // --- Modo Auth (Devuelve Result para 401) ---
 
+/**
+ * Realiza una petición GET en modo 'auth'. Devuelve un `Result` en caso de error 401.
+ * @param endpoint - La ruta del endpoint de la API.
+ * @param options - Opciones para la petición, incluyendo `parseResponse`.
+ */
 export function apiGetAuth<T>(
   endpoint: string,
   options?: ApiOptions & { parseResponse?: "json" },
