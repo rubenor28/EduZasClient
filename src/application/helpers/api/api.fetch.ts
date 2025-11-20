@@ -96,26 +96,17 @@ async function baseFetch<T>(
   const url = `${API_BASE_URL}${endpoint}`;
   const { parseResponse = "json", ...fetchOptions } = options;
 
-  const defaultHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    ...fetchOptions.headers,
-  };
-
   const res = await fetch(url, {
     ...fetchOptions,
-    headers: defaultHeaders,
     credentials: "include",
   });
 
   if (!res.ok) {
-    // 1. Obtener el manejador de error apropiado para el código de estado.
     const errorHandler =
       apiErrorHandlers[res.status] ??
       (() => new InternalServerError(`Unhandled status code: ${res.status}`));
-    // 2. Crear la instancia del error (ej. InputError, NotFoundError).
     const errorInstance = await errorHandler(res);
 
-    // 3. Determinar si el error debe ser encapsulado en un `Result` o lanzado como excepción.
     const isInputError =
       errorInstance instanceof InputError ||
       errorInstance instanceof AlreadyExistError;
@@ -133,17 +124,14 @@ async function baseFetch<T>(
       } else if (errorInstance instanceof AlreadyExistError) {
         resultError = { type: "already-exists" };
       } else {
-        // UnauthorizedError
         resultError = { type: "unauthorized" };
       }
       return Err(resultError);
     }
 
-    // 4. Si el modo es estricto o el error no coincide con el modo no estricto, lanzar la excepción.
     throw errorInstance;
   }
 
-  // 5. Procesar la respuesta exitosa según la opción `parseResponse`.
   let data: T | Response | void;
   switch (parseResponse) {
     case "raw":
@@ -157,7 +145,6 @@ async function baseFetch<T>(
       break;
   }
 
-  // 6. Si el modo no es estricto, encapsular la respuesta exitosa en `Ok`.
   if (mode !== "strict") {
     return Ok(data);
   }
@@ -199,9 +186,10 @@ export function apiGet<T>(
 }
 
 /**
- * Realiza una petición POST en modo 'strict'. Lanza una excepción en caso de error HTTP.
+ * Realiza una petición POST en modo 'strict'. Soporta tanto JSON como FormData.
+ * Lanza una excepción en caso de error HTTP.
  * @param endpoint - La ruta del endpoint de la API.
- * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param data - El cuerpo de la petición. Puede ser un objeto (se serializa a JSON) o FormData.
  * @param options - Opciones para la petición, incluyendo `parseResponse`.
  */
 export function apiPost<T>(
@@ -224,17 +212,28 @@ export function apiPost<T>(
   data: unknown,
   options?: ApiOptions,
 ): Promise<T | Response | void> {
+  const isFormData = data instanceof FormData;
+  const headers: HeadersInit = isFormData
+    ? {}
+    : { "Content-Type": "application/json" };
+
   return baseFetch<T>(
     endpoint,
-    { ...options, method: "POST", body: JSON.stringify(data) },
+    {
+      ...options,
+      method: "POST",
+      headers: { ...headers, ...options?.headers },
+      body: isFormData ? data : JSON.stringify(data),
+    },
     "strict",
   );
 }
 
 /**
- * Realiza una petición PUT en modo 'strict'. Lanza una excepción en caso de error HTTP.
+ * Realiza una petición PUT en modo 'strict'. Soporta tanto JSON como FormData.
+ * Lanza una excepción en caso de error HTTP.
  * @param endpoint - La ruta del endpoint de la API.
- * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param data - El cuerpo de la petición. Puede ser un objeto (se serializa a JSON) o FormData.
  * @param options - Opciones para la petición, incluyendo `parseResponse`.
  */
 export function apiPut<T>(
@@ -257,9 +256,19 @@ export function apiPut<T>(
   data: unknown,
   options?: ApiOptions,
 ): Promise<T | Response | void> {
+  const isFormData = data instanceof FormData;
+  const headers: HeadersInit = isFormData
+    ? {}
+    : { "Content-Type": "application/json" };
+
   return baseFetch<T>(
     endpoint,
-    { ...options, method: "PUT", body: JSON.stringify(data) },
+    {
+      ...options,
+      method: "PUT",
+      headers: { ...headers, ...options?.headers },
+      body: isFormData ? data : JSON.stringify(data),
+    },
     "strict",
   );
 }
@@ -319,9 +328,10 @@ export function apiGetInput<T>(
 }
 
 /**
- * Realiza una petición POST en modo 'input'. Devuelve un `Result` en caso de error 400 o 409.
+ * Realiza una petición POST en modo 'input'. Soporta JSON y FormData.
+ * Devuelve un `Result` en caso de error 400 o 409.
  * @param endpoint - La ruta del endpoint de la API.
- * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param data - El cuerpo de la petición. Puede ser un objeto (se serializa a JSON) o FormData.
  * @param options - Opciones para la petición, incluyendo `parseResponse`.
  */
 export function apiPostInput<T>(
@@ -344,17 +354,28 @@ export function apiPostInput<T>(
   data: unknown,
   options?: ApiOptions,
 ): Promise<Result<T | Response | void, APIInputError>> {
+  const isFormData = data instanceof FormData;
+  const headers: HeadersInit = isFormData
+    ? {}
+    : { "Content-Type": "application/json" };
+
   return baseFetch<T, APIInputError>(
     endpoint,
-    { ...options, method: "POST", body: JSON.stringify(data) },
+    {
+      ...options,
+      method: "POST",
+      headers: { ...headers, ...options?.headers },
+      body: isFormData ? data : JSON.stringify(data),
+    },
     "input",
   );
 }
 
 /**
- * Realiza una petición PUT en modo 'input'. Devuelve un `Result` en caso de error 400 o 409.
+ * Realiza una petición PUT en modo 'input'. Soporta JSON y FormData.
+ * Devuelve un `Result` en caso de error 400 o 409.
  * @param endpoint - La ruta del endpoint de la API.
- * @param data - El cuerpo de la petición. Se serializará como JSON.
+ * @param data - El cuerpo de la petición. Puede ser un objeto (se serializa a JSON) o FormData.
  * @param options - Opciones para la petición, incluyendo `parseResponse`.
  */
 export function apiPutInput<T>(
@@ -377,9 +398,19 @@ export function apiPutInput<T>(
   data: unknown,
   options?: ApiOptions,
 ): Promise<Result<T | Response | void, APIInputError>> {
+  const isFormData = data instanceof FormData;
+  const headers: HeadersInit = isFormData
+    ? {}
+    : { "Content-Type": "application/json" };
+
   return baseFetch<T, APIInputError>(
     endpoint,
-    { ...options, method: "PUT", body: JSON.stringify(data) },
+    {
+      ...options,
+      method: "PUT",
+      headers: { ...headers, ...options?.headers },
+      body: isFormData ? data : JSON.stringify(data),
+    },
     "input",
   );
 }

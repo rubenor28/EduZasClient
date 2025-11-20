@@ -6,6 +6,7 @@ import {
   ContenidoAcademico,
   ClasesInscritas,
   Evaluaciones,
+  DatabaseManagement,
 } from "./pages/views";
 import {
   AuthErrorAs500Boundary,
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
             element: <Outlet />,
             children: [
               { index: true, element: <AdminPanel /> },
+              { path: "database", element: <DatabaseManagement /> },
               // Futuras sub-rutas de admin: /admin/users, /admin/stats...
             ],
           },
