@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { ClassForm, type ClassFormData } from "./ClassForm";
 import type { Class } from "@domain";
 import type { NewClass, ClassUpdate, FieldErrorDTO } from "@application";
-import { apiClient, InputError } from "@application";
+import { apiPost, apiPut, InputError } from "@application";
 import { useUser } from "@presentation";
 
 type ClassEditorModalProps = {
@@ -86,10 +86,10 @@ export const ClassEditorModal = ({
     try {
       if (isEditMode) {
         const payload: ClassUpdate = { id: classToEdit!.id, ...cleanedData };
-        await apiClient.put("/classes", payload);
+        await apiPut("/classes", payload);
       } else {
         const payload: NewClass = { ownerId: user.id, ...cleanedData };
-        await apiClient.post("/classes", payload);
+        await apiPost("/classes", payload);
       }
       onSuccess();
       onClose();

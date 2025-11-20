@@ -1,7 +1,7 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import { Login, Register, Dashboard, HomePage } from "./pages";
+import { Login, Register, HomePage } from "./pages";
+import { AdminPanel, ProfessorPanel, StudentPanel } from "./pages/panels";
 import {
-  AdminPanel,
   ClasesAsesoradas,
   ContenidoAcademico,
   ClasesInscritas,
@@ -19,7 +19,7 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <Outlet />,
-    errorElement: <ProtectedErrorPage />,
+    errorElement: <PublicErrorPage />,
     children: [
       // --- Rutas Públicas ---
       {
@@ -34,29 +34,45 @@ export const router = createBrowserRouter([
           { path: "register", element: <Register /> },
         ],
       },
-
-      // --- Rutas Protegidas ---
+      // --- Rutas Protegidas (agrupadas por layout) ---
       {
-        element: <UserProvider><Outlet /></UserProvider>,
+        element: (
+          <UserProvider>
+            <DashboardLayout />
+          </UserProvider>
+        ), // Layout con la Navbar principal
+        errorElement: <ProtectedErrorPage />,
         children: [
-          // Layout para vistas con Navbar
           {
-            element: <DashboardLayout />,
+            index: true,
+            element: <HomePage />, // Redirige al panel correcto
+          },
+          {
+            path: "admin",
+            element: <Outlet />,
             children: [
-              {
-                path: "/", // La raíz renderiza HomePage para la redirección dinámica
-                element: <HomePage />,
-              },
-              { path: "admin-panel", element: <AdminPanel /> },
-              { path: "courses", element: <ClasesAsesoradas /> },
-              { path: "tests", element: <Evaluaciones /> },
-              { path: "contents", element: <ContenidoAcademico /> },
-              { path: "enrollments", element: <ClasesInscritas /> },
-              { path: "reports", element: <Dashboard /> },
+              { index: true, element: <AdminPanel /> },
+              // Futuras sub-rutas de admin: /admin/users, /admin/stats...
             ],
           },
-          // rutas autenticadas que no usan el DashboardLayout
-          // { path: "perfil", element: <ProfilePage /> }
+          {
+            path: "professor",
+            element: <Outlet />,
+            children: [
+              { index: true, element: <ProfessorPanel /> },
+              { path: "courses", element: <ClasesAsesoradas /> },
+              { path: "tests", element: <Evaluaciones /> },
+              { path: "content", element: <ContenidoAcademico /> },
+            ],
+          },
+          {
+            path: "student",
+            element: <Outlet />,
+            children: [
+              { index: true, element: <StudentPanel /> },
+              { path: "courses", element: <ClasesInscritas /> },
+            ],
+          },
         ],
       },
     ],

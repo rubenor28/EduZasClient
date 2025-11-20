@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { apiClient } from "@application";
+import { apiPost } from "@application";
 import type { PaginatedQuery, ClassCriteria } from "@application";
 import type { Class } from "@domain";
 
@@ -39,7 +39,7 @@ export const useClassSearch = (
       setIsLoading(true);
       setError(null);
       try {
-        const result = await apiClient.post<
+        const result = await apiPost<
           PaginatedQuery<Class, ClassCriteria>
         >(endpoint, debouncedCriteria);
         setData(result);

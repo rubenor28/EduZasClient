@@ -1,5 +1,5 @@
 import type { User } from "@domain";
-import { apiClient } from "@application";
+import { apiGetAuth } from "@application";
 import {
   createContext,
   useState,
@@ -46,7 +46,7 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const result = await apiClient.auth.getMe();
+      const result = await apiGetAuth<User>("/auth/me");
 
       result.match(
         (userData) => {

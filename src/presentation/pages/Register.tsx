@@ -1,4 +1,4 @@
-import { type FieldErrorDTO, apiClient, type NewUser } from "@application";
+import { type FieldErrorDTO, apiPostInput, type NewUser } from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import {
@@ -71,7 +71,7 @@ export function Register() {
       delete payload.midName;
     }
 
-    const result = await apiClient.inputHandle.post<unknown>(
+    const result = await apiPostInput<unknown>(
       "/auth/sign-in",
       payload,
     );

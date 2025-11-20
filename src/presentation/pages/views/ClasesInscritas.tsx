@@ -8,20 +8,24 @@ import {
   Snackbar,
   ToggleButton,
   ToggleButtonGroup,
+  Button,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import type { Class } from "@domain";
-import { apiClient } from "@application";
+import { apiPut } from "@application";
 import {
   ClassCard,
   ClassSearchForm,
   type MenuOption,
   useUser,
   useClassSearch,
+  EnrollClassModal,
 } from "@presentation";
 
 export const ClasesInscritas = () => {
   const { user } = useUser();
+  const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
 
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
@@ -40,7 +44,7 @@ export const ClasesInscritas = () => {
     const action = shouldHide ? "ocultar" : "mostrar";
     try {
       const payload = { userId: user.id, classId: classId, hidden: shouldHide };
-      await apiClient.put("/classes/students/relationship", payload);
+      await apiPut("/classes/students/relationship", payload, { parseResponse: 'void' });
       refetch();
       setSnackbar({
         open: true,
@@ -145,9 +149,25 @@ export const ClasesInscritas = () => {
 
   return (
     <Paper sx={{ p: 2, backgroundColor: "transparent", boxShadow: "none" }}>
-      <Typography variant="h4" gutterBottom>
-        Clases Inscritas
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          mb: 2,
+        }}
+      >
+        <Typography variant="h4" gutterBottom>
+          Clases Inscritas
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setIsEnrollModalOpen(true)}
+        >
+          Inscribirse
+        </Button>
+      </Box>
 
       <ClassSearchForm
         criteria={criteria}
@@ -156,6 +176,19 @@ export const ClasesInscritas = () => {
       />
 
       {renderContent()}
+
+      <EnrollClassModal
+        open={isEnrollModalOpen}
+        onClose={() => setIsEnrollModalOpen(false)}
+        onSuccess={() => {
+          refetch();
+          setSnackbar({
+            open: true,
+            message: "¡Inscripción exitosa!",
+            severity: "success",
+          });
+        }}
+      />
       
       <Snackbar
         open={snackbar.open}

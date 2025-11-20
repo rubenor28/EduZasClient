@@ -13,7 +13,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import type { Class } from "@domain";
-import { type ClassUpdate, apiClient, ForbiddenError } from "@application";
+import { type ClassUpdate, apiDelete, apiPut, ForbiddenError } from "@application";
 import {
   ClassCard,
   ClassSearchForm,
@@ -59,7 +59,7 @@ export const ClasesAsesoradas = () => {
       return;
     try {
       const payload: ClassUpdate = { ...classData, active: false };
-      await apiClient.put("/classes", payload);
+      await apiPut("/classes", payload, { parseResponse: 'void' });
       refetch();
       setSnackbar({
         open: true,
@@ -92,7 +92,7 @@ export const ClasesAsesoradas = () => {
       return;
     try {
       const payload: ClassUpdate = { ...classData, active: true };
-      await apiClient.put("/classes", payload);
+      await apiPut("/classes", payload, { parseResponse: 'void' });
       refetch();
       setSnackbar({
         open: true,
@@ -120,7 +120,7 @@ export const ClasesAsesoradas = () => {
     if (!window.confirm("¿Estás seguro de que quieres eliminar esta clase?"))
       return;
     try {
-      await apiClient.delete(`/classes/${classId}`);
+      await apiDelete(`/classes/${classId}`, { parseResponse: 'void' });
       refetch();
       setSnackbar({
         open: true,

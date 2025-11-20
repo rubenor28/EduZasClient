@@ -1,7 +1,7 @@
 import { AppBar, Toolbar, Typography, Box } from "@mui/material";
 import { useUser } from "../../context/UserContext";
 import type { User } from "@domain";
-import { apiClient } from "@application";
+import { apiDelete } from "@application";
 import { useNavigate, NavLink } from "react-router-dom";
 
 type NavPage = {
@@ -15,40 +15,13 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const navPages: NavPage[] = [
-    {
-      title: "Panel de administrador",
-      path: "/admin-panel",
-      minimumRole: 2,
-    },
-    {
-      title: "Clases asesoradas",
-      path: "/courses",
-      minimumRole: 1,
-    },
-    {
-      title: "Evaluaciones",
-      path: "/tests",
-      minimumRole: 1,
-    },
-    {
-      title: "Contenido academico",
-      path: "/contents",
-      minimumRole: 1,
-    },
-    {
-      title: "Clases inscritas",
-      path: "/enrollments",
-      minimumRole: 0,
-    },
-    {
-      title: "Reportes",
-      path: "/reports",
-      minimumRole: 0,
-    },
+    { title: "Panel de Administrador", path: "/admin", minimumRole: 2 },
+    { title: "Panel de Profesor", path: "/professor", minimumRole: 1 },
+    { title: "Panel de Estudiante", path: "/student", minimumRole: 0 }
   ];
 
   const handleLogout = async () => {
-    await apiClient.delete("/auth/logout");
+    await apiDelete("/auth/logout", { parseResponse: 'void' });
     navigate("/login");
   };
 

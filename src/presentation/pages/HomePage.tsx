@@ -3,27 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 
-// Mapa de roles a rutas por defecto
+// Mapa de roles a rutas de panel por defecto
 const roleToPathMap: { [key: number]: string } = {
-  0: "/enrollments", // Estudiante
-  1: "/courses", // Profesor
-  2: "/admin-panel", // Administrador
+  0: "/student",    // Estudiante
+  1: "/professor",  // Profesor
+  2: "/admin",      // Administrador
 };
 
 /**
- * Componente que redirige al usuario a su página de inicio por defecto
+ * Componente que redirige al usuario a su panel principal por defecto
  * basada en su rol, una vez que está autenticado.
- * Muestra un spinner de carga brevemente mientras se resuelve la redirección.
  */
 export const HomePage = () => {
   const { user } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Determina la ruta por defecto o usa '/dashboard' como fallback
-    const defaultPath = roleToPathMap[user.role] || "/dashboard";
+    // Determina la ruta por defecto o usa '/student' como fallback seguro.
+    const defaultPath = roleToPathMap[user.role] || "/student";
     navigate(defaultPath, { replace: true });
-  }, [user, navigate]); // Dependencias para re-ejecutar si el usuario o navigate cambian
+  }, [user, navigate]);
 
   // Muestra un indicador de carga mientras se redirige
   return (

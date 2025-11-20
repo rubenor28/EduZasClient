@@ -1,7 +1,7 @@
 import {
   type FieldErrorDTO,
   InternalServerError,
-  apiClient,
+  apiPostInput,
 } from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState, useEffect } from "react";
@@ -38,21 +38,10 @@ export function Login() {
     if (location.state?.registrationSuccess) {
       setSuccessMessage(location.state.message);
       // Limpiar el estado para que el mensaje no se muestre si el usuario navega de nuevo
-      // Esto es crucial para evitar que el mensaje aparezca si el usuario recarga la página o navega a otra y vuelve.
+      // Evita que el mensaje aparezca si el usuario recarga la página o navega a otra y vuelve.
       window.history.replaceState({}, document.title, location.pathname);
     }
-
-    const isAlreadyAuth = async () => {
-      let result = await apiClient.auth.getMe();
-
-      if (result.ok) {
-        navigate("/");
-        return;
-      }
-    };
-
-    isAlreadyAuth();
-  }, [location]); // Dependencia solo en location para evitar bucles. location.state ya es un nuevo objeto en cada navegación.
+  }, [location]);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (
@@ -75,7 +64,7 @@ export function Login() {
     setFormError(null);
     setSuccessMessage(null); // Clear success message on new submission
 
-    const result = await apiClient.inputHandle.post<void>("/auth/login", {
+    const result = await apiPostInput<void>("/auth/login", {
       email,
       password,
     });
