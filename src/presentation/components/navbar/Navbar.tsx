@@ -4,7 +4,6 @@ import type { User } from "@domain";
 import { apiClient } from "@application";
 import { useNavigate, NavLink } from "react-router-dom";
 
-// 1. Definir la estructura de las páginas de navegación
 type NavPage = {
   title: string;
   path: string;
@@ -15,7 +14,6 @@ export const Navbar = () => {
   const { user } = useUser();
   const navigate = useNavigate();
 
-  // 2. Mover la lógica de las páginas de vuelta al Navbar
   const navPages: NavPage[] = [
     {
       title: "Panel de administrador",

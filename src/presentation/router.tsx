@@ -1,5 +1,5 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import { Login, Register, Dashboard, HomePage } from "./pages"; // Import HomePage
+import { Login, Register, Dashboard, HomePage } from "./pages";
 import {
   AdminPanel,
   ClasesAsesoradas,
@@ -8,7 +8,6 @@ import {
   Evaluaciones,
 } from "./pages/views";
 import {
-  NotFound,
   AuthErrorAs500Boundary,
   PublicErrorPage,
   ProtectedErrorPage,
@@ -61,9 +60,5 @@ export const router = createBrowserRouter([
         ],
       },
     ],
-  },
-  {
-    path: "*",
-    element: <NotFound />,
   },
 ]);

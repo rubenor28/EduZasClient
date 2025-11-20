@@ -16,7 +16,7 @@ const roleToPathMap: { [key: number]: string } = {
  * Muestra un spinner de carga brevemente mientras se resuelve la redirección.
  */
 export const HomePage = () => {
-  const { user } = useUser(); // Asume que UserProvider ya ha cargado al usuario
+  const { user } = useUser();
   const navigate = useNavigate();
 
   useEffect(() => {

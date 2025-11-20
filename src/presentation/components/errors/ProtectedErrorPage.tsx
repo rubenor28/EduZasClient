@@ -10,6 +10,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "@application";
+
 import { Forbidden } from "./Forbidden";
 import { InternalServerError as InternalServer } from "./InternalServerError";
 import { NotFound } from "./NotFound";
@@ -33,32 +34,32 @@ export function ProtectedErrorPage() {
 
   // --- Caso 1: Errores específicos de nuestra aplicación ---
   if (error instanceof AppError) {
-    if (error instanceof UnauthorizedError) {
-      // Un 401 en una ruta protegida siempre redirige al login.
+    // Un 401 en una ruta protegida siempre redirige al login.
+    if (error instanceof UnauthorizedError)
       return <Navigate to="/login" replace />;
-    }
-    if (error instanceof ForbiddenError) {
+
+    if (error instanceof ForbiddenError)
       return <Forbidden onClear={handleClearError} />;
-    }
-    if (error instanceof NotFoundError) {
-      return <NotFound />;
-    }
+
+    if (error instanceof NotFoundError) return <NotFound />;
+
     // Cualquier otro AppError se trata como un error interno.
-    return <InternalServer error={error} onClear={handleClearError} showDetails={true} />;
+    return (
+      <InternalServer
+        error={error}
+        onClear={handleClearError}
+        showDetails={true}
+      />
+    );
   }
 
   // --- Caso 2: Errores de respuesta de React Router (ej. 404 de un loader) ---
   if (isRouteErrorResponse(error)) {
-    if (error.status === 401) {
-      // Un 401 en una ruta protegida siempre redirige al login.
-      return <Navigate to="/login" replace />;
-    }
-    if (error.status === 404) {
-      return <NotFound />;
-    }
-    if (error.status === 403) {
-      return <Forbidden onClear={handleClearError} />;
-    }
+    // Un 401 en una ruta protegida siempre redirige al login.
+    if (error.status === 401) return <Navigate to="/login" replace />;
+    if (error.status === 404) return <NotFound />;
+    if (error.status === 403) return <Forbidden onClear={handleClearError} />;
+
     return (
       <InternalServer
         error={new Error(error.data || error.statusText)}
@@ -70,9 +71,21 @@ export function ProtectedErrorPage() {
 
   // --- Caso 3: Errores nativos de JS (Error, TypeError, etc.) ---
   if (error instanceof Error) {
-    return <InternalServer error={error} onClear={handleClearError} showDetails={true} />;
+    return (
+      <InternalServer
+        error={error}
+        onClear={handleClearError}
+        showDetails={true}
+      />
+    );
   }
 
   // --- Caso 4: Error desconocido ---
-  return <InternalServer error={new Error(String(error))} onClear={handleClearError} showDetails={true} />;
+  return (
+    <InternalServer
+      error={new Error(String(error))}
+      onClear={handleClearError}
+      showDetails={true}
+    />
+  );
 }

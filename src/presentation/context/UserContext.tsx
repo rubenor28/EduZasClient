@@ -1,5 +1,5 @@
 import type { User } from "@domain";
-import { apiClient, UnauthorizedError } from "@application";
+import { apiClient } from "@application";
 import {
   createContext,
   useState,
@@ -46,19 +46,19 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      try {
-        const userData = await apiClient.get<User>("/auth/me");
-        setUser(userData);
-      } catch (error) {
-        if (error instanceof UnauthorizedError) {
-          // Si el usuario no está autenticado, redirigir a la página de login.
-          navigate("/login");
-        }
+      const result = await apiClient.auth.getMe();
 
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
+      result.match(
+        (userData) => {
+          setUser(userData);
+        },
+        (error) => {
+          if (error.type !== "unauthorized") throw new Error();
+          navigate("/login");
+        },
+      );
+
+      setIsLoading(false);
     };
 
     fetchUser();
@@ -77,28 +77,18 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     );
   }
 
-  // Solo renderiza los hijos si tenemos un usuario y la carga ha terminado.
-  // El `user` aquí nunca será `null` gracias al `if (isLoading)`
-  // que cubre el estado inicial.
   if (user) {
     return (
       <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
     );
   }
 
-  // Este return es por si algo sale mal y no se redirige,
-  // para no renderizar nada.
+  // No renderiza nada si no hay usuario, ya que la redirección está en curso.
   return null;
 };
 
 /**
  * Hook personalizado para acceder a los datos del usuario desde el contexto.
- *
- * @example
- * const { user } = useUser();
- *
- * @returns El objeto `UserContextType` que contiene los datos del usuario.
- * @throws {Error} Si se usa fuera de un `UserProvider`.
  */
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);

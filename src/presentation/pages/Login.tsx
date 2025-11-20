@@ -2,7 +2,6 @@ import {
   type FieldErrorDTO,
   InternalServerError,
   apiClient,
-  UnauthorizedError,
 } from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState, useEffect } from "react";
@@ -44,15 +43,15 @@ export function Login() {
     }
 
     const isAlreadyAuth = async () => {
-      try {
-        await apiClient.get<void>("/auth/me");
-        navigate("/");
-      } catch (e) {
-        if (!(e instanceof UnauthorizedError)) throw e;
-      }
+      let result = await apiClient.auth.getMe();
 
-      isAlreadyAuth();
+      if (result.ok) {
+        navigate("/");
+        return;
+      }
     };
+
+    isAlreadyAuth();
   }, [location]); // Dependencia solo en location para evitar bucles. location.state ya es un nuevo objeto en cada navegación.
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);

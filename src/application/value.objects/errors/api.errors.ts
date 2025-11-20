@@ -1,4 +1,14 @@
 /**
+ * Modos de manejo de errores para el `baseFetch`.
+ *
+ * - `strict`: Lanza excepciones para todos los errores HTTP.
+ * - `input`: Devuelve un `Result` para errores 400/409, lanza excepción para los demás.
+ * - `auth`: Devuelve un `Result` para errores 401, lanza excepción para los demás.
+ * - `input-auth`: Devuelve un `Result` para errores 400/409 y 401.
+ */
+export type FetchErrorMode = "strict" | "input" | "auth" | "input-auth";
+
+/**
  * Representa un error de validacion en un campo,
  * ya sea de un objeto o una entrada cualquiera.
  */
@@ -14,6 +24,17 @@ export type FieldErrorDTO = {
 export type APIInputError =
   | { type: "already-exists" }
   | { type: "input-error"; data: FieldErrorDTO[] };
+
+/**
+ * Representa un error de autenticación (401) devuelto como un `Result`.
+ */
+export type APIAuthError = { type: "unauthorized" };
+
+/**
+ * Unión de todos los posibles errores que pueden ser devueltos en un `Result`
+ * por el `baseFetch`.
+ */
+export type APIResultError = APIInputError | APIAuthError;
 
 /**
  * Clase base para todos los errores personalizados de la aplicación.
@@ -39,10 +60,7 @@ export abstract class AppError extends Error {
  * como una respuesta 401.
  */
 export class UnauthorizedError extends AppError {
-  constructor(
-    message: string = "No autorizado",
-    stack?: string,
-  ) {
+  constructor(message: string = "No autorizado", stack?: string) {
     super(message, stack);
   }
 }
