@@ -22,6 +22,7 @@ interface Props {
  */
 export function ErrorView({ error, onClear }: Props) {
   if (error instanceof UnauthorizedError) {
+    if (onClear) onClear();
     return <Navigate to="/login" />;
   }
   if (error instanceof ForbiddenError) {

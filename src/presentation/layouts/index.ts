@@ -1,2 +1,2 @@
 export * from "./AuthLayout";
-export * from "./ProtectedRoute";
+export * from "./DashboardLayout";

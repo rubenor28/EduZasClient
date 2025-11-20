@@ -7,7 +7,6 @@ import {
 import {
   AppError,
   ForbiddenError,
-  InternalServerError,
   NotFoundError,
   UnauthorizedError,
 } from "@application";

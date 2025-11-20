@@ -1,62 +1,68 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import { Login, Register, Home } from "./pages";
+import { Login, Register, Dashboard, HomePage } from "./pages"; // Import HomePage
+import {
+  AdminPanel,
+  ClasesAsesoradas,
+  ContenidoAcademico,
+  ClasesInscritas,
+  Evaluaciones,
+} from "./pages/views";
 import {
   NotFound,
   AuthErrorAs500Boundary,
   PublicErrorPage,
   ProtectedErrorPage,
 } from "./components/errors";
-import { ProtectedRoute } from "./layouts";
+import { DashboardLayout } from "./layouts";
+import { UserProvider } from "./context/UserContext";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    // El elemento raíz ahora es solo un Outlet, permitiendo anidación.
     element: <Outlet />,
+    errorElement: <ProtectedErrorPage />,
     children: [
       // --- Rutas Públicas ---
-      // Este grupo de rutas no requiere autenticación.
       {
-        // Envolvemos el Outlet con el boundary que convierte errores 401/403 en 500.
         element: (
           <AuthErrorAs500Boundary>
             <Outlet />
           </AuthErrorAs500Boundary>
         ),
-        // `PublicErrorPage` maneja los errores de renderizado para este grupo.
         errorElement: <PublicErrorPage />,
         children: [
-          {
-            path: "login",
-            element: <Login />,
-          },
-          {
-            path: "register",
-            element: <Register />,
-          },
+          { path: "login", element: <Login /> },
+          { path: "register", element: <Register /> },
         ],
       },
 
       // --- Rutas Protegidas ---
-      // Este grupo de rutas requiere autenticación.
       {
-        // `ProtectedRoute` verifica la autenticación y contiene el `GlobalErrorDisplay`.
-        element: <ProtectedRoute />,
-        // `ProtectedErrorPage` maneja los errores de renderizado para este grupo.
-        errorElement: <ProtectedErrorPage />,
+        element: <UserProvider><Outlet /></UserProvider>,
         children: [
+          // Layout para vistas con Navbar
           {
-            // La ruta raíz ("/") ahora está protegida.
-            index: true,
-            element: <Home />,
+            element: <DashboardLayout />,
+            children: [
+              {
+                path: "/", // La raíz renderiza HomePage para la redirección dinámica
+                element: <HomePage />,
+              },
+              { path: "admin-panel", element: <AdminPanel /> },
+              { path: "courses", element: <ClasesAsesoradas /> },
+              { path: "tests", element: <Evaluaciones /> },
+              { path: "contents", element: <ContenidoAcademico /> },
+              { path: "enrollments", element: <ClasesInscritas /> },
+              { path: "reports", element: <Dashboard /> },
+            ],
           },
-          // ... aquí se pueden agregar más rutas protegidas ...
+          // rutas autenticadas que no usan el DashboardLayout
+          // { path: "perfil", element: <ProfilePage /> }
         ],
       },
     ],
   },
   {
-    // La ruta catch-all para 404 se mantiene al final.
     path: "*",
     element: <NotFound />,
   },
