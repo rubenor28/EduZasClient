@@ -30,7 +30,7 @@ export const ClassSearchForm = ({
   };
 
   const handleActiveChange = (
-    event: React.MouseEvent<HTMLElement>,
+    _e: React.MouseEvent<HTMLElement>,
     newValue: string | null,
   ) => {
     if (newValue === null) return; // No permitir deselección total

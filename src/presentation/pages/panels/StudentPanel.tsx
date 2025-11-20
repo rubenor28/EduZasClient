@@ -17,7 +17,6 @@ const actions = [
     icon: <ClassIcon fontSize="large" />,
     path: "/student/courses",
   },
-  // Agrega aquí futuras acciones para estudiantes
 ];
 
 export const StudentPanel = () => {

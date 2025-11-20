@@ -7,7 +7,7 @@ const PREDEFINED_COLORS = [
   "#D84315", "#00695C", "#AD1457", "#6A1B9A",
 ];
 
-// Usamos un tipo que puede ser para una nueva clase o para una actualización
+// Tipo que puede ser para una nueva clase o para una actualización
 export type ClassFormData = Omit<NewClass & ClassUpdate, "ownerId" | "id">;
 
 type ClassFormProps = {

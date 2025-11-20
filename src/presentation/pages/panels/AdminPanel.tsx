@@ -1,7 +1,5 @@
 import { Paper, Typography } from "@mui/material";
 
-// Este es un placeholder. Aquí irían las acciones del administrador.
-// Por ejemplo: gestionar usuarios, ver estadísticas, etc.
 export const AdminPanel = () => {
   return (
     <Paper sx={{ p: 3 }}>

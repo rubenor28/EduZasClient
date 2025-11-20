@@ -13,7 +13,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import type { Class } from "@domain";
-import { apiPut } from "@application";
+import { apiDelete, apiPut, NotFoundError } from "@application";
 import {
   ClassCard,
   ClassSearchForm,
@@ -61,10 +61,44 @@ export const ClasesInscritas = () => {
     }
   };
 
-  const getMenuOptions = (classData: Class): MenuOption[] => {
-    const isHidden = data?.criteria.withStudent?.hidden;
-    const options: MenuOption[] = [];
+  const handleUnenroll = async (classId: string) => {
+    if (!window.confirm("¿Estás seguro de que quieres abandonar esta clase?")) {
+      return;
+    }
+    try {
+      await apiDelete(`/classes/enroll/${classId}/${user.id}`, { parseResponse: 'void' });
+      refetch(); // Refrescar la lista de clases inscritas
+      setSnackbar({
+        open: true,
+        message: "Has abandonado la clase correctamente.",
+        severity: "success",
+      });
+    } catch (err) {
+      console.error("Error al abandonar la clase:", err);
+      let errorMessage = "Error al abandonar la clase.";
+      if (err instanceof NotFoundError) {
+        errorMessage = "Ya no estás inscrito en esta clase o no se encontró.";
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      setSnackbar({
+        open: true,
+        message: errorMessage,
+        severity: "error",
+      });
+    }
+  };
 
+  const getMenuOptions = (classData: Class): MenuOption[] => {
+    const options: MenuOption[] = [
+      {
+        name: "Abandonar Clase",
+        callback: () => handleUnenroll(classData.id),
+      },
+    ];
+
+    const isHidden = data?.criteria.withStudent?.hidden;
+    // Opciones de ocultar/mostrar clase, se añaden después de abandonar
     if (isHidden) {
       options.push({
         name: "Mostrar clase",

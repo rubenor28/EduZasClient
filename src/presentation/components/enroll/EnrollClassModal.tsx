@@ -45,7 +45,7 @@ export const EnrollClassModal = ({
 
     try {
       const payload = { classId, userId: user.id };
-            await apiPost("/classes/enroll", payload);
+      await apiPost("/classes/enroll", payload, { parseResponse: "void" });
       onSuccess();
       onClose();
     } catch (e) {
