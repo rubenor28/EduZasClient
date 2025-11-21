@@ -10,6 +10,7 @@ import {
 import SchoolIcon from "@mui/icons-material/School";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import BookIcon from "@mui/icons-material/Book";
+import ContactsIcon from "@mui/icons-material/Contacts";
 import { useNavigate } from "react-router-dom";
 
 const actions = [
@@ -18,6 +19,12 @@ const actions = [
     description: "Gestiona las clases que impartes o en las que colaboras.",
     icon: <SchoolIcon fontSize="large" />,
     path: "/professor/courses",
+  },
+  {
+    title: "Mis Contactos",
+    description: "Administra tu agenda de contactos profesionales y académicos.",
+    icon: <ContactsIcon fontSize="large" />,
+    path: "/professor/contacts",
   },
   {
     title: "Evaluaciones",

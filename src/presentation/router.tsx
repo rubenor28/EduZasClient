@@ -7,6 +7,7 @@ import {
   ClasesInscritas,
   Evaluaciones,
   DatabaseManagement,
+  ContactsView,
 } from "./pages/views";
 import {
   AuthErrorAs500Boundary,
@@ -63,6 +64,7 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <ProfessorPanel /> },
               { path: "courses", element: <ClasesAsesoradas /> },
+              { path: "contacts", element: <ContactsView /> },
               { path: "tests", element: <Evaluaciones /> },
               { path: "content", element: <ContenidoAcademico /> },
             ],
