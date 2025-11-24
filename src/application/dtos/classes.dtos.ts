@@ -1,5 +1,11 @@
 import type { Criteria, StringQuery } from "@application";
 
+/** DTO para la creación de un nuevo profesor en una clase. */
+export type Professor = {
+  userId: number;
+  isOwner: boolean;
+};
+
 /**
  * DTO para la creación de una nueva clase.
  * Contiene los datos necesarios para registrar una clase en el sistema.
@@ -16,6 +22,8 @@ export type NewClass = {
   color: string;
   /** ID del propietario (profesor) de la clase. */
   ownerId: number;
+  /** Lista de profesores a añadir a la clase. */
+  professors?: Professor[];
 };
 
 /**
@@ -64,4 +72,10 @@ export type ClassCriteria = Criteria & {
    * `hidden`: Si es true, busca clases que el estudiante tiene ocultas.
    */
   withStudent?: { id: number; hidden?: boolean };
+};
+
+export type ClassProfessorCriteria = Criteria & {
+  userId?: number;
+  classId?: string;
+  isOwner?: boolean;
 };

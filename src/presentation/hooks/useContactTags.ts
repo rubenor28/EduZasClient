@@ -7,8 +7,16 @@ type UseContactTagsReturn = {
   isLoading: boolean;
   error: string | null;
   fetchTags: (agendaOwnerId: number, contactId: number) => Promise<void>;
-  addTag: (agendaOwnerId: number, contactId: number, tag: string) => Promise<void>;
-  removeTag: (agendaOwnerId: number, contactId: number, tag: string) => Promise<void>;
+  addTag: (
+    agendaOwnerId: number,
+    contactId: number,
+    tag: string,
+  ) => Promise<void>;
+  removeTag: (
+    agendaOwnerId: number,
+    contactId: number,
+    tag: string,
+  ) => Promise<void>;
 };
 
 export const useContactTags = (): UseContactTagsReturn => {
@@ -16,29 +24,41 @@ export const useContactTags = (): UseContactTagsReturn => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTags = useCallback(async (agendaOwnerId: number, contactId: number) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const criteria: TagCriteria = {
-        agendaOwnerId,
-        contactId,
-        page: 1,
-        pageSize: 100, // Asumimos que un contacto no tendrá más de 100 etiquetas
-      };
-      const result = await apiPost<PaginatedQuery<string, TagCriteria>>(
-        "/contacts/tags/search",
-        criteria,
-      );
-      setTags(result.results);
-    } catch (e) {
-      const fetchError = e instanceof Error ? e.message : "Error al cargar etiquetas";
-      setError(fetchError);
-      console.error("Failed to fetch tags:", e);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const fetchTags = useCallback(
+    async (agendaOwnerId: number, contactId: number) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        let page = 1;
+        let search: PaginatedQuery<string, TagCriteria>;
+        let results: string[] = [];
+
+        do {
+          const criteria: TagCriteria = {
+            agendaOwnerId,
+            contactId,
+            page,
+          };
+
+          search = await apiPost<PaginatedQuery<string, TagCriteria>>(
+            "/contacts/tags/search",
+            criteria,
+          );
+
+          results.push(...search.results);
+        } while (search.totalPages > page);
+        setTags(results);
+      } catch (e) {
+        const fetchError =
+          e instanceof Error ? e.message : "Error al cargar etiquetas";
+        setError(fetchError);
+        console.error("Failed to fetch tags:", e);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   const addTag = useCallback(
     async (agendaOwnerId: number, contactId: number, tag: string) => {
@@ -48,7 +68,11 @@ export const useContactTags = (): UseContactTagsReturn => {
       setTags(optimisticTags); // Actualización optimista
 
       try {
-        await apiPost("/contacts/tags", { agendaOwnerId, userId: contactId, tag });
+        await apiPost("/contacts/tags", {
+          agendaOwnerId,
+          userId: contactId,
+          tag,
+        });
       } catch (e) {
         setError("Error al añadir la etiqueta. Inténtalo de nuevo.");
         setTags(tags); // Revertir en caso de error

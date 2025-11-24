@@ -44,7 +44,9 @@ export const ClasesInscritas = () => {
     const action = shouldHide ? "ocultar" : "mostrar";
     try {
       const payload = { userId: user.id, classId: classId, hidden: shouldHide };
-      await apiPut("/classes/students/relationship", payload, { parseResponse: 'void' });
+      await apiPut("/classes/students/relationship", payload, {
+        parseResponse: "void",
+      });
       refetch();
       setSnackbar({
         open: true,
@@ -66,7 +68,9 @@ export const ClasesInscritas = () => {
       return;
     }
     try {
-      await apiDelete(`/classes/enroll/${classId}/${user.id}`, { parseResponse: 'void' });
+      await apiDelete(`/classes/enroll/${classId}/${user.id}`, {
+        parseResponse: "void",
+      });
       refetch(); // Refrescar la lista de clases inscritas
       setSnackbar({
         open: true,
@@ -132,8 +136,8 @@ export const ClasesInscritas = () => {
     criteria.withStudent?.hidden === undefined
       ? "all"
       : criteria.withStudent.hidden
-      ? "true"
-      : "false";
+        ? "true"
+        : "false";
 
   const hiddenToggle = (
     <ToggleButtonGroup
@@ -158,13 +162,13 @@ export const ClasesInscritas = () => {
     }
     if (error) {
       return (
-        <Alert severity="error">Error al cargar las clases: {error.message}</Alert>
+        <Alert severity="error">
+          Error al cargar las clases: {error.message}
+        </Alert>
       );
     }
     if (!data || data.results.length === 0) {
-      return (
-        <Typography sx={{ mt: 2 }}>No se encontraron clases.</Typography>
-      );
+      return <Typography sx={{ mt: 2 }}>No se encontraron clases.</Typography>;
     }
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
@@ -173,7 +177,7 @@ export const ClasesInscritas = () => {
             <ClassCard
               classData={classData}
               onClick={() => {}}
-              menuOptions={getMenuOptions(classData)}
+              getMenuOptions={() => getMenuOptions(classData)}
             />
           </Grid>
         ))}
@@ -223,7 +227,7 @@ export const ClasesInscritas = () => {
           });
         }}
       />
-      
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

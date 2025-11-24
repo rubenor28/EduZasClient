@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { Grid, TextField, Paper, Box, Button } from "@mui/material";
 import type { ContactCriteria, StringQuery } from "@application";
 

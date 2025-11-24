@@ -17,3 +17,13 @@ export type Class = {
   /** Color asociado a la clase para propósitos de UI. */
   color: string;
 };
+
+export type UserClassRelationID = {
+  userId: number;
+  classId: string;
+};
+
+export type ClassProfessor = {
+  id: UserClassRelationID;
+  isOwner: boolean;
+};

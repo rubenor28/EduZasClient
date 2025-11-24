@@ -7,55 +7,57 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import type { Class } from "@domain";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useUser, useClassProfessorRelation } from "@presentation";
 
-/**
- * Define la estructura para una opción del menú desplegable.
- */
 export type MenuOption = {
   name: string;
   callback: () => void;
 };
 
-/**
- * Props para el componente ClassCard.
- */
 type ClassCardProps = {
-  /** El objeto de la clase a mostrar. */
   classData: Class;
-  /** Función a ejecutar cuando se hace clic en la tarjeta. */
   onClick: (id: string) => void;
-  /** Opciones dinámicas para el menú de la tarjeta (opcional). */
-  menuOptions?: MenuOption[];
+  getMenuOptions?: (isOwner: boolean, isAdmin: boolean) => MenuOption[];
 };
 
-/**
- * Componente de tarjeta para mostrar información de una clase,
- * con un estilo inspirado en Google Classroom.
- */
 export const ClassCard = ({
   classData,
   onClick,
-  menuOptions = [],
+  getMenuOptions,
 }: ClassCardProps) => {
   const { id, className, subject, section, color } = classData;
+  const { user } = useUser();
+  const { relation, isLoading: isLoadingRelation } = useClassProfessorRelation(
+    id,
+    user?.id,
+  );
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
+
+  const isOwner = user.role === 2 || (relation?.isOwner ?? false);
+  const isAdmin = user.role === 2;
+
+  const menuOptions = useMemo(
+    () => getMenuOptions?.(isOwner, isAdmin) ?? [],
+    [isOwner, isAdmin, getMenuOptions],
+  );
 
   const handleCardClick = () => {
     onClick(id);
   };
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    // Detiene la propagación para que no se active el onClick de la tarjeta.
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
 
-  const handleCloseMenu = (_event: object, _reason: "backdropClick" | "escapeKeyDown") => {
+  const handleCloseMenu = () => {
     setAnchorEl(null);
   };
 
@@ -65,7 +67,7 @@ export const ClassCard = ({
   ) => {
     event.stopPropagation();
     callback();
-    setAnchorEl(null); // Cierra el menú directamente
+    setAnchorEl(null);
   };
 
   return (
@@ -90,32 +92,39 @@ export const ClassCard = ({
                 color: "white",
                 fontWeight: "bold",
                 textShadow: "1px 1px 3px rgba(0,0,0,0.3)",
-                mr: "40px", // Margen derecho para no solapar el icono
+                mr: "40px",
               }}
               noWrap
             >
               {className}
             </Typography>
             {section && (
-              <Typography variant="subtitle1" sx={{ color: "white", textShadow: "1px 1px 3px rgba(0,0,0,0.2)" }}>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  color: "white",
+                  textShadow: "1px 1px 3px rgba(0,0,0,0.2)",
+                }}
+              >
                 {section}
               </Typography>
             )}
           </Box>
-          {menuOptions.length > 0 && (
-            <IconButton
-              aria-label="opciones"
-              onClick={handleMenuClick}
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                color: "white",
-              }}
-            >
-              <MoreVertIcon />
-            </IconButton>
-          )}
+          <Box sx={{ position: "absolute", top: 8, right: 8 }}>
+            {isLoadingRelation ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              menuOptions.length > 0 && (
+                <IconButton
+                  aria-label="opciones"
+                  onClick={handleMenuClick}
+                  sx={{ color: "white" }}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+              )
+            )}
+          </Box>
         </Box>
         <CardContent sx={{ height: 80 }}>
           {subject && (
@@ -129,10 +138,8 @@ export const ClassCard = ({
         anchorEl={anchorEl}
         open={isMenuOpen}
         onClose={handleCloseMenu}
-        onClick={(e) => e.stopPropagation()} // Evita que el clic en el menú se propague a la tarjeta
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
+        onClick={(e) => e.stopPropagation()}
+        MenuListProps={{ "aria-labelledby": "basic-button" }}
       >
         {menuOptions.map((option) => (
           <MenuItem

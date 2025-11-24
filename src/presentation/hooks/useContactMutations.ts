@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { apiPostInput, apiPutInput } from "@application";
+import { apiPostInput, apiPutInput, InternalServerError } from "@application";
 import type {
   NewContact,
   ContactUpdate,
@@ -47,7 +47,7 @@ export const useContactMutations = () => {
       // Debería ser un error inesperado
       setState({
         isLoading: false,
-        error: new AppError("Ocurrió un error inesperado"),
+        error: new InternalServerError("Ocurrió un error inesperado"),
         validationErrors: null,
       });
     }
@@ -65,7 +65,7 @@ export const useContactMutations = () => {
       // 'already-exists'
       setState({
         isLoading: false,
-        error: new AppError("El contacto ya existe en tu agenda."),
+        error: new InternalServerError("El contacto ya existe en tu agenda."),
         validationErrors: null,
       });
     }

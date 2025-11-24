@@ -11,7 +11,7 @@ import {
   Chip,
   Alert,
 } from "@mui/material";
-import { useEffect, useState, useCallback, type KeyboardEvent } from "react";
+import { useEffect, useState, type KeyboardEvent } from "react";
 import { useUser } from "@presentation";
 import type { Contact, User } from "@domain";
 import type { FieldErrorDTO } from "@application";
@@ -65,7 +65,7 @@ export const ContactEditorModal = ({
     error: mutationError,
     reset: resetMutation,
   } = useContactMutations();
-  
+
   const {
     tags: fetchedTags,
     isLoading: isLoadingTags,
@@ -114,10 +114,8 @@ export const ContactEditorModal = ({
 
   useEffect(() => {
     if (backendErrors) {
-      const mappedErrors = backendErrors.map(err => 
-        err.field.toLowerCase() === 'userid' 
-          ? { ...err, field: 'email' } 
-          : err
+      const mappedErrors = backendErrors.map((err) =>
+        err.field.toLowerCase() === "userid" ? { ...err, field: "email" } : err,
       );
       setFieldErrors(mappedErrors);
     }
@@ -129,16 +127,20 @@ export const ContactEditorModal = ({
     );
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
     if (getErrorForField(name)) {
-      setFieldErrors((prev) => prev.filter((err) => err.field.toLowerCase() !== name.toLowerCase()));
+      setFieldErrors((prev) =>
+        prev.filter((err) => err.field.toLowerCase() !== name.toLowerCase()),
+      );
     }
   };
 
   const handleTagInputKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' && tagInput.trim() !== "") {
+    if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault();
       const newTag = tagInput.trim();
       if (isEditMode && contactToEdit) {
@@ -156,7 +158,7 @@ export const ContactEditorModal = ({
     if (isEditMode && contactToEdit) {
       removeTag(currentUser.id, contactToEdit.userId, tagToDelete);
     } else {
-      setCreationTags(creationTags.filter(tag => tag !== tagToDelete));
+      setCreationTags(creationTags.filter((tag) => tag !== tagToDelete));
     }
   };
 
@@ -166,16 +168,38 @@ export const ContactEditorModal = ({
 
     if (isEditMode && contactToEdit) {
       await updateContact(
-        { agendaOwnerId: currentUser.id, userId: contactToEdit.userId, alias: formState.alias, notes: formState.notes },
-        () => { onSuccess(); handleClose(); },
+        {
+          agendaOwnerId: currentUser.id,
+          userId: contactToEdit.userId,
+          alias: formState.alias,
+          notes: formState.notes,
+        },
+        () => {
+          onSuccess();
+          handleClose();
+        },
       );
     } else if (searchedUser) {
       await createContact(
-        { agendaOwnerId: currentUser.id, userId: searchedUser.id, alias: formState.alias, notes: formState.notes, tags: creationTags },
-        () => { onSuccess(); handleClose(); },
+        {
+          agendaOwnerId: currentUser.id,
+          userId: searchedUser.id,
+          alias: formState.alias,
+          notes: formState.notes,
+          tags: creationTags,
+        },
+        () => {
+          onSuccess();
+          handleClose();
+        },
       );
     } else {
-      setFieldErrors([{ field: 'email', message: 'Debes buscar y seleccionar un usuario válido.' }]);
+      setFieldErrors([
+        {
+          field: "email",
+          message: "Debes buscar y seleccionar un usuario válido.",
+        },
+      ]);
     }
   };
 
@@ -191,7 +215,9 @@ export const ContactEditorModal = ({
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>{isEditMode ? "Editar Contacto" : "Añadir Nuevo Contacto"}</DialogTitle>
+      <DialogTitle>
+        {isEditMode ? "Editar Contacto" : "Añadir Nuevo Contacto"}
+      </DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           {mutationError && (
@@ -200,25 +226,84 @@ export const ContactEditorModal = ({
             </Alert>
           )}
 
-          <TextField margin="normal" fullWidth id="email" name="email" label="Email del Contacto" value={formState.email} onChange={handleChange} error={!!getErrorForField("email")} helperText={getErrorForField("email")?.message} disabled={isEditMode} InputProps={{ endAdornment: !isEditMode && isSearchingUser && <CircularProgress size={20} /> }} />
+          <TextField
+            margin="normal"
+            fullWidth
+            id="email"
+            name="email"
+            label="Email del Contacto"
+            value={formState.email}
+            onChange={handleChange}
+            error={!!getErrorForField("email")}
+            helperText={getErrorForField("email")?.message}
+            disabled={isEditMode}
+            InputProps={{
+              endAdornment: !isEditMode && isSearchingUser && (
+                <CircularProgress size={20} />
+              ),
+            }}
+          />
           {!isEditMode && (
             <Box sx={{ mb: 2, pl: 1, height: "24px" }}>
-              {searchError && <Typography color="error">{searchError}</Typography>}
-              {searchedUser && (<Typography color="primary">Usuario encontrado: {searchedUser.firstName} {searchedUser.fatherLastname}</Typography>)}
+              {searchError && (
+                <Typography color="error">{searchError}</Typography>
+              )}
+              {searchedUser && (
+                <Typography color="primary">
+                  Usuario encontrado: {searchedUser.firstName}{" "}
+                  {searchedUser.fatherLastname}
+                </Typography>
+              )}
             </Box>
           )}
-          <TextField margin="normal" fullWidth id="alias" name="alias" label="Alias" value={formState.alias} onChange={handleChange} error={!!getErrorForField("alias")} helperText={getErrorForField("alias")?.message} />
-          <TextField margin="normal" fullWidth id="notes" name="notes" label="Notas (Opcional)" multiline rows={4} value={formState.notes} onChange={handleChange} error={!!getErrorForField("notes")} helperText={getErrorForField("notes")?.message} />
-          
+          <TextField
+            margin="normal"
+            fullWidth
+            id="alias"
+            name="alias"
+            label="Alias"
+            value={formState.alias}
+            onChange={handleChange}
+            error={!!getErrorForField("alias")}
+            helperText={getErrorForField("alias")?.message}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            id="notes"
+            name="notes"
+            label="Notas (Opcional)"
+            multiline
+            rows={4}
+            value={formState.notes}
+            onChange={handleChange}
+            error={!!getErrorForField("notes")}
+            helperText={getErrorForField("notes")?.message}
+          />
+
           <Box sx={{ my: 2 }}>
-            <Typography variant="subtitle1" gutterBottom>Etiquetas</Typography>
-            <TextField fullWidth variant="outlined" label="Añadir etiqueta y presionar Enter" value={tagInput} onChange={(e) => setTagInput(e.target.value)} onKeyDown={handleTagInputKeyDown} disabled={isEditMode && !contactToEdit} />
+            <Typography variant="subtitle1" gutterBottom>
+              Etiquetas
+            </Typography>
+            <TextField
+              fullWidth
+              variant="outlined"
+              label="Añadir etiqueta y presionar Enter"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={handleTagInputKeyDown}
+              disabled={isEditMode && !contactToEdit}
+            />
             {isLoadingTags ? (
               <CircularProgress size={24} sx={{ mt: 1 }} />
             ) : (
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}>
                 {tags.map((tag) => (
-                  <Chip key={tag} label={tag} onDelete={() => handleTagDelete(tag)} />
+                  <Chip
+                    key={tag}
+                    label={tag}
+                    onDelete={() => handleTagDelete(tag)}
+                  />
                 ))}
               </Box>
             )}
@@ -227,7 +312,13 @@ export const ContactEditorModal = ({
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button type="submit" variant="contained" disabled={isMutating}>
-            {isMutating ? <CircularProgress size={24} /> : isEditMode ? "Guardar Cambios" : "Añadir"}
+            {isMutating ? (
+              <CircularProgress size={24} />
+            ) : isEditMode ? (
+              "Guardar Cambios"
+            ) : (
+              "Añadir"
+            )}
           </Button>
         </DialogActions>
       </form>

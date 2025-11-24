@@ -35,7 +35,6 @@ export const ContactsView = () => {
 
   const [criteria, setCriteria] = useState<ContactCriteria>({
     page: 1,
-    pageSize: 10,
     agendaOwnerId: currentUser.id,
   });
 
@@ -88,7 +87,7 @@ export const ContactsView = () => {
   };
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     value: number,
   ) => {
     setCriteria((prev) => ({ ...prev, page: value }));
