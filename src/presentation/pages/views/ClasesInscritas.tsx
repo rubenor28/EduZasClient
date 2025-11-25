@@ -13,7 +13,12 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import type { Class } from "@domain";
-import { apiDelete, apiPut, NotFoundError, type ClassCriteria } from "@application";
+import {
+  apiDelete,
+  apiPut,
+  NotFoundError,
+  type ClassCriteria,
+} from "@application";
 import {
   ClassCard,
   ClassSearchForm,
@@ -21,6 +26,7 @@ import {
   useUser,
   usePaginatedSearch,
   EnrollClassModal,
+  PaginationControls,
 } from "@presentation";
 
 export const ClasesInscritas = () => {
@@ -33,12 +39,18 @@ export const ClasesInscritas = () => {
     severity: "success" | "error" | "info" | "warning";
   }>({ open: false, message: "", severity: "info" });
 
-  const { criteria, setCriteria, data, isLoading, error, refreshSearch: refetch } =
-    usePaginatedSearch<Class, ClassCriteria>("/classes/enrolled", {
-      page: 1,
-      active: true,
-      withStudent: { id: user.id, hidden: false },
-    });
+  const {
+    criteria,
+    setCriteria,
+    data,
+    isLoading,
+    error,
+    refreshSearch: refetch,
+  } = usePaginatedSearch<Class, ClassCriteria>("/classes/enrolled", {
+    page: 1,
+    active: true,
+    withStudent: { id: user.id, hidden: false },
+  });
 
   const handleToggleHidden = async (classId: string, shouldHide: boolean) => {
     const action = shouldHide ? "ocultar" : "mostrar";
@@ -124,6 +136,7 @@ export const ClasesInscritas = () => {
     if (newValue === null) return;
     setCriteria((prev) => ({
       ...prev,
+      page: 1,
       withStudent: {
         ...prev.withStudent!,
         hidden:
@@ -136,8 +149,8 @@ export const ClasesInscritas = () => {
     criteria.withStudent?.hidden === undefined
       ? "all"
       : criteria.withStudent.hidden
-        ? "true"
-        : "false";
+      ? "true"
+      : "false";
 
   const hiddenToggle = (
     <ToggleButtonGroup
@@ -214,6 +227,8 @@ export const ClasesInscritas = () => {
       />
 
       {renderContent()}
+
+      <PaginationControls data={data} setCriteria={setCriteria} />
 
       <EnrollClassModal
         open={isEnrollModalOpen}

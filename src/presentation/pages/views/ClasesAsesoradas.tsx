@@ -11,15 +11,14 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
-import type { Class, ClassProfessor } from "@domain";
+import { useMemo, useState } from "react";
+import type { Class } from "@domain";
 import {
   type ClassUpdate,
   apiDelete,
   apiPut,
   ForbiddenError,
   type ClassCriteria,
-  apiGet,
 } from "@application";
 import {
   ClassCard,
@@ -28,6 +27,8 @@ import {
   useUser,
   usePaginatedSearch,
   type MenuOption,
+  PaginationControls,
+  useOwnership,
 } from "@presentation";
 
 export const ClasesAsesoradas = () => {
@@ -55,6 +56,8 @@ export const ClasesAsesoradas = () => {
     active: true,
     withProfessor: { id: user.id },
   });
+
+  const ownershipMap = useOwnership(data?.results);
 
   const handleOpenCreateModal = () => {
     setEditingClass(null);
@@ -138,52 +141,6 @@ export const ClasesAsesoradas = () => {
     }
   };
 
-  const getMenuOptions = (classData: Class): MenuOption[] => {
-    const options: MenuOption[] = [];
-    const isAdmin = user.role === 2;
-    let isOwner = false;
-
-    apiGet<ClassProfessor>(`/classes/professors/${classData.id}/${user.id}`)
-      .then((relation) => {
-        isOwner = relation.isOwner;
-      })
-      .catch((_) =>
-        setSnackbar({
-          open: true,
-          message: "Error al cargar las clases",
-          severity: "error",
-        }),
-      );
-
-    if (isOwner || isAdmin) {
-      options.push({
-        name: "Modificar",
-        callback: () => handleOpenEditModal(classData, isOwner),
-      });
-    }
-
-    if (classData.active) {
-      options.push({
-        name: "Archivar",
-        callback: () => handleArchive(classData),
-      });
-    } else {
-      options.push({
-        name: "Desarchivar",
-        callback: () => handleUnarchive(classData),
-      });
-    }
-
-    if (isOwner || isAdmin) {
-      options.push({
-        name: "Eliminar",
-        callback: () => handleDelete(classData.id),
-      });
-    }
-
-    return options;
-  };
-
   const handleIsOwnerChange = (
     _e: React.MouseEvent<HTMLElement>,
     newValue: string | null,
@@ -191,6 +148,7 @@ export const ClasesAsesoradas = () => {
     if (newValue === null) return;
     setCriteria((prev) => ({
       ...prev,
+      page: 1,
       withProfessor: {
         ...prev.withProfessor!,
         isOwner: newValue === "all" ? undefined : newValue === "true",
@@ -202,8 +160,8 @@ export const ClasesAsesoradas = () => {
     criteria.withProfessor?.isOwner === undefined
       ? "all"
       : criteria.withProfessor.isOwner
-        ? "true"
-        : "false";
+      ? "true"
+      : "false";
 
   const isOwnerToggle = (
     <ToggleButtonGroup
@@ -228,13 +186,42 @@ export const ClasesAsesoradas = () => {
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
         {data.results.map((classData) => {
+          const isOwner = ownershipMap.get(classData.id) ?? false;
+          const menuOptions: MenuOption[] = [];
+
+          if (isOwner || isAdmin) {
+            menuOptions.push({
+              name: "Modificar",
+              callback: () => handleOpenEditModal(classData, isOwner),
+            });
+          }
+
+          if (classData.active) {
+            menuOptions.push({
+              name: "Archivar",
+              callback: () => handleArchive(classData),
+            });
+          } else {
+            menuOptions.push({
+              name: "Desarchivar",
+              callback: () => handleUnarchive(classData),
+            });
+          }
+
+          if (isOwner || isAdmin) {
+            menuOptions.push({
+              name: "Eliminar",
+              callback: () => handleDelete(classData.id),
+            });
+          }
+
           return (
             <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
               <ClassCard
                 classData={classData}
                 onClick={() => {}}
                 isLoading={isLoading}
-                menuOptions={getMenuOptions(classData)}
+                menuOptions={menuOptions}
               />
             </Grid>
           );
@@ -272,6 +259,8 @@ export const ClasesAsesoradas = () => {
 
       {renderContent()}
 
+      <PaginationControls data={data} setCriteria={setCriteria} />
+
       <ClassEditorModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -296,4 +285,3 @@ export const ClasesAsesoradas = () => {
     </Paper>
   );
 };
-

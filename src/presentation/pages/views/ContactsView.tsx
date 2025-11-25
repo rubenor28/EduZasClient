@@ -11,7 +11,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Pagination,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
@@ -21,6 +20,7 @@ import {
   useUser,
   ContactEditorModal,
   ContactSearchForm,
+  PaginationControls,
 } from "@presentation";
 import type { Contact } from "@domain";
 import { apiDelete, type ContactCriteria } from "@application";
@@ -33,11 +33,17 @@ export const ContactsView = () => {
     null,
   );
 
-  const { criteria, setCriteria, data, isLoading, error, refreshSearch: refetch, nextPage, prevPage } =
-    usePaginatedSearch<Contact, ContactCriteria>("/contacts/me", {
-      page: 1,
-      agendaOwnerId: currentUser.id,
-    });
+  const {
+    criteria,
+    setCriteria,
+    data,
+    isLoading,
+    error,
+    refreshSearch: refetch,
+  } = usePaginatedSearch<Contact, ContactCriteria>("/contacts/me", {
+    page: 1,
+    agendaOwnerId: currentUser.id,
+  });
 
   // --- Handlers ---
   const handleOpenCreate = () => {
@@ -80,13 +86,6 @@ export const ContactsView = () => {
   const handleSuccess = () => {
     handleCloseModal();
     refetch();
-  };
-
-  const handlePageChange = (
-    _event: React.ChangeEvent<unknown>,
-    value: number,
-  ) => {
-    setCriteria((prev) => ({ ...prev, page: value }));
   };
 
   // --- Render Logic ---
@@ -154,17 +153,7 @@ export const ContactsView = () => {
 
       {renderContent()}
 
-      {data && data.totalPages > 1 && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Pagination
-            count={data.totalPages}
-            page={criteria.page}
-            onChange={handlePageChange}
-            color="primary"
-            size="large"
-          />
-        </Box>
-      )}
+      <PaginationControls data={data} setCriteria={setCriteria} />
 
       <ContactEditorModal
         open={isModalOpen}

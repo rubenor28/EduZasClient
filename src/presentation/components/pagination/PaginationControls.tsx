@@ -1,0 +1,69 @@
+
+import { Box, Pagination } from "@mui/material";
+import { type Criteria, type PaginatedQuery } from "@application";
+
+/**
+ * Props para el componente `PaginationControls`.
+ * @template T - El tipo de dato de los resultados.
+ * @template C - El tipo de criterio de búsqueda.
+ */
+interface PaginationControlsProps<T, C extends Criteria> {
+  /**
+   * Los datos paginados devueltos por el hook `usePaginatedSearch`.
+   * Puede ser `undefined` si la búsqueda aún no se ha completado.
+   */
+  data: PaginatedQuery<T, C> | undefined;
+
+  /**
+   * La función para actualizar los criterios de búsqueda, proporcionada por `usePaginatedSearch`.
+   * Se utiliza para cambiar de página.
+   */
+  setCriteria: React.Dispatch<React.SetStateAction<C>>;
+}
+
+/**
+ * Un componente reutilizable para mostrar controles de paginación (números de página).
+ * Está diseñado para funcionar con los datos proporcionados por el hook `usePaginatedSearch`.
+ *
+ * @template T - El tipo de dato de los resultados.
+ * @template C - El tipo de criterio de búsqueda que extiende `Criteria`.
+ *
+ * @example
+ * const { data, criteria, setCriteria } = usePaginatedSearch<MyType, MyCriteria>("/my-endpoint", { page: 1 });
+ *
+ * // ... en el JSX
+ * <PaginationControls data={data} setCriteria={setCriteria} />
+ */
+export const PaginationControls = <T, C extends Criteria>({
+  data,
+  setCriteria,
+}: PaginationControlsProps<T, C>) => {
+  if (!data || data.totalPages <= 1) {
+    return null; // No renderizar si no hay datos o solo hay una página
+  }
+
+  const handlePageChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    setCriteria((prev) => ({ ...prev, page: value }));
+  };
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        mt: 4,
+      }}
+    >
+      <Pagination
+        count={data.totalPages}
+        page={data.page}
+        onChange={handlePageChange}
+        color="primary"
+        size="large"
+      />
+    </Box>
+  );
+};
