@@ -12,14 +12,21 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import type { Class } from "@domain";
-import { type ClassUpdate, apiDelete, apiPut, ForbiddenError } from "@application";
+import type { Class, ClassProfessor } from "@domain";
+import {
+  type ClassUpdate,
+  apiDelete,
+  apiPut,
+  ForbiddenError,
+  type ClassCriteria,
+  apiGet,
+} from "@application";
 import {
   ClassCard,
   ClassSearchForm,
   ClassEditorModal,
   useUser,
-  useClassSearch,
+  usePaginatedSearch,
   type MenuOption,
 } from "@presentation";
 
@@ -34,12 +41,20 @@ export const ClasesAsesoradas = () => {
     severity: "success" | "error" | "info" | "warning";
   }>({ open: false, message: "", severity: "info" });
 
-  const { criteria, setCriteria, data, isLoading, error, refetch } =
-    useClassSearch("/classes/assigned", {
-      page: 1,
-      active: true,
-      withProfessor: { id: user.id },
-    });
+  const isAdmin = user.role === 2;
+
+  const {
+    criteria,
+    setCriteria,
+    data,
+    isLoading,
+    error,
+    refreshSearch: refetch,
+  } = usePaginatedSearch<Class, ClassCriteria>("/classes/assigned", {
+    page: 1,
+    active: true,
+    withProfessor: { id: user.id },
+  });
 
   const handleOpenCreateModal = () => {
     setEditingClass(null);
@@ -54,64 +69,125 @@ export const ClasesAsesoradas = () => {
   };
 
   const handleArchive = async (classData: Class) => {
-    if (!window.confirm(`¿Estás seguro de que quieres archivar la clase '${classData.className}'?`)) return;
+    if (
+      !window.confirm(
+        `¿Estás seguro de que quieres archivar la clase '${classData.className}'?`,
+      )
+    )
+      return;
     try {
       const payload: ClassUpdate = { ...classData, active: false };
-      await apiPut("/classes", payload, { parseResponse: 'void' });
+      await apiPut("/classes", payload, { parseResponse: "void" });
       refetch();
-      setSnackbar({ open: true, message: "La clase ha sido archivada.", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: "La clase ha sido archivada.",
+        severity: "success",
+      });
     } catch (err) {
-      const message = err instanceof ForbiddenError ? "No tienes permiso para archivar esta clase." : "Error al archivar la clase.";
+      const message =
+        err instanceof ForbiddenError
+          ? "No tienes permiso para archivar esta clase."
+          : "Error al archivar la clase.";
       setSnackbar({ open: true, message, severity: "error" });
     }
   };
 
   const handleUnarchive = async (classData: Class) => {
-    if (!window.confirm(`¿Estás seguro de que quieres desarchivar la clase '${classData.className}'?`)) return;
+    if (
+      !window.confirm(
+        `¿Estás seguro de que quieres desarchivar la clase '${classData.className}'?`,
+      )
+    )
+      return;
     try {
       const payload: ClassUpdate = { ...classData, active: true };
-      await apiPut("/classes", payload, { parseResponse: 'void' });
+      await apiPut("/classes", payload, { parseResponse: "void" });
       refetch();
-      setSnackbar({ open: true, message: "La clase ha sido desarchivada.", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: "La clase ha sido desarchivada.",
+        severity: "success",
+      });
     } catch (err) {
-      const message = err instanceof ForbiddenError ? "No tienes permiso para desarchivar esta clase." : "Error al desarchivar la clase.";
+      const message =
+        err instanceof ForbiddenError
+          ? "No tienes permiso para desarchivar esta clase."
+          : "Error al desarchivar la clase.";
       setSnackbar({ open: true, message, severity: "error" });
     }
   };
 
   const handleDelete = async (classId: string) => {
-    if (!window.confirm("¿Estás seguro de que quieres eliminar esta clase?")) return;
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta clase?"))
+      return;
     try {
-      await apiDelete(`/classes/${classId}`, { parseResponse: 'void' });
+      await apiDelete(`/classes/${classId}`, { parseResponse: "void" });
       refetch();
-      setSnackbar({ open: true, message: "La clase ha sido eliminada.", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: "La clase ha sido eliminada.",
+        severity: "success",
+      });
     } catch (err) {
-      const message = err instanceof ForbiddenError ? "No tienes permiso para eliminar esta clase." : "Error al eliminar la clase.";
+      const message =
+        err instanceof ForbiddenError
+          ? "No tienes permiso para eliminar esta clase."
+          : "Error al eliminar la clase.";
       setSnackbar({ open: true, message, severity: "error" });
     }
   };
 
-  const getMenuOptions = (classData: Class, isOwner: boolean, isAdmin: boolean): MenuOption[] => {
+  const getMenuOptions = (classData: Class): MenuOption[] => {
     const options: MenuOption[] = [];
-    
+    const isAdmin = user.role === 2;
+    let isOwner = false;
+
+    apiGet<ClassProfessor>(`/classes/professors/${classData.id}/${user.id}`)
+      .then((relation) => {
+        isOwner = relation.isOwner;
+      })
+      .catch((_) =>
+        setSnackbar({
+          open: true,
+          message: "Error al cargar las clases",
+          severity: "error",
+        }),
+      );
+
     if (isOwner || isAdmin) {
-        options.push({ name: "Modificar", callback: () => handleOpenEditModal(classData, isOwner) });
+      options.push({
+        name: "Modificar",
+        callback: () => handleOpenEditModal(classData, isOwner),
+      });
     }
 
     if (classData.active) {
-      options.push({ name: "Archivar", callback: () => handleArchive(classData) });
+      options.push({
+        name: "Archivar",
+        callback: () => handleArchive(classData),
+      });
     } else {
-      options.push({ name: "Desarchivar", callback: () => handleUnarchive(classData) });
+      options.push({
+        name: "Desarchivar",
+        callback: () => handleUnarchive(classData),
+      });
     }
-    
+
     if (isOwner || isAdmin) {
-        options.push({ name: "Eliminar", callback: () => handleDelete(classData.id) });
+      options.push({
+        name: "Eliminar",
+        callback: () => handleDelete(classData.id),
+      });
     }
 
     return options;
   };
 
-  const handleIsOwnerChange = (_e: React.MouseEvent<HTMLElement>, newValue: string | null) => {
+  const handleIsOwnerChange = (
+    _e: React.MouseEvent<HTMLElement>,
+    newValue: string | null,
+  ) => {
     if (newValue === null) return;
     setCriteria((prev) => ({
       ...prev,
@@ -122,10 +198,20 @@ export const ClasesAsesoradas = () => {
     }));
   };
 
-  const isOwnerValue = criteria.withProfessor?.isOwner === undefined ? "all" : (criteria.withProfessor.isOwner ? "true" : "false");
+  const isOwnerValue =
+    criteria.withProfessor?.isOwner === undefined
+      ? "all"
+      : criteria.withProfessor.isOwner
+        ? "true"
+        : "false";
 
   const isOwnerToggle = (
-    <ToggleButtonGroup value={isOwnerValue} exclusive onChange={handleIsOwnerChange} size="small">
+    <ToggleButtonGroup
+      value={isOwnerValue}
+      exclusive
+      onChange={handleIsOwnerChange}
+      size="small"
+    >
       <ToggleButton value="true">Propias</ToggleButton>
       <ToggleButton value="false">Ajenas</ToggleButton>
       <ToggleButton value="all">Todas</ToggleButton>
@@ -134,32 +220,46 @@ export const ClasesAsesoradas = () => {
 
   const renderContent = () => {
     if (isLoading) return <CircularProgress />;
-    if (error) return <Alert severity="error">Error al cargar las clases.</Alert>;
+    if (error)
+      return <Alert severity="error">Error al cargar las clases.</Alert>;
     if (!data || data.results.length === 0) {
       return <Typography sx={{ mt: 2 }}>No se encontraron clases.</Typography>;
     }
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
-        {data.results.map((classData) => (
-          <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
-            <ClassCard
-              classData={classData}
-              onClick={() => {}}
-              getMenuOptions={(isOwner, isAdmin) => getMenuOptions(classData, isOwner, isAdmin)}
-            />
-          </Grid>
-        ))}
+        {data.results.map((classData) => {
+          return (
+            <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
+              <ClassCard
+                classData={classData}
+                onClick={() => {}}
+                isLoading={isLoading}
+                menuOptions={getMenuOptions(classData)}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
     );
   };
 
   return (
     <Paper sx={{ p: 2, backgroundColor: "transparent", boxShadow: "none" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
         <Typography variant="h4" gutterBottom>
           Clases Asesoradas
         </Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreateModal}>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleOpenCreateModal}
+        >
           Nueva Clase
         </Button>
       </Box>
@@ -176,7 +276,7 @@ export const ClasesAsesoradas = () => {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         classToEdit={editingClass}
-        isCurrentUserOwner={editingClassIsOwner}
+        isCurrentUserOwner={isAdmin || editingClassIsOwner}
         onSuccess={refetch}
       />
       <Snackbar

@@ -16,7 +16,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import {
-  useContactsSearch,
+  usePaginatedSearch,
   ContactCard,
   useUser,
   ContactEditorModal,
@@ -33,15 +33,11 @@ export const ContactsView = () => {
     null,
   );
 
-  const [criteria, setCriteria] = useState<ContactCriteria>({
-    page: 1,
-    agendaOwnerId: currentUser.id,
-  });
-
-  const { data, isLoading, error, refetch } = useContactsSearch(
-    "/contacts/me",
-    criteria,
-  );
+  const { criteria, setCriteria, data, isLoading, error, refreshSearch: refetch, nextPage, prevPage } =
+    usePaginatedSearch<Contact, ContactCriteria>("/contacts/me", {
+      page: 1,
+      agendaOwnerId: currentUser.id,
+    });
 
   // --- Handlers ---
   const handleOpenCreate = () => {

@@ -13,13 +13,13 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import type { Class } from "@domain";
-import { apiDelete, apiPut, NotFoundError } from "@application";
+import { apiDelete, apiPut, NotFoundError, type ClassCriteria } from "@application";
 import {
   ClassCard,
   ClassSearchForm,
   type MenuOption,
   useUser,
-  useClassSearch,
+  usePaginatedSearch,
   EnrollClassModal,
 } from "@presentation";
 
@@ -33,8 +33,8 @@ export const ClasesInscritas = () => {
     severity: "success" | "error" | "info" | "warning";
   }>({ open: false, message: "", severity: "info" });
 
-  const { criteria, setCriteria, data, isLoading, error, refetch } =
-    useClassSearch("/classes/enrolled", {
+  const { criteria, setCriteria, data, isLoading, error, refreshSearch: refetch } =
+    usePaginatedSearch<Class, ClassCriteria>("/classes/enrolled", {
       page: 1,
       active: true,
       withStudent: { id: user.id, hidden: false },

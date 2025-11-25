@@ -11,8 +11,7 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import type { Class } from "@domain";
-import { useState, useMemo } from "react";
-import { useUser, useClassProfessorRelation } from "@presentation";
+import { useState } from "react";
 
 export type MenuOption = {
   name: string;
@@ -21,32 +20,21 @@ export type MenuOption = {
 
 type ClassCardProps = {
   classData: Class;
+  isLoading: boolean;
   onClick: (id: string) => void;
-  getMenuOptions?: (isOwner: boolean, isAdmin: boolean) => MenuOption[];
+  menuOptions?: MenuOption[];
 };
 
 export const ClassCard = ({
   classData,
+  isLoading,
   onClick,
-  getMenuOptions,
+  menuOptions = [],
 }: ClassCardProps) => {
   const { id, className, subject, section, color } = classData;
-  const { user } = useUser();
-  const { relation, isLoading: isLoadingRelation } = useClassProfessorRelation(
-    id,
-    user?.id,
-  );
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
-
-  const isOwner = user.role === 2 || (relation?.isOwner ?? false);
-  const isAdmin = user.role === 2;
-
-  const menuOptions = useMemo(
-    () => getMenuOptions?.(isOwner, isAdmin) ?? [],
-    [isOwner, isAdmin, getMenuOptions],
-  );
 
   const handleCardClick = () => {
     onClick(id);
@@ -111,7 +99,7 @@ export const ClassCard = ({
             )}
           </Box>
           <Box sx={{ position: "absolute", top: 8, right: 8 }}>
-            {isLoadingRelation ? (
+            {isLoading ? (
               <CircularProgress size={24} sx={{ color: "white" }} />
             ) : (
               menuOptions.length > 0 && (

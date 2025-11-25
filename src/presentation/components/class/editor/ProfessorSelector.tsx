@@ -17,7 +17,8 @@ import {
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import type { User, Contact } from "@domain";
-import { useContactsSearch, useUser } from "@presentation";
+import { usePaginatedSearch, useUser } from "@presentation";
+import type { ContactCriteria } from "@application";
 
 // Tipos unificados para la gestión interna del componente
 export type ProfessorInfo = {
@@ -59,8 +60,7 @@ export const ProfessorSelector = ({
   const [managedProfessors, setManagedProfessors] = useState<ManagedProfessor[]>([]);
   
   const [hasSearchedContacts, setHasSearchedContacts] = useState(false);
-  const contactCriteria = useMemo(() => ({ page: 1, pageSize: 200, agendaOwnerId: user.id }), [user.id]);
-  const { data: contactsData, isLoading: isLoadingContacts, error: contactsError, search: searchContacts } = useContactsSearch("/contacts/me", contactCriteria, { manual: true });
+  const { data: contactsData, isLoading: isLoadingContacts, error: contactsError, refreshSearch: searchContacts } = usePaginatedSearch<Contact, ContactCriteria>("/contacts/me", { page: 1, agendaOwnerId: user.id }, { autoFetch: false });
 
   useEffect(() => {
     if (open && !hasSearchedContacts) {

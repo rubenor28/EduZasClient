@@ -9,10 +9,26 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ClassForm, type ClassFormData } from "./ClassForm";
-import { ProfessorSelector, type ProfessorSelectorChanges } from "./ProfessorSelector";
+import {
+  ProfessorSelector,
+  type ProfessorSelectorChanges,
+} from "./ProfessorSelector";
 import type { Class, User } from "@domain";
-import type { NewClass, ClassUpdate, FieldErrorDTO, Professor, PaginatedQuery, UserCriteria } from "@application";
-import { apiPost, apiPut, InputError, apiDelete, apiGet, NotFoundError } from "@application";
+import type {
+  NewClass,
+  ClassUpdate,
+  FieldErrorDTO,
+  Professor,
+  PaginatedQuery,
+  UserCriteria,
+} from "@application";
+import {
+  apiPost,
+  apiPut,
+  InputError,
+  apiDelete,
+  apiGet,
+} from "@application";
 import { useUser } from "@presentation";
 
 type ClassEditorModalProps = {
@@ -26,7 +42,7 @@ type ClassEditorModalProps = {
 // Se usa para obtener el isOwner de un profesor
 type ClassProfessorRelation = {
   isOwner: boolean;
-}
+};
 
 const getInitialFormData = (classData?: Class | null): ClassFormData => ({
   className: classData?.className || "",
@@ -51,9 +67,18 @@ export const ClassEditorModal = ({
   onSuccess,
 }: ClassEditorModalProps) => {
   const { user } = useUser();
-  const [formData, setFormData] = useState<ClassFormData>(getInitialFormData(classToEdit));
-  const [professorChanges, setProfessorChanges] = useState<ProfessorSelectorChanges>({ toAdd: [], toRemove: [], toUpdate: [] });
-  const [initialProfessors, setInitialProfessors] = useState<{ user: User, isOwner: boolean }[]>([]);
+  const [formData, setFormData] = useState<ClassFormData>(
+    getInitialFormData(classToEdit),
+  );
+  const [professorChanges, setProfessorChanges] =
+    useState<ProfessorSelectorChanges>({
+      toAdd: [],
+      toRemove: [],
+      toUpdate: [],
+    });
+  const [initialProfessors, setInitialProfessors] = useState<
+    { user: User; isOwner: boolean }[]
+  >([]);
   const [isLoadingProfessors, setIsLoadingProfessors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -76,27 +101,27 @@ export const ClassEditorModal = ({
         try {
           // 1. Obtener la lista de usuarios (profesores)
           const usersResult = await apiPost<PaginatedQuery<User, UserCriteria>>(
-            '/users', { teachingInClass: classToEdit.id }
+            "/users",
+            { teachingInClass: classToEdit.id },
           );
 
           // 2. Para cada profesor, obtener su estado de propiedad
-          const professorDataPromises = usersResult.results.map(async (profUser) => {
-            try {
-              const relation = await apiGet<ClassProfessorRelation>(`/classes/professors/${classToEdit.id}/${profUser.id}`);
+          const professorDataPromises = usersResult.results.map(
+            async (profUser) => {
+              const relation = await apiGet<ClassProfessorRelation>(
+                `/classes/professors/${classToEdit.id}/${profUser.id}`,
+              );
               return { user: profUser, isOwner: relation.isOwner };
-            } catch (e) {
-              if (e instanceof NotFoundError) {
-                return { user: profUser, isOwner: false };
-              }
-              throw e; // Lanzar otros errores
-            }
-          });
-          
+            },
+          );
+
           const fullProfessorData = await Promise.all(professorDataPromises);
-          
+
           setInitialProfessors(fullProfessorData);
         } catch (e) {
-          setFormError(e instanceof Error ? e.message : "Error al cargar profesores.");
+          setFormError(
+            e instanceof Error ? e.message : "Error al cargar profesores.",
+          );
         } finally {
           setIsLoadingProfessors(false);
         }
@@ -105,7 +130,9 @@ export const ClassEditorModal = ({
     }
   }, [classToEdit, open, isEditMode]);
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -124,30 +151,59 @@ export const ClassEditorModal = ({
     try {
       if (isEditMode) {
         // Actualizar datos de la clase
-        const classPayload: ClassUpdate = { id: classToEdit!.id, ...cleanedData };
-        await apiPut("/classes", classPayload, { parseResponse: 'void' });
+        const classPayload: ClassUpdate = {
+          id: classToEdit!.id,
+          ...cleanedData,
+        };
+        await apiPut("/classes", classPayload, { parseResponse: "void" });
 
         // Aplicar cambios en profesores si el usuario es dueño
         if (isCurrentUserOwner) {
-            const changesPromises = [
-              ...professorChanges.toAdd.map(p => apiPost("/classes/professor", { classId: classToEdit!.id, userId: p.userId, isOwner: p.isOwner }, { parseResponse: 'void' })),
-              ...professorChanges.toRemove.map(p => apiDelete(`/classes/professors/${classToEdit!.id}/${p.userId}`, { parseResponse: 'void' })),
-              ...professorChanges.toUpdate.map(p => apiPut("/classes/professors", { classId: classToEdit!.id, userId: p.userId, isOwner: p.isOwner }, { parseResponse: 'void' }))
-            ];
-            await Promise.all(changesPromises);
+          const changesPromises = [
+            ...professorChanges.toAdd.map((p) =>
+              apiPost(
+                "/classes/professor",
+                {
+                  classId: classToEdit!.id,
+                  userId: p.userId,
+                  isOwner: p.isOwner,
+                },
+                { parseResponse: "void" },
+              ),
+            ),
+            ...professorChanges.toRemove.map((p) =>
+              apiDelete(`/classes/professors/${classToEdit!.id}/${p.userId}`, {
+                parseResponse: "void",
+              }),
+            ),
+            ...professorChanges.toUpdate.map((p) =>
+              apiPut(
+                "/classes/professors",
+                {
+                  classId: classToEdit!.id,
+                  userId: p.userId,
+                  isOwner: p.isOwner,
+                },
+                { parseResponse: "void" },
+              ),
+            ),
+          ];
+          await Promise.all(changesPromises);
         }
       } else {
         // Crear nueva clase
-        const professorsPayload: Professor[] = professorChanges.toAdd.map(p => ({
-          userId: p.userId,
-          isOwner: p.isOwner,
-        }));
-        const payload: NewClass = { 
-          ownerId: user.id, 
+        const professorsPayload: Professor[] = professorChanges.toAdd.map(
+          (p) => ({
+            userId: p.userId,
+            isOwner: p.isOwner,
+          }),
+        );
+        const payload: NewClass = {
+          ownerId: user.id,
           ...cleanedData,
           professors: professorsPayload,
         };
-        await apiPost("/classes", payload, { parseResponse: 'void' });
+        await apiPost("/classes", payload, { parseResponse: "void" });
       }
       onSuccess();
       onClose();
@@ -169,7 +225,9 @@ export const ClassEditorModal = ({
       </DialogTitle>
       <DialogContent>
         {formError && (
-          <Alert severity="error" sx={{ mb: 2 }}>{formError}</Alert>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {formError}
+          </Alert>
         )}
         <ClassForm
           formData={formData}
@@ -178,7 +236,7 @@ export const ClassEditorModal = ({
           fieldErrors={fieldErrors}
         />
         {isLoadingProfessors ? (
-          <CircularProgress sx={{ display: 'block', margin: '20px auto' }} />
+          <CircularProgress sx={{ display: "block", margin: "20px auto" }} />
         ) : (
           <ProfessorSelector
             isEditMode={isEditMode}
@@ -190,9 +248,21 @@ export const ClassEditorModal = ({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={isSubmitting}>Cancelar</Button>
-        <Button onClick={handleSubmit} variant="contained" disabled={isSubmitting}>
-          {isSubmitting ? <CircularProgress size={24} /> : (isEditMode ? "Guardar Cambios" : "Crear")}
+        <Button onClick={onClose} disabled={isSubmitting}>
+          Cancelar
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <CircularProgress size={24} />
+          ) : isEditMode ? (
+            "Guardar Cambios"
+          ) : (
+            "Crear"
+          )}
         </Button>
       </DialogActions>
     </Dialog>
