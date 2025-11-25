@@ -1,17 +1,7 @@
 import { useState, useEffect } from "react";
 import { apiGet, NotFoundError } from "@application";
-import type { Class } from "@domain";
+import type { Class, ClassProfessor } from "@domain";
 import { useUser } from "@presentation";
-
-/**
- * @deprecated Este type se usa para la relacion de un profesor con una clase
- * en el backend, es probable que se mueva a @domain
- */
-type ClassProfessor = {
-  classId: string;
-  userId: number;
-  isOwner: boolean;
-};
 
 /**
  * Hook para determinar la propiedad (ownership) de un conjunto de clases para el usuario actual.

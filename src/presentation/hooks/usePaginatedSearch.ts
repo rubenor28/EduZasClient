@@ -27,7 +27,7 @@ export function usePaginatedSearch<T, C extends Criteria>(
 
   const [criteria, setCriteria] = useState(initialCriteria);
   const [debouncedCriteria, setDebouncedCriteria] = useState(criteria);
-  
+
   const [data, setData] = useState<PaginatedQuery<T, C> | null>(null);
   const [isLoading, setLoading] = useState(autoFetch);
   const [error, setError] = useState<AppError | null>(null);
@@ -45,7 +45,10 @@ export function usePaginatedSearch<T, C extends Criteria>(
     try {
       setLoading(true);
       setError(null);
-      const s = await apiPost<PaginatedQuery<T, C>>(endpoint, debouncedCriteria);
+      const s = await apiPost<PaginatedQuery<T, C>>(
+        endpoint,
+        debouncedCriteria,
+      );
       setData(s);
     } catch (e) {
       let error: AppError;
@@ -80,15 +83,20 @@ export function usePaginatedSearch<T, C extends Criteria>(
 
   // Funciones para paginación que actualizan el estado correctamente
   const nextPage = () => {
-    if ((data?.page ?? 1) < (data?.totalPages ?? 1)) {
-      setCriteria(prev => ({ ...prev, page: (prev.page ?? 1) + 1 }));
-    }
+    const page = data?.page ?? 1;
+    const totalPages = data?.totalPages ?? 1;
+
+    if (page >= totalPages) return;
+
+    setCriteria((prev) => ({ ...prev, page: page + 1 }));
   };
 
   const prevPage = () => {
-    if ((data?.page ?? 1) > 1) {
-      setCriteria(prev => ({ ...prev, page: (prev.page ?? 1) - 1 }));
-    }
+    const page = data?.page ?? 1;
+
+    if (page <= 1) return;
+
+    setCriteria((prev) => ({ ...prev, page: page - 1 }));
   };
 
   return {
