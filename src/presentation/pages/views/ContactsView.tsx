@@ -40,6 +40,8 @@ export const ContactsView = () => {
     isLoading,
     error,
     refreshSearch: refetch,
+    firstPage,
+    lastPage,
   } = usePaginatedSearch<Contact, ContactCriteria>("/contacts/me", {
     page: 1,
     agendaOwnerId: currentUser.id,
@@ -153,7 +155,12 @@ export const ContactsView = () => {
 
       {renderContent()}
 
-      <PaginationControls data={data} setCriteria={setCriteria} />
+      <PaginationControls
+        data={data}
+        setCriteria={setCriteria}
+        firstPage={firstPage}
+        lastPage={lastPage}
+      />
 
       <ContactEditorModal
         open={isModalOpen}

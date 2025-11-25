@@ -46,6 +46,8 @@ export const ClasesInscritas = () => {
     isLoading,
     error,
     refreshSearch: refetch,
+    firstPage,
+    lastPage,
   } = usePaginatedSearch<Class, ClassCriteria>("/classes/enrolled", {
     page: 1,
     active: true,
@@ -228,7 +230,12 @@ export const ClasesInscritas = () => {
 
       {renderContent()}
 
-      <PaginationControls data={data} setCriteria={setCriteria} />
+      <PaginationControls
+        data={data}
+        setCriteria={setCriteria}
+        firstPage={firstPage}
+        lastPage={lastPage}
+      />
 
       <EnrollClassModal
         open={isEnrollModalOpen}

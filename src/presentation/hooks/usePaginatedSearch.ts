@@ -99,6 +99,14 @@ export function usePaginatedSearch<T, C extends Criteria>(
     setCriteria((prev) => ({ ...prev, page: page - 1 }));
   };
 
+  const firstPage = () => {
+    setCriteria((prev) => ({ ...prev, page: 1 }));
+  };
+
+  const lastPage = () => {
+    setCriteria((prev) => ({ ...prev, page: data?.totalPages ?? 1 }));
+  };
+
   return {
     data,
     criteria,
@@ -108,5 +116,7 @@ export function usePaginatedSearch<T, C extends Criteria>(
     refreshSearch,
     nextPage,
     prevPage,
+    firstPage,
+    lastPage,
   };
 }

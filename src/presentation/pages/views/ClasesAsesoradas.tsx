@@ -51,6 +51,8 @@ export const ClasesAsesoradas = () => {
     isLoading,
     error,
     refreshSearch: refetch,
+    firstPage,
+    lastPage,
   } = usePaginatedSearch<Class, ClassCriteria>("/classes/assigned", {
     page: 1,
     active: true,
@@ -259,7 +261,7 @@ export const ClasesAsesoradas = () => {
 
       {renderContent()}
 
-      <PaginationControls data={data} setCriteria={setCriteria} />
+      <PaginationControls data={data} setCriteria={setCriteria} firstPage={firstPage} lastPage={lastPage} />
 
       <ClassEditorModal
         open={isModalOpen}

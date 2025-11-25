@@ -1,5 +1,5 @@
 
-import { Box, Pagination } from "@mui/material";
+import { Box, Pagination, Button } from "@mui/material";
 import { type Criteria, type PaginatedQuery } from "@application";
 
 /**
@@ -19,6 +19,14 @@ interface PaginationControlsProps<T, C extends Criteria> {
    * Se utiliza para cambiar de página.
    */
   setCriteria: React.Dispatch<React.SetStateAction<C>>;
+  /**
+   * Función para ir a la primera página.
+   */
+  firstPage: () => void;
+  /**
+   * Función para ir a la última página.
+   */
+  lastPage: () => void;
 }
 
 /**
@@ -29,14 +37,16 @@ interface PaginationControlsProps<T, C extends Criteria> {
  * @template C - El tipo de criterio de búsqueda que extiende `Criteria`.
  *
  * @example
- * const { data, criteria, setCriteria } = usePaginatedSearch<MyType, MyCriteria>("/my-endpoint", { page: 1 });
+ * const { data, criteria, setCriteria, firstPage, lastPage } = usePaginatedSearch<MyType, MyCriteria>("/my-endpoint", { page: 1 });
  *
  * // ... en el JSX
- * <PaginationControls data={data} setCriteria={setCriteria} />
+ * <PaginationControls data={data} setCriteria={setCriteria} firstPage={firstPage} lastPage={lastPage} />
  */
 export const PaginationControls = <T, C extends Criteria>({
   data,
   setCriteria,
+  firstPage,
+  lastPage,
 }: PaginationControlsProps<T, C>) => {
   if (!data || data.totalPages <= 1) {
     return null; // No renderizar si no hay datos o solo hay una página
@@ -49,14 +59,27 @@ export const PaginationControls = <T, C extends Criteria>({
     setCriteria((prev) => ({ ...prev, page: value }));
   };
 
+  const isFirstPage = data.page === 1;
+  const isLastPage = data.page === data.totalPages;
+
   return (
     <Box
       sx={{
         display: "flex",
         justifyContent: "center",
+        alignItems: "center", // Align items vertically
+        gap: 2, // Spacing between items
         mt: 4,
       }}
     >
+      <Button
+        onClick={firstPage}
+        disabled={isFirstPage}
+        variant="outlined"
+        size="small"
+      >
+        Primera
+      </Button>
       <Pagination
         count={data.totalPages}
         page={data.page}
@@ -64,6 +87,14 @@ export const PaginationControls = <T, C extends Criteria>({
         color="primary"
         size="large"
       />
+      <Button
+        onClick={lastPage}
+        disabled={isLastPage}
+        variant="outlined"
+        size="small"
+      >
+        Última
+      </Button>
     </Box>
   );
 };
