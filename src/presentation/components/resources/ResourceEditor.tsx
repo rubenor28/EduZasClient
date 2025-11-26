@@ -5,12 +5,19 @@ import "@blocknote/core/fonts/inter.css";
 import { Box, Typography, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import type { Block } from "@blocknote/core";
+import type { Resource } from "domain/resources";
 
-export const ResourceEditor = () => {
+type ResourceEditorProps = {
+  defaultData: Resource;
+};
+
+export const ResourceEditor = ({ defaultData }: ResourceEditorProps) => {
   const [blocks, setBlocks] = useState<Block[]>([]);
+  const [resource, setResource] = useState(defaultData);
+
   const editor = useCreateBlockNote();
 
-  useEffect(() => console.log(JSON.stringify(blocks)), [blocks]);
+  useEffect(() => console.log(JSON.stringify(blocks)), [setBlocks]);
 
   return (
     <>
@@ -22,6 +29,7 @@ export const ResourceEditor = () => {
           alignItems: "flex-start",
         }}
       >
+        {/* Un titulo o input editable pero que tambien permita ver el titulo del recurso o modificarlo */}
         <TextField
           id="standard-helperText"
           label="Helper text"
@@ -31,6 +39,7 @@ export const ResourceEditor = () => {
           size="medium"
         />
       </Box>
+      {/*Contenido del recurso*/}
       <BlockNoteView
         theme="light"
         editor={editor}
