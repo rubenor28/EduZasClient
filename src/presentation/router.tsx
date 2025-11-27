@@ -8,6 +8,7 @@ import {
   Evaluaciones,
   DatabaseManagement,
   ContactsView,
+  ResourceEditorPage,
 } from "./pages/views";
 import {
   AuthErrorAs500Boundary,
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
               { path: "contacts", element: <ContactsView /> },
               { path: "tests", element: <Evaluaciones /> },
               { path: "content", element: <ContenidoAcademico /> },
+              { path: "content/:resourceId", element: <ResourceEditorPage /> },
             ],
           },
           {

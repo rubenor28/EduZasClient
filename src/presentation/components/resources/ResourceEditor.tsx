@@ -2,51 +2,60 @@ import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import "@blocknote/core/fonts/inter.css";
-import { Box, Typography, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Box, TextField } from "@mui/material";
+import { useEffect } from "react";
 import type { Block } from "@blocknote/core";
-import type { Resource } from "domain/resources";
 
 type ResourceEditorProps = {
-  defaultData: Resource;
+  initialTitle: string;
+  initialContent: Block[];
+  onTitleChange: (title: string) => void;
+  onContentChange: (content: Block[]) => void;
+  titleError?: string;
+  disabled?: boolean;
 };
 
-export const ResourceEditor = ({ defaultData }: ResourceEditorProps) => {
-  const [blocks, setBlocks] = useState<Block[]>([]);
-  const [resource, setResource] = useState(defaultData);
+export const ResourceEditor = ({
+  initialTitle,
+  initialContent,
+  onTitleChange,
+  onContentChange,
+  titleError,
+  disabled = false,
+}: ResourceEditorProps) => {
+  const editor = useCreateBlockNote({ initialContent });
 
-  const editor = useCreateBlockNote();
+  // Sync editor if initialContent changes from parent
+  useEffect(() => {
+    if (editor && JSON.stringify(initialContent) !== JSON.stringify(editor.document)) {
+        editor.replaceBlocks(editor.document, initialContent);
+    }
+  }, [initialContent, editor]);
 
-  useEffect(() => console.log(JSON.stringify(blocks)), [setBlocks]);
 
   return (
     <>
-      <Box
-        sx={{
-          p: 2,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "flex-start",
-        }}
-      >
-        {/* Un titulo o input editable pero que tambien permita ver el titulo del recurso o modificarlo */}
-        <TextField
-          id="standard-helperText"
-          label="Helper text"
-          defaultValue="Default Value"
-          helperText="Some important text"
-          variant="standard"
-          size="medium"
+      <TextField
+        label="Título"
+        value={initialTitle}
+        onChange={(e) => onTitleChange(e.target.value)}
+        fullWidth
+        margin="normal"
+        error={!!titleError}
+        helperText={titleError}
+        disabled={disabled}
+      />
+
+      <Box sx={{ mt: 2 }}>
+        <BlockNoteView
+          theme="light"
+          editor={editor}
+          editable={!disabled}
+          onChange={() => {
+            onContentChange(editor.document);
+          }}
         />
       </Box>
-      {/*Contenido del recurso*/}
-      <BlockNoteView
-        theme="light"
-        editor={editor}
-        onChange={() => {
-          setBlocks(editor.document);
-        }}
-      />
     </>
   );
 };

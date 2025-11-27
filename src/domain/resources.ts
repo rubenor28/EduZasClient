@@ -1,7 +1,9 @@
+import type { Block } from "@blocknote/core";
+
 export type Resource = {
-    id: number;
+    id: string;
     active: boolean;
     title: string;
-    content: string;
+    content: Block[];
     professorId: number;
 };

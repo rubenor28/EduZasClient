@@ -1,5 +1,13 @@
 import type { Criteria, StringQuery } from "./common";
 
+export type Resource = {
+  id: string;
+  active: boolean;
+  title: string;
+  content: string;
+  professorId: number;
+}
+
 export type NewResource = {
   title: string;
   content: string;
@@ -22,7 +30,7 @@ export type ResourceCriteria = Criteria & {
 };
 
 export type ResourceSummary = {
-    id: number;
+    id: string;
     active: boolean;
     title: string;
     professorId: number;
