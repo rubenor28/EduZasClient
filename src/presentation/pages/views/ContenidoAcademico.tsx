@@ -51,11 +51,14 @@ export const ContenidoAcademico = () => {
     refreshSearch: refetch,
     firstPage,
     lastPage,
-  } = usePaginatedSearch<ResourceSummary, ResourceCriteria>("/resources/search", {
-    page: 1,
-    active: true,
-    professorId: user.id,
-  });
+  } = usePaginatedSearch<ResourceSummary, ResourceCriteria>(
+    "/resources/search",
+    {
+      page: 1,
+      active: true,
+      professorId: user.id,
+    },
+  );
 
   const handleCreate = async () => {
     setIsCreating(true);
@@ -90,7 +93,9 @@ export const ContenidoAcademico = () => {
     )
       return;
     try {
-      const fullResource = await apiGet<Resource>(`/resources/${resourceData.id}`);
+      const fullResource = await apiGet<Resource>(
+        `/resources/${resourceData.id}`,
+      );
       const payload: ResourceUpdate = { ...fullResource, active: false };
       await apiPut("/resources", payload, { parseResponse: "void" });
       refetch();
@@ -116,7 +121,9 @@ export const ContenidoAcademico = () => {
     )
       return;
     try {
-      const fullResource = await apiGet<Resource>(`/resources/${resourceData.id}`);
+      const fullResource = await apiGet<Resource>(
+        `/resources/${resourceData.id}`,
+      );
       const payload: ResourceUpdate = { ...fullResource, active: true };
       await apiPut("/resources", payload, { parseResponse: "void" });
       refetch();
@@ -172,12 +179,7 @@ export const ContenidoAcademico = () => {
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
         {data.results.map((resourceData) => {
-          const menuOptions: MenuOption[] = [
-            {
-              name: "Modificar",
-              callback: () => handleEdit(resourceData.id),
-            },
-          ];
+          const menuOptions: MenuOption[] = [];
 
           if (resourceData.active) {
             menuOptions.push({
@@ -262,4 +264,3 @@ export const ContenidoAcademico = () => {
     </Paper>
   );
 };
-

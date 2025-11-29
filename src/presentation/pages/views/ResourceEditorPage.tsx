@@ -20,7 +20,17 @@ import {
 } from "@application";
 import { useUser, ResourceEditor } from "@presentation";
 
-const defaultBlock = { type: "paragraph", content: "" };
+const createDefaultBlock = (): Block => ({
+  id: crypto.randomUUID(),
+  type: "paragraph",
+  props: {
+    textColor: "default",
+    backgroundColor: "default",
+    textAlignment: "left",
+  },
+  content: [],
+  children: [],
+});
 
 export const ResourceEditorPage = () => {
   const { resourceId } = useParams<{ resourceId: string }>();
@@ -28,10 +38,10 @@ export const ResourceEditorPage = () => {
   const { user } = useUser();
 
   const [initialContent, setInitialContent] = useState<Block[]>([
-    defaultBlock,
+    createDefaultBlock(),
   ]);
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState<Block[]>([defaultBlock]);
+  const [content, setContent] = useState<Block[]>([createDefaultBlock()]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,9 +66,9 @@ export const ResourceEditorPage = () => {
         let parsedContent: Block[];
         try {
           const parsed = JSON.parse(fetchedResource.content);
-          parsedContent = Array.isArray(parsed) && parsed.length > 0 ? parsed : [defaultBlock];
+          parsedContent = Array.isArray(parsed) && parsed.length > 0 ? parsed : [createDefaultBlock()];
         } catch {
-          parsedContent = [defaultBlock];
+          parsedContent = [createDefaultBlock()];
         }
 
         setInitialContent(parsedContent);
@@ -143,6 +153,9 @@ export const ResourceEditorPage = () => {
         onContentChange={setContent}
         titleError={titleError}
         disabled={isSubmitting}
+        onAssociationChange={() => {
+          setSnackbar({ open: true, message: "Asociaciones actualizadas exitosamente." });
+        }}
       />
 
       <Snackbar
