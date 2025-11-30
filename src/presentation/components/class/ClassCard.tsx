@@ -12,11 +12,7 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import type { Class } from "@domain";
 import { useState } from "react";
-
-export type MenuOption = {
-  name: string;
-  callback: () => void;
-};
+import type { MenuOption } from "presentation/types";
 
 type ClassCardProps = {
   classData: Class;

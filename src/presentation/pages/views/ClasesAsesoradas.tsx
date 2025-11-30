@@ -11,7 +11,7 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { Class } from "@domain";
 import {
   type ClassUpdate,
@@ -261,7 +261,7 @@ export const ClasesAsesoradas = () => {
 
       {renderContent()}
 
-      <PaginationControls data={data} setCriteria={setCriteria} firstPage={firstPage} lastPage={lastPage} />
+      <PaginationControls data={data ?? undefined} setCriteria={setCriteria} firstPage={firstPage} lastPage={lastPage} />
 
       <ClassEditorModal
         open={isModalOpen}

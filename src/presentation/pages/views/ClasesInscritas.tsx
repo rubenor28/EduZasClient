@@ -192,7 +192,8 @@ export const ClasesInscritas = () => {
             <ClassCard
               classData={classData}
               onClick={() => {}}
-              getMenuOptions={() => getMenuOptions(classData)}
+              isLoading={isLoading}
+              menuOptions={getMenuOptions(classData)}
             />
           </Grid>
         ))}
@@ -231,7 +232,7 @@ export const ClasesInscritas = () => {
       {renderContent()}
 
       <PaginationControls
-        data={data}
+        data={data ?? undefined}
         setCriteria={setCriteria}
         firstPage={firstPage}
         lastPage={lastPage}

@@ -156,7 +156,7 @@ export const ContactsView = () => {
       {renderContent()}
 
       <PaginationControls
-        data={data}
+        data={data ?? undefined}
         setCriteria={setCriteria}
         firstPage={firstPage}
         lastPage={lastPage}

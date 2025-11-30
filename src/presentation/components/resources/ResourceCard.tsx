@@ -13,11 +13,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import type { ResourceSummary } from "@application";
 import { useState } from "react";
 import BookIcon from '@mui/icons-material/Book';
-
-export type MenuOption = {
-  name: string;
-  callback: () => void;
-};
+import type { MenuOption } from "presentation/types";
 
 type ResourceCardProps = {
   resourceData: ResourceSummary;
