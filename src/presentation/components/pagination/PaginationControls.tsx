@@ -67,8 +67,8 @@ export const PaginationControls = <T, C extends Criteria>({
       sx={{
         display: "flex",
         justifyContent: "center",
-        alignItems: "center", // Align items vertically
-        gap: 2, // Spacing between items
+        alignItems: "center",
+        gap: 2,
         mt: 4,
       }}
     >
