@@ -1,5 +1,5 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import { Login, Register, HomePage } from "./pages";
+import { Login, HomePage, Register, InitialSetup } from "./pages";
 import { AdminPanel, ProfessorPanel, StudentPanel } from "./pages/panels";
 import {
   ClasesAsesoradas,
@@ -15,40 +15,45 @@ import {
   PublicErrorPage,
   ProtectedErrorPage,
 } from "./components/errors";
+import { SystemGuard } from "./components/auth/SystemGuard";
 import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Outlet />,
+    element: <SystemGuard />, // El guardián envuelve toda la aplicación
     errorElement: <PublicErrorPage />,
     children: [
-      // --- Rutas Públicas ---
+      // --- Ruta de Configuración Inicial ---
+      {
+        path: "setup",
+        element: <InitialSetup />,
+      },
+      // --- Rutas Públicas (accesibles solo si hay usuarios) ---
       {
         element: (
           <AuthErrorAs500Boundary>
             <Outlet />
           </AuthErrorAs500Boundary>
         ),
-        errorElement: <PublicErrorPage />,
         children: [
           { path: "login", element: <Login /> },
           { path: "register", element: <Register /> },
         ],
       },
-      // --- Rutas Protegidas (agrupadas por layout) ---
+      // --- Rutas Protegidas (requieren autenticación) ---
       {
         element: (
           <UserProvider>
             <DashboardLayout />
           </UserProvider>
-        ), // Layout con la Navbar principal
+        ),
         errorElement: <ProtectedErrorPage />,
         children: [
           {
             index: true,
-            element: <HomePage />, // Redirige al panel correcto
+            element: <HomePage />,
           },
           {
             path: "admin",
@@ -56,7 +61,6 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <AdminPanel /> },
               { path: "database", element: <DatabaseManagement /> },
-              // Futuras sub-rutas de admin: /admin/users, /admin/stats...
             ],
           },
           {
