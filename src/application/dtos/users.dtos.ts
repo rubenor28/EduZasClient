@@ -7,6 +7,7 @@ export type NewUser = {
   password: string;
   motherLastname?: string;
   midName?: string;
+  role: number;
 };
 
 export type UpdateUser = {
