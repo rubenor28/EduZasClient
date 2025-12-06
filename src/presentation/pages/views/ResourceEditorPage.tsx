@@ -63,16 +63,8 @@ export const ResourceEditorPage = () => {
         );
         setTitle(fetchedResource.title);
 
-        let parsedContent: Block[];
-        try {
-          const parsed = JSON.parse(fetchedResource.content);
-          parsedContent = Array.isArray(parsed) && parsed.length > 0 ? parsed : [createDefaultBlock()];
-        } catch {
-          parsedContent = [createDefaultBlock()];
-        }
-
-        setInitialContent(parsedContent);
-        setContent(parsedContent);
+        setInitialContent(fetchedResource.content);
+        setContent(fetchedResource.content);
       } catch (e) {
         setError(e instanceof Error ? e.message : "Error al cargar el recurso.");
       } finally {
@@ -94,7 +86,7 @@ export const ResourceEditorPage = () => {
       const payload: ResourceUpdate = {
         id: resourceId,
         title,
-        content: JSON.stringify(content),
+        content: content,
         active: true, // Assume active on save
         professorId: user.id, // This might need to come from the fetched resource
       };

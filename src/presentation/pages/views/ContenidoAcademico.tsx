@@ -31,6 +31,7 @@ import {
   type MenuOption,
   PaginationControls,
 } from "@presentation";
+import type { Block } from "@blocknote/core";
 
 export const ContenidoAcademico = () => {
   const { user } = useUser();
@@ -60,12 +61,24 @@ export const ContenidoAcademico = () => {
     },
   );
 
+  const createDefaultBlock = (): Block => ({
+    id: crypto.randomUUID(),
+    type: "paragraph",
+    props: {
+      textColor: "default",
+      backgroundColor: "default",
+      textAlignment: "left",
+    },
+    content: [],
+    children: [],
+  });
+
   const handleCreate = async () => {
     setIsCreating(true);
     try {
       const payload: NewResource = {
         title: "Nueva nota",
-        content: JSON.stringify([{ type: "paragraph", content: "" }]),
+        content: [createDefaultBlock()],
         professorId: user.id,
       };
       const newResource = await apiPost<ResourceSummary>("/resources", payload);
