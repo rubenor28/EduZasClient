@@ -43,8 +43,6 @@ export const ResourceEditor = ({
   const { resourceId } = useParams<{ resourceId: string }>();
   const [isAssociationModalOpen, setIsAssociationModalOpen] = useState(false);
 
-  console.log(resourceId);
-
   const editor = useCreateBlockNote({
     initialContent: parseContent(initialContent),
   });

@@ -1,4 +1,9 @@
-export type SearchType = "LIKE" | "EQUALS";
+export const SearchType = {
+  EQ: 0,
+  LIKE: 1,
+} as const;
+
+export type SearchType = typeof SearchType[keyof typeof SearchType];
 
 export type StringQuery = {
   text: string;
