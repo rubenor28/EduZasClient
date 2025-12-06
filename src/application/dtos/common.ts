@@ -12,6 +12,7 @@ export type StringQuery = {
 
 export type Criteria = {
   page: number;
+  pageSize?: number;
 };
 
 export type PaginatedQuery<T, C> = {

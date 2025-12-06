@@ -6,7 +6,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import type { ResourceCriteria } from "@application";
+import { SearchType, type ResourceCriteria } from "@application";
 
 type ResourceSearchFormProps = {
   criteria: ResourceCriteria;
@@ -25,7 +25,7 @@ export const ResourceSearchForm = ({
     const { name, value } = e.target;
     setCriteria((prev) => ({
       ...prev,
-      [name]: value ? { text: value, searchType: "LIKE" } : undefined,
+      [name]: value ? { text: value, searchType: SearchType.LIKE } : undefined,
     }));
   };
 

@@ -1,24 +1,25 @@
 import type { Criteria, StringQuery } from "./common";
+import type { Block } from "@blocknote/core";
 
 export type Resource = {
   id: string;
   active: boolean;
   title: string;
-  content: string;
+  content: Block[];
   professorId: number;
 };
 
 export type NewResource = {
   title: string;
-  content: string;
+  content: Block[];
   professorId: number;
 };
 
 export type ResourceUpdate = {
   id: string;
   active: boolean;
-  title: string;
-  content: string;
+  title:string;
+  content: Block[];
   professorId: number;
 };
 

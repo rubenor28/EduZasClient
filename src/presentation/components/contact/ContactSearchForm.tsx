@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Grid, TextField, Paper, Box, Button } from "@mui/material";
-import type { ContactCriteria, StringQuery } from "@application";
+import { SearchType, type ContactCriteria, type StringQuery } from "@application";
 
 type ContactSearchFormProps = {
   criteria: ContactCriteria;
@@ -9,7 +9,7 @@ type ContactSearchFormProps = {
 
 const createStringQuery = (value: string): StringQuery | undefined => {
   // "LIKE" es un valor estándar para búsquedas de tipo "contains" o "contiene".
-  return value ? { text: value, searchType: "LIKE" } : undefined;
+  return value ? { text: value, searchType: SearchType.LIKE } : undefined;
 };
 
 export const ContactSearchForm = ({

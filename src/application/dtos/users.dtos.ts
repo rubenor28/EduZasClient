@@ -24,7 +24,7 @@ export type UpdateUser = {
 
 export type UserCriteria = {
   active?: boolean;
-  role?: StringQuery;
+  role?: number;
   firstName?: StringQuery;
   midName?: StringQuery;
   fatherLastname?: StringQuery;

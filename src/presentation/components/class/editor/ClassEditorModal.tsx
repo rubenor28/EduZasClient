@@ -101,7 +101,7 @@ export const ClassEditorModal = ({
         try {
           // 1. Obtener la lista de usuarios (profesores)
           const usersResult = await apiPost<PaginatedQuery<User, UserCriteria>>(
-            "/users",
+            "/users/all",
             { teachingInClass: classToEdit.id },
           );
 

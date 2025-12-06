@@ -6,7 +6,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import type { ClassCriteria } from "@application";
+import { SearchType, type ClassCriteria } from "@application";
 
 type ClassSearchFormProps = {
   criteria: ClassCriteria;
@@ -25,7 +25,7 @@ export const ClassSearchForm = ({
     const { name, value } = e.target;
     setCriteria((prev) => ({
       ...prev,
-      [name]: value ? { text: value, searchType: "LIKE" } : undefined,
+      [name]: value ? { text: value, searchType: SearchType.LIKE } : undefined,
     }));
   };
 
