@@ -1,8 +1,4 @@
-import {
-  type FieldErrorDTO,
-  InternalServerError,
-  apiPostInput,
-} from "@application";
+import { type FieldErrorDTO, apiPostInput } from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState, useEffect } from "react";
 import { useNavigate, Link as RouterLink, useLocation } from "react-router-dom";
@@ -77,10 +73,8 @@ export function Login() {
       (error) => {
         if (error.type === "input-error") {
           setFieldErrors(error.data);
-        } else if (error.type === "already-exists") {
-          throw new InternalServerError(
-            "Error inesperado: 'already-exists' recibido en el login.",
-          );
+        } else if (error.type === "conflict") {
+          setFormError(error.message);
         } else {
           setFormError("Las credenciales proporcionadas son incorrectas.");
         }

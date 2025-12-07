@@ -1,5 +1,5 @@
 import {
-  AlreadyExistError,
+  Conflict,
   ForbiddenError,
   InputError,
   NotFoundError,
@@ -29,5 +29,9 @@ export const apiErrorHandlers: Record<number, ErrorHandler> = {
     const errors: FieldErrorDTO[] = (await res.json()).errors;
     return new InputError(errors);
   },
-  409: () => new AlreadyExistError(),
+  409: async (res) => {
+    const response = (await res.json()).errors;
+    return new Conflict(response.message);
+  },
 };
+

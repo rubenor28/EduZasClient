@@ -8,6 +8,7 @@ import {
   CardContent,
 } from "@mui/material";
 import DnsIcon from '@mui/icons-material/Dns';
+import PeopleIcon from '@mui/icons-material/People';
 import { useNavigate } from "react-router-dom";
 
 const actions = [
@@ -16,6 +17,12 @@ const actions = [
     description: "Realiza respaldos y restauraciones de la base de datos del sistema.",
     icon: <DnsIcon fontSize="large" />,
     path: "/admin/database",
+  },
+  {
+    title: "Gestión de Usuarios",
+    description: "Administra los usuarios del sistema, sus roles y estados.",
+    icon: <PeopleIcon fontSize="large" />,
+    path: "/admin/users",
   },
   // Futuras acciones del administrador pueden ir aquí
 ];

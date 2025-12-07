@@ -1,5 +1,6 @@
 export type User = {
   id: number;
+  active: boolean;
   firstName: string;
   midName?: string;
   fatherLastname: string;

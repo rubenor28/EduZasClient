@@ -5,3 +5,4 @@ export * from "./Evaluaciones";
 export * from "./DatabaseManagement";
 export * from "./ContactsView";
 export * from "./ResourceEditorPage";
+export * from "./UsersView";

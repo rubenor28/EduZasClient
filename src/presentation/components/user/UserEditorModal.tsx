@@ -1,0 +1,186 @@
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  CircularProgress,
+  Alert,
+} from "@mui/material";
+import { useState, useEffect } from "react";
+import { UserEditorForm, type UserFormData } from "./UserEditorForm";
+import type { User } from "@domain";
+import type { NewUser, UpdateUser, FieldErrorDTO } from "@application";
+import { apiPostInput, apiPutInput } from "@application";
+
+type UserEditorModalProps = {
+  open: boolean;
+  onClose: () => void;
+  userToEdit?: User | null;
+  onSuccess: () => void;
+};
+
+type FormPayload =
+  | { mode: "create"; data: NewUser }
+  | { mode: "update"; data: UpdateUser };
+
+const getInitialFormData = (user?: User | null): UserFormData => ({
+  firstName: user?.firstName || "",
+  midName: user?.midName || "",
+  fatherLastname: user?.fatherLastname || "",
+  motherLastname: user?.motherLastname || "",
+  email: user?.email || "",
+  password: "",
+  role: user?.role ?? 0,
+  active: user ? user.active : true,
+});
+
+export const UserEditorModal = ({
+  open,
+  onClose,
+  userToEdit,
+  onSuccess,
+}: UserEditorModalProps) => {
+  const [formData, setFormData] = useState<UserFormData>(
+    getInitialFormData(userToEdit),
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
+
+  const isEditMode = !!userToEdit;
+
+  useEffect(() => {
+    if (open) {
+      setFormData(getInitialFormData(userToEdit));
+      setFormError(null);
+      setFieldErrors([]);
+    }
+  }, [userToEdit, open]);
+
+  const handleFormChange = (name: string, value: unknown) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setFormError(null);
+    setFieldErrors([]);
+
+    try {
+      let formPayload: FormPayload;
+
+      if (isEditMode) {
+        const updateData: UpdateUser = {
+          id: userToEdit!.id,
+          firstName: formData.firstName,
+          fatherLastname: formData.fatherLastname,
+          email: formData.email,
+          role: formData.role,
+          active: formData.active,
+          password: formData.password || null,
+        };
+        if (formData.midName) updateData.midName = formData.midName;
+        if (formData.motherLastname)
+          updateData.motherLastname = formData.motherLastname;
+
+        formPayload = { mode: "update", data: updateData };
+      } else {
+        const createData: NewUser = {
+          firstName: formData.firstName,
+          fatherLastname: formData.fatherLastname,
+          email: formData.email,
+          password: formData.password!,
+          role: formData.role,
+        };
+        if (formData.midName) createData.midName = formData.midName;
+        if (formData.motherLastname)
+          createData.motherLastname = formData.motherLastname;
+
+        formPayload = { mode: "create", data: createData };
+      }
+
+      switch (formPayload.mode) {
+        case "update": {
+          const result = await apiPutInput("/users", formPayload.data);
+          result.match(
+            () => {
+              onSuccess();
+              onClose();
+            },
+            (error) => {
+              if (error.type === "input-error") {
+                setFieldErrors(error.data);
+              } else {
+                setFormError(error.message || "Error al actualizar.");
+              }
+            },
+          );
+          break;
+        }
+        case "create": {
+          const result = await apiPostInput("/users", formPayload.data);
+          result.match(
+            () => {
+              onSuccess();
+              onClose();
+            },
+            (error) => {
+              if (error.type === "input-error") {
+                setFieldErrors(error.data);
+              } else if (error.type === "conflict") {
+                setFormError(error.message);
+              } else {
+                setFormError("Error al crear el usuario.");
+              }
+            },
+          );
+          break;
+        }
+      }
+    } catch (e) {
+      setFormError(e instanceof Error ? e.message : "Error inesperado.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>
+        {isEditMode ? "Editar Usuario" : "Crear Nuevo Usuario"}
+      </DialogTitle>
+      <DialogContent>
+        {formError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {formError}
+          </Alert>
+        )}
+        <UserEditorForm
+          formData={formData}
+          onFormChange={handleFormChange}
+          isEditMode={isEditMode}
+          fieldErrors={fieldErrors}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} disabled={isSubmitting}>
+          Cancelar
+        </Button>
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <CircularProgress size={24} />
+          ) : isEditMode ? (
+            "Guardar Cambios"
+          ) : (
+            "Crear"
+          )}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};

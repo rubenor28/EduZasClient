@@ -1,4 +1,4 @@
-import type { StringQuery } from "./common";
+import type { Criteria, StringQuery } from "./common";
 
 export type NewUser = {
   firstName: string;
@@ -17,12 +17,12 @@ export type UpdateUser = {
   firstName: string;
   fatherLastname: string;
   email: string;
-  password: string;
+  password: string | null;
   midName?: string;
   motherLastname?: string;
 };
 
-export type UserCriteria = {
+export type UserCriteria = Criteria & {
   active?: boolean;
   role?: number;
   firstName?: StringQuery;

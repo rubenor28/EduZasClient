@@ -40,8 +40,8 @@ export function Register() {
       (error) => {
         if (error.type === "input-error") {
           setFieldErrors(error.data);
-        } else if (error.type === "already-exists") {
-          setFormError("El correo electrónico ya está en uso.");
+        } else if (error.type === "conflict") {
+          setFormError(error.message);
         } else {
           setFormError(
             "Ocurrió un error inesperado al intentar registrar la cuenta.",

@@ -22,7 +22,7 @@ export type FieldErrorDTO = {
  * a la API.
  */
 export type APIInputError =
-  | { type: "already-exists" }
+  | { type: "conflict"; message: string }
   | { type: "input-error"; data: FieldErrorDTO[] };
 
 /**
@@ -89,8 +89,8 @@ export class NotFoundError extends AppError {
  * Representa un error al tratar de crear un elemento
  * repetido, como una respuesta 409.
  */
-export class AlreadyExistError extends AppError {
-  constructor(message: string = "El elemento ya existe", stack?: string) {
+export class Conflict extends AppError {
+  constructor(message: string, stack?: string) {
     super(message, stack);
   }
 }

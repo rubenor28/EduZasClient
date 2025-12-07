@@ -9,6 +9,7 @@ import {
   DatabaseManagement,
   ContactsView,
   ResourceEditorPage,
+  UsersView,
 } from "./pages/views";
 import {
   AuthErrorAs500Boundary,
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <AdminPanel /> },
               { path: "database", element: <DatabaseManagement /> },
+              { path: "users", element: <UsersView /> },
             ],
           },
           {

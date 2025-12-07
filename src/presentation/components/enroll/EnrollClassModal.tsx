@@ -13,7 +13,7 @@ import { useUser } from "@presentation";
 import {
   apiPost,
   NotFoundError,
-  AlreadyExistError,
+  Conflict,
   InputError,
 } from "@application";
 
@@ -51,8 +51,8 @@ export const EnrollClassModal = ({
     } catch (e) {
       if (e instanceof NotFoundError) {
         setError("No se encontró ninguna clase con ese código.");
-      } else if (e instanceof AlreadyExistError) {
-        setError("Ya estás inscrito en esta clase.");
+      } else if (e instanceof Conflict) {
+        setError(e.message);
       } else if (e instanceof InputError) {
         // Asumiendo que el error de input es para el campo classId
         setError(e.errors[0]?.message || "El código de la clase es inválido.");

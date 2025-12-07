@@ -10,7 +10,7 @@ import {
   type APIInputError,
   type APIAuthError,
   InputError,
-  AlreadyExistError,
+  Conflict,
   UnauthorizedError,
 } from "@application";
 import { apiErrorHandlers } from "./api.error.handlers";
@@ -109,7 +109,7 @@ async function baseFetch<T>(
 
     const isInputError =
       errorInstance instanceof InputError ||
-      errorInstance instanceof AlreadyExistError;
+      errorInstance instanceof Conflict;
     const isAuthError = errorInstance instanceof UnauthorizedError;
 
     const shouldReturnResult =
@@ -121,8 +121,8 @@ async function baseFetch<T>(
       let resultError: APIResultError;
       if (errorInstance instanceof InputError) {
         resultError = { type: "input-error", data: errorInstance.errors };
-      } else if (errorInstance instanceof AlreadyExistError) {
-        resultError = { type: "already-exists" };
+      } else if (errorInstance instanceof Conflict) {
+        resultError = { type: "conflict", message: errorInstance.message };
       } else {
         resultError = { type: "unauthorized" };
       }
