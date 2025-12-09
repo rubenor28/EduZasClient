@@ -49,3 +49,9 @@ export type ClassResourceAssociationCriteria = Criteria  & {
   professorId: number;
   resourceId: string;
 };
+
+export type ClassResource = {
+    classId: string;
+    resourceId: string;
+    hidden: boolean;
+}

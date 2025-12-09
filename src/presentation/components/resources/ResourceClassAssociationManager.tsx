@@ -18,15 +18,15 @@ import { useState, useEffect, useMemo } from "react";
 import type {
   ClassResourceAssociation,
   ClassResourceAssociationCriteria,
-  NewClassResourceDTO,
+  ClassResource,
 } from "@application";
 import { apiPost, apiDelete, apiPut } from "@application";
 import { useUser, usePaginatedSearch, PaginationControls } from "@presentation";
 
 type Changes = {
-  toAdd: { classId: string; isHidden: boolean }[];
+  toAdd: { classId: string; hidden: boolean }[];
   toRemove: string[];
-  toUpdate: { classId: string; isHidden: boolean }[];
+  toUpdate: { classId: string; hidden: boolean }[];
 };
 
 const initialChanges: Changes = { toAdd: [], toRemove: [], toUpdate: [] };
@@ -112,7 +112,9 @@ export const ResourceClassAssociationManager = ({
       };
 
       if (newIsAssociated === wasOriginallyAssociated) {
-        newChanges.toAdd = newChanges.toAdd.filter((c) => c.classId !== classId);
+        newChanges.toAdd = newChanges.toAdd.filter(
+          (c) => c.classId !== classId
+        );
         newChanges.toRemove = newChanges.toRemove.filter(
           (id) => id !== classId
         );
@@ -123,11 +125,13 @@ export const ResourceClassAssociationManager = ({
         if (!newChanges.toAdd.find((c) => c.classId === classId)) {
           newChanges.toAdd.push({
             classId,
-            isHidden: initialState.get(classId)?.isHidden ?? false,
+            hidden: false, // Default to visible
           });
         }
       } else {
-        newChanges.toAdd = newChanges.toAdd.filter((c) => c.classId !== classId);
+        newChanges.toAdd = newChanges.toAdd.filter(
+          (c) => c.classId !== classId
+        );
         newChanges.toUpdate = newChanges.toUpdate.filter(
           (c) => c.classId !== classId
         );
@@ -150,17 +154,16 @@ export const ResourceClassAssociationManager = ({
     });
 
     setChanges((prev) => {
-      const newChanges: Changes = { ...prev };
+      const newChanges = { ...prev };
       const original = initialState.get(classId);
-      const wasOriginallyAssociated = original?.isAssociated ?? false;
-
+      
       const pendingAdd = newChanges.toAdd.find((c) => c.classId === classId);
       if (pendingAdd) {
-        pendingAdd.isHidden = newIsHidden;
+        pendingAdd.hidden = newIsHidden;
         return newChanges;
       }
 
-      if (wasOriginallyAssociated) {
+      if (original?.isAssociated) {
         if (newIsHidden === original.isHidden) {
           newChanges.toUpdate = newChanges.toUpdate.filter(
             (c) => c.classId !== classId
@@ -170,9 +173,9 @@ export const ResourceClassAssociationManager = ({
             (c) => c.classId === classId
           );
           if (existingUpdate) {
-            existingUpdate.isHidden = newIsHidden;
+            existingUpdate.hidden = newIsHidden;
           } else {
-            newChanges.toUpdate.push({ classId, isHidden: newIsHidden });
+            newChanges.toUpdate.push({ classId, hidden: newIsHidden });
           }
         }
       }
@@ -197,8 +200,8 @@ export const ResourceClassAssociationManager = ({
             {
               resourceId,
               classId: c.classId,
-              hidden: c.isHidden,
-            } as NewClassResourceDTO,
+              hidden: c.hidden,
+            },
             { parseResponse: "void" }
           )
         ),
@@ -208,8 +211,8 @@ export const ResourceClassAssociationManager = ({
             {
               resourceId,
               classId: c.classId,
-              hidden: c.isHidden,
-            } as NewClassResourceDTO, // Assuming the DTO is the same for PUT
+              hidden: c.hidden,
+            } as ClassResource,
             { parseResponse: "void" }
           )
         ),
@@ -270,16 +273,17 @@ export const ResourceClassAssociationManager = ({
             {currentViewAssociations.map((assoc, index) => (
               <div key={assoc.classId}>
                 <ListItem dense sx={{ py: 1.5 }}>
-                  <ListItemText primary={assoc.className} sx={{ flexGrow: 1 }} />
-                  <Box
-                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
-                  >
+                  <ListItemText
+                    primary={assoc.className}
+                    sx={{ flexGrow: 1 }}
+                  />
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     {assoc.isAssociated && (
                       <FormControlLabel
                         sx={{ mr: 0, color: "text.secondary" }}
                         control={
                           <Switch
-                            checked={!assoc.isHidden} // isHidden: false -> checked: true (Visible)
+                            checked={!assoc.isHidden} 
                             onChange={() =>
                               handleHiddenToggle(assoc.classId, assoc.isHidden)
                             }

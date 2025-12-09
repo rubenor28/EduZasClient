@@ -22,9 +22,9 @@ import { apiPost, apiDelete, apiPut } from "@application";
 import { useUser, usePaginatedSearch, PaginationControls } from "@presentation";
 
 type Changes = {
-  toAdd: { classId: string; isVisible: boolean }[];
+  toAdd: { classId: string; visible: boolean }[];
   toRemove: string[];
-  toUpdate: { classId: string; isVisible: boolean }[];
+  toUpdate: { classId: string; visible: boolean }[];
 };
 
 const initialChanges: Changes = { toAdd: [], toRemove: [], toUpdate: [] };
@@ -111,28 +111,26 @@ export const TestClassAssociationManager = ({
       };
 
       if (newIsAssociated === wasOriginallyAssociated) {
-        // Toggled back to original state, remove from all change sets
-        newChanges.toAdd = newChanges.toAdd.filter((c) => c.classId !== classId);
+        newChanges.toAdd = newChanges.toAdd.filter(
+          (c) => c.classId !== classId
+        );
         newChanges.toRemove = newChanges.toRemove.filter(
           (id) => id !== classId
-        );
-        newChanges.toUpdate = newChanges.toUpdate.filter(
-          (c) => c.classId !== classId
         );
       } else if (newIsAssociated) {
-        // Adding association
         newChanges.toRemove = newChanges.toRemove.filter(
           (id) => id !== classId
         );
-        newChanges.toUpdate = newChanges.toUpdate.filter(
-          (c) => c.classId !== classId
-        );
         if (!newChanges.toAdd.find((c) => c.classId === classId)) {
-          newChanges.toAdd.push({ classId, isVisible: true });
+          newChanges.toAdd.push({
+            classId,
+            visible: true, // Default to visible
+          });
         }
       } else {
-        // Removing association
-        newChanges.toAdd = newChanges.toAdd.filter((c) => c.classId !== classId);
+        newChanges.toAdd = newChanges.toAdd.filter(
+          (c) => c.classId !== classId
+        );
         newChanges.toUpdate = newChanges.toUpdate.filter(
           (c) => c.classId !== classId
         );
@@ -160,31 +158,26 @@ export const TestClassAssociationManager = ({
     setChanges((prev) => {
       const newChanges: Changes = { ...prev };
       const original = initialState.get(classId);
-      const wasOriginallyAssociated = original?.isAssociated ?? false;
 
-      // If it's a new association, just update the toAdd entry
       const pendingAdd = newChanges.toAdd.find((c) => c.classId === classId);
       if (pendingAdd) {
-        pendingAdd.isVisible = newVisibility;
+        pendingAdd.visible = newVisibility;
         return newChanges;
       }
 
-      // If it was an existing association
-      if (wasOriginallyAssociated) {
-        // Remove from updates if it's back to original state
+      if (original?.isAssociated) {
         if (newVisibility === original.isVisible) {
           newChanges.toUpdate = newChanges.toUpdate.filter(
             (c) => c.classId !== classId
           );
         } else {
-          // Add or update the entry in toUpdate
           const existingUpdate = newChanges.toUpdate.find(
             (c) => c.classId === classId
           );
           if (existingUpdate) {
-            existingUpdate.isVisible = newVisibility;
+            existingUpdate.visible = newVisibility;
           } else {
-            newChanges.toUpdate.push({ classId, isVisible: newVisibility });
+            newChanges.toUpdate.push({ classId, visible: newVisibility });
           }
         }
       }
@@ -207,14 +200,14 @@ export const TestClassAssociationManager = ({
         ...changes.toAdd.map((c) =>
           apiPost(
             `/tests/classes`,
-            { testId: testId, classId: c.classId, visible: c.isVisible },
+            { testId: testId, classId: c.classId, visible: c.visible },
             { parseResponse: "void" }
           )
         ),
         ...changes.toUpdate.map((c) =>
           apiPut(
             `/tests/classes`,
-            { testId: testId, classId: c.classId, visible: c.isVisible },
+            { testId: testId, classId: c.classId, visible: c.visible },
             { parseResponse: "void" }
           )
         ),
