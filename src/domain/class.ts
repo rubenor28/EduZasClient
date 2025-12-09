@@ -18,12 +18,18 @@ export type Class = {
   color: string;
 };
 
+/** Identificador compuesto para la relación entre un usuario y una clase. */
 export type UserClassRelationID = {
+  /** ID del usuario. */
   userId: number;
+  /** ID de la clase. */
   classId: string;
 };
 
+/** Representa la relación de un profesor con una clase. */
 export type ClassProfessor = {
+  /** Identificador de la relación. */
   id: UserClassRelationID;
+  /** Indica si el profesor es el creador/propietario de la clase. */
   isOwner: boolean;
 };

@@ -7,7 +7,7 @@ import { type OutputData } from "@editorjs/editorjs";
 export type Test = {
   /** Identificador único de la evaluación (GUID). */
   id: string;
-  /** Indicador de borrado logico de la evaluacion */
+  /** Indica si la evaluación está activa. */
   active: boolean;
   /** Título de la evaluación. */
   title: string;
