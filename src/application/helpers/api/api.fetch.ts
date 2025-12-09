@@ -14,10 +14,9 @@ import {
   UnauthorizedError,
 } from "@application";
 import { apiErrorHandlers } from "./api.error.handlers";
+import { API_BASE_URL } from "@domain";
 
 // --- Lógica de baseFetch ---
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5018";
 
 /**
  * Define cómo se debe procesar el cuerpo de una respuesta de la API.

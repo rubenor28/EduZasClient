@@ -10,8 +10,7 @@ import {
 } from "@mui/material";
 import { UploadFile } from "@mui/icons-material";
 import { apiGet, apiPost } from "@application";
-
-const API_BASE_URL = "http://localhost:5018";
+import { API_BASE_URL } from "@domain";
 
 type AntiforgeryToken = {
   headerName: string;
