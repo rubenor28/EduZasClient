@@ -1,4 +1,10 @@
-import { type FieldErrorDTO, apiPostInput } from "@application";
+import {
+  type FieldErrorDTO,
+  apiPostInput,
+  NotFoundError,
+  errorService,
+  InternalServerError,
+} from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState, useEffect } from "react";
 import { useNavigate, Link as RouterLink, useLocation } from "react-router-dom";
@@ -68,26 +74,33 @@ export function Login() {
     setFormError(null);
     setSuccessMessage(null); // Clear success message on new submission
 
-    const result = await apiPostInput<void>("/auth/login", {
-      email,
-      password,
-    });
+    try {
+      const result = await apiPostInput<void>("/auth/login", {
+        email,
+        password,
+      });
 
-    setIsSubmitting(false);
-    result.match(
-      (_successData) => {
-        navigate("/");
-      },
-      (error) => {
-        if (error.type === "input-error") {
-          setFieldErrors(error.data);
-        } else if (error.type === "conflict") {
-          setFormError(error.message);
-        } else {
-          setFormError("Las credenciales proporcionadas son incorrectas.");
-        }
-      },
-    );
+      result.match(
+        (_successData) => {
+          navigate("/");
+        },
+        (error) => {
+          if (error.type === "input-error") {
+            setFieldErrors(error.data);
+          } else if (error.type === "conflict") {
+            setFormError(error.message);
+          } else {
+            setFormError("Las credenciales proporcionadas son incorrectas.");
+          }
+        },
+      );
+    } catch (e) {
+      if (e instanceof NotFoundError) setFormError("No se encontró el email.");
+      else
+        errorService.notify(new InternalServerError("Error al iniciar sesión"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
