@@ -68,9 +68,13 @@ export type TestCriteria = Criteria & {
  * DTO para representar el estado de asociación entre una evaluación y una clase.
  */
 export type ClassTestAssociation = {
+  /** ID de la clase. */
   classId: string;
+  /** Nombre de la clase. */
   className: string;
+  /** Indica si la evaluación está asociada a la clase. */
   isAssociated: boolean;
+  /** Indica si la evaluación es visible para los estudiantes. */
   isVisible: boolean;
 };
 
@@ -78,6 +82,8 @@ export type ClassTestAssociation = {
  * DTO para los criterios de búsqueda de asociaciones entre evaluación y clase.
  */
 export type ClassTestAssociationCriteria = Criteria & {
+  /** ID del profesor que consulta. */
   professorId: number;
+  /** ID de la evaluación. */
   testId: string;
 };

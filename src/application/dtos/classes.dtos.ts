@@ -2,7 +2,9 @@ import type { Criteria, StringQuery } from "@application";
 
 /** DTO para la creación de un nuevo profesor en una clase. */
 export type Professor = {
+  /** ID del usuario profesor. */
   userId: number;
+  /** Indica si es el propietario de la clase. */
   isOwner: boolean;
 };
 
@@ -74,8 +76,12 @@ export type ClassCriteria = Criteria & {
   withStudent?: { id: number; hidden?: boolean };
 };
 
+/** Criterios de búsqueda para la relación clase-profesor. */
 export type ClassProfessorCriteria = Criteria & {
+  /** Filtrar por ID de usuario. */
   userId?: number;
+  /** Filtrar por ID de clase. */
   classId?: string;
+  /** Filtrar por estado de propiedad. */
   isOwner?: boolean;
 };

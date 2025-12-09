@@ -9,16 +9,14 @@ import {
 } from "@application";
 
 /**
- * @modificado
- * La firma ahora es más simple. Solo convierte una `Response` en una instancia de `AppError`.
- * Es síncrona si no necesita leer el cuerpo, y asíncrona si lo necesita.
+ * Función que transforma una respuesta HTTP de error en una excepción de aplicación (`AppError`).
+ * Puede ser síncrona o asíncrona dependiendo de si necesita leer el cuerpo de la respuesta.
  */
 type ErrorHandler = (res: Response) => Promise<AppError> | AppError;
 
 /**
- * @modificado
- * El registro de manejadores ahora es más simple. Cada función solo se preocupa
- * de construir y devolver la instancia de error apropiada.
+ * Registro de manejadores de errores HTTP mapeados por código de estado.
+ * Cada manejador construye la excepción `AppError` correspondiente.
  */
 export const apiErrorHandlers: Record<number, ErrorHandler> = {
   401: () => new UnauthorizedError(),
