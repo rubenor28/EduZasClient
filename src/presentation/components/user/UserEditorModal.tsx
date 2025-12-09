@@ -38,6 +38,7 @@ const getInitialFormData = (user?: User | null): UserFormData => ({
   motherLastname: user?.motherLastname || "",
   email: user?.email || "",
   password: "",
+  passwordConfirmation: "",
   role: user?.role ?? 0,
   active: user ? user.active : true,
 });
@@ -59,6 +60,9 @@ export const UserEditorModal = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
+  const [passwordConfirmationError, setPasswordConfirmationError] = useState<
+    string | null
+  >(null);
 
   const isEditMode = !!userToEdit;
 
@@ -67,6 +71,7 @@ export const UserEditorModal = ({
       setFormData(getInitialFormData(userToEdit));
       setFormError(null);
       setFieldErrors([]);
+      setPasswordConfirmationError(null);
     }
   }, [userToEdit, open]);
 
@@ -78,6 +83,16 @@ export const UserEditorModal = ({
     setIsSubmitting(true);
     setFormError(null);
     setFieldErrors([]);
+    setPasswordConfirmationError(null);
+
+    // Validar confirmación de contraseña si se está estableciendo una
+    if (formData.password) {
+      if (formData.password !== formData.passwordConfirmation) {
+        setPasswordConfirmationError("Las contraseñas no coinciden.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
 
     try {
       let formPayload: FormPayload;
@@ -173,6 +188,7 @@ export const UserEditorModal = ({
           onFormChange={handleFormChange}
           isEditMode={isEditMode}
           fieldErrors={fieldErrors}
+          passwordConfirmationError={passwordConfirmationError}
         />
       </DialogContent>
       <DialogActions>

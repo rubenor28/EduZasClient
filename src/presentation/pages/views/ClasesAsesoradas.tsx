@@ -67,6 +67,7 @@ export const ClasesAsesoradas = () => {
     lastPage,
   } = usePaginatedSearch<Class, ClassCriteria>("/classes/assigned", {
     page: 1,
+    pageSize: 12,
     active: true,
     withProfessor: { id: user.id },
   });

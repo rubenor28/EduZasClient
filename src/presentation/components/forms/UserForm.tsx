@@ -31,6 +31,10 @@ type UserFormProps = {
   showLoginLink?: boolean;
 };
 
+type UserFormData = NewUser & {
+  passwordConfirmation?: string;
+};
+
 /**
  * Formulario reutilizable para la creación de usuarios.
  * Se utiliza tanto en el Registro Público como en la Configuración Inicial.
@@ -45,17 +49,21 @@ export const UserForm = ({
   submitButtonText,
   showLoginLink = false,
 }: UserFormProps) => {
-  const [formState, setFormState] = useState<NewUser>({
+  const [formState, setFormState] = useState<UserFormData>({
     firstName: "",
     midName: "",
     fatherLastname: "",
     motherLastname: "",
     email: "",
     password: "",
-    role: 0
+    passwordConfirmation: "",
+    role: 0,
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordConfirmationError, setPasswordConfirmationError] = useState<
+    string | null
+  >(null);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (
@@ -80,6 +88,13 @@ export const UserForm = ({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (formState.password !== formState.passwordConfirmation) {
+      setPasswordConfirmationError("Las contraseñas no coinciden");
+      return;
+    }
+    setPasswordConfirmationError(null);
+
     const payload: NewUser = { ...formState };
     if (payload.motherLastname === "") {
       delete payload.motherLastname;
@@ -87,6 +102,7 @@ export const UserForm = ({
     if (payload.midName === "") {
       delete payload.midName;
     }
+    delete (payload as Partial<UserFormData>).passwordConfirmation;
     onSubmit(payload);
   };
 
@@ -114,7 +130,9 @@ export const UserForm = ({
         value={formState.firstName}
         onChange={handleInputChange}
         error={!!getErrorForField("firstName")}
-        helperText={getErrorForField("firstName")?.message}
+        helperText={
+          getErrorForField("firstName")?.message || "Mínimo 3 letras."
+        }
         disabled={isSubmitting}
       />
       <TextField
@@ -127,7 +145,10 @@ export const UserForm = ({
         value={formState.midName}
         onChange={handleInputChange}
         error={!!getErrorForField("midName")}
-        helperText={getErrorForField("midName")?.message}
+        helperText={
+          getErrorForField("midName")?.message ||
+          "Mínimo 3 letras, admite nombres compuestos ej. Del Rocío."
+        }
         disabled={isSubmitting}
       />
       <TextField
@@ -141,7 +162,9 @@ export const UserForm = ({
         value={formState.fatherLastname}
         onChange={handleInputChange}
         error={!!getErrorForField("fatherLastname")}
-        helperText={getErrorForField("fatherLastname")?.message}
+        helperText={
+          getErrorForField("fatherLastname")?.message || "Mínimo 3 letras."
+        }
         disabled={isSubmitting}
       />
       <TextField
@@ -154,7 +177,10 @@ export const UserForm = ({
         value={formState.motherLastname}
         onChange={handleInputChange}
         error={!!getErrorForField("motherLastname")}
-        helperText={getErrorForField("motherLastname")?.message}
+        helperText={
+          getErrorForField("motherLastname")?.message ||
+          "Mínimo 3 letras, admite apellidos compuestos ej. Del León"
+        }
         disabled={isSubmitting}
       />
       <TextField
@@ -183,7 +209,10 @@ export const UserForm = ({
         value={formState.password}
         onChange={handleInputChange}
         error={!!getErrorForField("password")}
-        helperText={getErrorForField("password")?.message}
+        helperText={
+          getErrorForField("password")?.message ||
+          "Mínimo 8 caracteres, una mayúscula, una minúscula y un símbolo."
+        }
         disabled={isSubmitting}
         InputProps={{
           endAdornment: (
@@ -191,6 +220,35 @@ export const UserForm = ({
               <IconButton
                 aria-label="toggle password visibility"
                 onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        name="passwordConfirmation"
+        label="Confirmar Contraseña"
+        type={showPassword ? "text" : "password"} // Use showPassword for consistency
+        id="passwordConfirmation"
+        autoComplete="new-password"
+        value={formState.passwordConfirmation}
+        onChange={handleInputChange}
+        error={!!passwordConfirmationError}
+        helperText={passwordConfirmationError}
+        disabled={isSubmitting}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password confirmation visibility"
+                onClick={handleClickShowPassword} // Reuse the same handler as password
                 onMouseDown={handleMouseDownPassword}
                 edge="end"
               >

@@ -9,6 +9,8 @@ export type Resource = {
   active: boolean;
   /** Título del recurso. */
   title: string;
+  /** Color de la tarjeta del recurso. */
+  color: string;
   /** Contenido del recurso (bloques). */
   content: Block[];
   /** ID del profesor autor. */
@@ -19,6 +21,8 @@ export type Resource = {
 export type NewResource = {
   /** Título del recurso. */
   title: string;
+  /** Color de la tarjeta del recurso. */
+  color: string;
   /** Contenido inicial del recurso. */
   content: Block[];
   /** ID del profesor que crea el recurso. */
@@ -33,6 +37,8 @@ export type ResourceUpdate = {
   active: boolean;
   /** Nuevo título. */
   title: string;
+  /** Nuevo color de la tarjeta del recurso. */
+  color: string;
   /** Nuevo contenido. */
   content: Block[];
   /** ID del profesor propietario. */
@@ -59,6 +65,8 @@ export type ResourceSummary = {
   active: boolean;
   /** Título del recurso. */
   title: string;
+  /** Color de la tarjeta del recurso. */
+  color: string;
   /** ID del profesor autor. */
   professorId: number;
 };

@@ -53,8 +53,12 @@ export const ResourceEditorPage = () => {
   const [initialContent, setInitialContent] = useState<Block[]>([
     createDefaultBlock(),
   ]);
+  const [_initialColor, setInitialColor] = useState<string>("#1976d2");
+
   const [title, setTitle] = useState("");
+  const [color, setColor] = useState<string>("#1976d2");
   const [content, setContent] = useState<Block[]>([createDefaultBlock()]);
+  const [active, setActive] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -76,6 +80,9 @@ export const ResourceEditorPage = () => {
           `/resources/${resourceId}`,
         );
         setTitle(fetchedResource.title);
+        setInitialColor(fetchedResource.color);
+        setColor(fetchedResource.color);
+        setActive(fetchedResource.active);
 
         setInitialContent(fetchedResource.content);
         setContent(fetchedResource.content);
@@ -89,6 +96,10 @@ export const ResourceEditorPage = () => {
     fetchResource();
   }, [resourceId]);
 
+  const handleColorChange = (newColor: string) => {
+    setColor(newColor);
+  };
+
   const handleSave = async () => {
     if (!resourceId) return;
 
@@ -100,9 +111,10 @@ export const ResourceEditorPage = () => {
       const payload: ResourceUpdate = {
         id: resourceId,
         title,
+        color,
         content: content,
-        active: true, // Assume active on save
-        professorId: user.id, // This might need to come from the fetched resource
+        active,
+        professorId: user.id,
       };
       await apiPut("/resources", payload, { parseResponse: "void" });
       setSnackbar({ open: true, message: "Contenido guardado exitosamente." });
@@ -118,6 +130,7 @@ export const ResourceEditorPage = () => {
   };
 
   const titleError = fieldErrors.find((fe) => fe.field === "Title")?.message;
+  const colorError = fieldErrors.find((fe) => fe.field === "Color")?.message;
 
   if (isLoading) {
     return <CircularProgress />;
@@ -161,10 +174,13 @@ export const ResourceEditorPage = () => {
 
       <ResourceEditor
         initialTitle={title}
+        initialColor={color}
         initialContent={initialContent}
         onTitleChange={setTitle}
+        onColorChange={handleColorChange}
         onContentChange={setContent}
         titleError={titleError}
+        colorError={colorError}
         disabled={isSubmitting}
         onAssociationChange={() => {
           setSnackbar({

@@ -8,6 +8,8 @@ export type Resource = {
     active: boolean;
     /** Título del recurso. */
     title: string;
+    /** Color de la tarjeta del recurso. */
+    color: string;
     /** Contenido del recurso en formato de bloques (BlockNote). */
     content: Block[];
     /** ID del profesor autor del recurso. */

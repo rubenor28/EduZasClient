@@ -65,6 +65,7 @@ export const Evaluaciones = () => {
     "/tests", // Endpoint for searching tests
     {
       page: 1,
+      pageSize: 12,
       professorId: user.id,
     },
   );

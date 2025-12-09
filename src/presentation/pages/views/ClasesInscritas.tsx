@@ -59,6 +59,7 @@ export const ClasesInscritas = () => {
     lastPage,
   } = usePaginatedSearch<Class, ClassCriteria>("/classes/enrolled", {
     page: 1,
+    pageSize: 12,
     active: true,
     withStudent: { id: user.id, hidden: false },
   });
@@ -200,7 +201,7 @@ export const ClasesInscritas = () => {
           <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
             <ClassCard
               classData={classData}
-              onClick={() => { }}
+              onClick={() => {}}
               isLoading={isLoading}
               menuOptions={getMenuOptions(classData)}
             />

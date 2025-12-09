@@ -65,6 +65,7 @@ export const ContenidoAcademico = () => {
     "/resources/search",
     {
       page: 1,
+      pageSize: 12,
       active: true,
       professorId: user.id,
     },
@@ -87,6 +88,7 @@ export const ContenidoAcademico = () => {
     try {
       const payload: NewResource = {
         title: "Nueva nota",
+        color: "#1976d2",
         content: [createDefaultBlock()],
         professorId: user.id,
       };

@@ -3,9 +3,11 @@ import EditorJS, { type OutputData } from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import Paragraph from "@editorjs/paragraph";
 import { MultipleChoiceTool, OpenQuestionTool, MultipleSelectionTool, MatchingTool, OrderingTool, TrueFalseTool, ShortAnswerTool, ClozeTool } from "./editor-tools";
-import { Box, TextField, Button } from "@mui/material";
+import { Box, TextField, Button, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { TestClassAssociationManager } from './TestClassAssociationManager';
+import { ColorSelector } from "../common";
+import { EDITOR_I18N } from "@domain";
 
 /**
  * Props para el componente TestEditor.
@@ -16,16 +18,22 @@ import { TestClassAssociationManager } from './TestClassAssociationManager';
 type TestEditorProps = {
   /** Título inicial de la evaluación. */
   initialTitle: string;
+  /** Color inicial de la evaluación. */
+  initialColor: string;
   /** Contenido inicial de la evaluación en formato OutputData de Editor.js. */
   initialContent?: OutputData;
   /** Callback para cuando el título cambia. */
   onTitleChange: (title: string) => void;
+  /** Callback para cuando el título cambia. */
+  onColorChange: (color: string) => void;
   /** Callback para cuando el contenido cambia. */
   onContentChange: (content: OutputData) => void;
   /** Callback para cuando las asociaciones a clases cambian. */
   onAssociationChange: () => void;
   /** Mensaje de error para el título. */
   titleError?: string;
+  /** Mensaje de error para el título. */
+  colorError?: string;
   /** Indica si el editor debe estar deshabilitado (solo lectura). */
   disabled?: boolean;
 };
@@ -35,49 +43,17 @@ type TestEditorProps = {
  * utilizando Editor.js.
  */
 
-// Configuración de i18n para español
-const EDITOR_I18N = {
-  messages: {
-    toolNames: {
-      "Text": "Párrafo",
-      "Heading": "Encabezado",
-      "MultipleChoice": "Opción Múltiple",
-      "OpenQuestion": "Pregunta Abierta",
-      "MultipleSelection": "Selección Múltiple",
-      "Matching": "Relación de Conceptos",
-      "Ordering": "Ordenamiento",
-      "TrueFalse": "Verdadero/Falso",
-      "ShortAnswer": "Respuesta Corta",
-      "Cloze": "Rellenar Huecos",
-    },
-    tools: {
-      "warning": {
-        "Title": "Título",
-        "Message": "Mensaje",
-      },
-    },
-    blockTunes: {
-      "delete": {
-        "Delete": "Eliminar",
-        "Click to delete": "Confirmar eliminación"
-      },
-      "moveUp": {
-        "Move up": "Mover arriba"
-      },
-      "moveDown": {
-        "Move down": "Mover abajo"
-      }
-    },
-  }
-};
 
 export const TestEditor = ({
   initialTitle,
+  initialColor,
   initialContent,
   onTitleChange,
+  onColorChange,
   onContentChange,
   onAssociationChange,
   titleError,
+  colorError,
   disabled = false,
 }: TestEditorProps) => {
   const { testId } = useParams<{ testId: string }>();
@@ -187,6 +163,7 @@ export const TestEditor = ({
         }}
       >
         <TextField
+          inputProps={{ maxLength: 100 }}
           label="Título"
           value={initialTitle}
           onChange={(e) => onTitleChange(e.target.value)}
@@ -197,6 +174,19 @@ export const TestEditor = ({
           disabled={disabled}
           sx={{ flexGrow: 1, mr: 2 }}
         />
+
+      <Box sx={{ mt: 2 }}>
+        <ColorSelector
+          initialColor={initialColor}
+          onColorChange={onColorChange}
+        />
+        {colorError && (
+          <Typography color="error" variant="caption" sx={{ mt: 1 }}>
+            {colorError}
+          </Typography>
+        )}
+      </Box>
+
         {testId && (
           <Button
             variant="outlined"

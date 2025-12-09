@@ -39,7 +39,7 @@ export const ResourceCard = ({
   onClick,
   menuOptions = [],
 }: ResourceCardProps) => {
-  const { id, title } = resourceData;
+  const { id, title, color } = resourceData;
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -72,7 +72,7 @@ export const ResourceCard = ({
         <Box
           sx={{
             height: 100,
-            backgroundColor: "secondary.main",
+            backgroundColor: color,
             position: "relative",
             p: 2,
             display: "flex",

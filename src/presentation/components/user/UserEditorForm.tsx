@@ -21,6 +21,7 @@ export type UserFormData = {
   motherLastname?: string;
   email: string;
   password?: string;
+  passwordConfirmation?: string;
   role: number;
   active: boolean;
 };
@@ -37,6 +38,8 @@ type UserFormProps = {
   isEditMode: boolean;
   /** Errores de validación por campo. */
   fieldErrors?: FieldErrorDTO[];
+  /** Error de validación para la confirmación de la contraseña. */
+  passwordConfirmationError?: string | null;
 };
 
 /**
@@ -48,6 +51,7 @@ export const UserEditorForm = ({
   onFormChange,
   isEditMode,
   fieldErrors = [],
+  passwordConfirmationError,
 }: UserFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -69,7 +73,9 @@ export const UserEditorForm = ({
           onChange={(e) => onFormChange(e.target.name, e.target.value)}
           required
           error={!!getErrorForField("firstName")}
-          helperText={getErrorForField("firstName")?.message}
+          helperText={
+            getErrorForField("firstName")?.message || "Mínimo 3 letras."
+          }
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -81,7 +87,10 @@ export const UserEditorForm = ({
           value={formData.midName || ""}
           onChange={(e) => onFormChange(e.target.name, e.target.value)}
           error={!!getErrorForField("midName")}
-          helperText={getErrorForField("midName")?.message}
+          helperText={
+            getErrorForField("midName")?.message ||
+            "Mínimo 3 letras, admite nombres compuestos ej. Del Rocío."
+          }
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -94,7 +103,9 @@ export const UserEditorForm = ({
           onChange={(e) => onFormChange(e.target.name, e.target.value)}
           required
           error={!!getErrorForField("fatherLastname")}
-          helperText={getErrorForField("fatherLastname")?.message}
+          helperText={
+            getErrorForField("fatherLastname")?.message || "Mínimo 3 letras."
+          }
         />
       </Grid>
       <Grid item xs={12} sm={6}>
@@ -106,7 +117,10 @@ export const UserEditorForm = ({
           value={formData.motherLastname || ""}
           onChange={(e) => onFormChange(e.target.name, e.target.value)}
           error={!!getErrorForField("motherLastname")}
-          helperText={getErrorForField("motherLastname")?.message}
+          helperText={
+            getErrorForField("motherLastname")?.message ||
+            "Mínimo 3 letras, admite apellidos compuestos ej. Del León"
+          }
         />
       </Grid>
       <Grid item xs={12}>
@@ -135,7 +149,10 @@ export const UserEditorForm = ({
           onChange={(e) => onFormChange(e.target.name, e.target.value)}
           required={!isEditMode}
           error={!!getErrorForField("password")}
-          helperText={getErrorForField("password")?.message}
+          helperText={
+            getErrorForField("password")?.message ||
+            "Mínimo 8 caracteres, una mayúscula, una minúscula y un símbolo."
+          }
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -150,6 +167,34 @@ export const UserEditorForm = ({
           }}
         />
       </Grid>
+      {(formData.password || !isEditMode) && (
+        <Grid item xs={12}>
+          <TextField
+            name="passwordConfirmation"
+            label="Confirmar Contraseña"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            variant="outlined"
+            value={formData.passwordConfirmation || ""}
+            onChange={(e) => onFormChange(e.target.name, e.target.value)}
+            required={!isEditMode || !!formData.password}
+            error={!!passwordConfirmationError}
+            helperText={passwordConfirmationError}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+      )}
       <Grid item xs={12} sm={6}>
         <FormControl fullWidth>
           <InputLabel>Rol</InputLabel>

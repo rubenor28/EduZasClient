@@ -70,6 +70,7 @@ export const TestEditorPage = () => {
     createDefaultContent(),
   );
   const [title, setTitle] = useState("");
+  const [color, setColor] = useState<string>("#1976d2");
   const [content, setContent] = useState<OutputData>(createDefaultContent());
   const [active, setActive] = useState(true); // Default to active, fetched later
   const [timeLimitMinutes, setTimeLimitMinutes] = useState<number | undefined>(undefined);
@@ -136,6 +137,7 @@ export const TestEditorPage = () => {
   };
 
   const titleError = fieldErrors.find((fe) => fe.field === "Title")?.message;
+  const colorError = fieldErrors.find((fe) => fe.field === "Color")?.message;
 
   if (isLoading) {
     return <CircularProgress />;
@@ -173,11 +175,14 @@ export const TestEditorPage = () => {
       <TestEditor
         initialTitle={title}
         initialContent={initialContent}
+        initialColor={color}
         onTitleChange={setTitle}
+        onColorChange={setColor}
         onContentChange={setContent}
         onAssociationChange={() => setSnackbar({ open: true, message: "Asociaciones actualizadas." })}
         titleError={titleError}
         disabled={isSubmitting}
+        colorError={colorError}
       />
 
       <Snackbar
