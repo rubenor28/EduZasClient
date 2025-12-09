@@ -18,7 +18,11 @@ import {
   type ResourceUpdate,
   type Resource,
 } from "@application";
-import { useUser, ResourceEditor } from "@presentation";
+import {
+  useUser,
+  ResourceEditor,
+  ResourceClassAssociationManager,
+} from "@presentation";
 
 const createDefaultBlock = (): Block => ({
   id: crypto.randomUUID(),
@@ -50,6 +54,7 @@ export const ResourceEditorPage = () => {
     open: boolean;
     message: string;
   }>({ open: false, message: "" });
+  const [isAssociationModalOpen, setAssociationModalOpen] = useState(false);
 
   useEffect(() => {
     if (!resourceId) return;
@@ -125,6 +130,13 @@ export const ResourceEditorPage = () => {
       >
         <Typography variant="h4">Editar Contenido</Typography>
         <Box>
+          <Button
+            onClick={() => setAssociationModalOpen(true)}
+            variant="outlined"
+            sx={{ mr: 2 }}
+          >
+            Asignar a Clases
+          </Button>
           <Button onClick={() => navigate("/professor/content")} sx={{ mr: 2 }}>
             Volver
           </Button>
@@ -146,9 +158,27 @@ export const ResourceEditorPage = () => {
         titleError={titleError}
         disabled={isSubmitting}
         onAssociationChange={() => {
-          setSnackbar({ open: true, message: "Asociaciones actualizadas exitosamente." });
+          setSnackbar({
+            open: true,
+            message: "Asociaciones actualizadas exitosamente.",
+          });
         }}
       />
+
+      {resourceId && (
+        <ResourceClassAssociationManager
+          open={isAssociationModalOpen}
+          onClose={() => setAssociationModalOpen(false)}
+          onSuccess={() => {
+            setSnackbar({
+              open: true,
+              message: "Asociaciones guardadas exitosamente.",
+            });
+            setAssociationModalOpen(false);
+          }}
+          resourceId={resourceId}
+        />
+      )}
 
       <Snackbar
         open={snackbar.open}

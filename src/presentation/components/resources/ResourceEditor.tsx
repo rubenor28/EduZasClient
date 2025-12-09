@@ -5,7 +5,7 @@ import "@blocknote/core/fonts/inter.css";
 import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import type { Block } from "@blocknote/core";
-import { ClassAssociationManager } from "./ClassAssociationManager";
+import { ResourceClassAssociationManager } from "./ResourceClassAssociationManager";
 import { useParams } from "react-router-dom";
 
 type ResourceEditorProps = {
@@ -98,7 +98,7 @@ export const ResourceEditor = ({
       </Box>
 
       {resourceId && (
-        <ClassAssociationManager
+        <ResourceClassAssociationManager
           open={isAssociationModalOpen}
           onClose={() => setIsAssociationModalOpen(false)}
           resourceId={resourceId}

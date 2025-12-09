@@ -16,23 +16,22 @@ import {
 } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import type {
-  ClassResourceAssosiation,
-  ClassResourceAssosiationCriteria,
+  ClassResourceAssociation,
+  ClassResourceAssociationCriteria,
+  NewClassResourceDTO,
 } from "@application";
-import { apiPost, apiDelete } from "@application";
+import { apiPost, apiDelete, apiPut } from "@application";
 import { useUser, usePaginatedSearch, PaginationControls } from "@presentation";
 
-type AssociationState = ClassResourceAssosiation & { isHidden: boolean };
-
 type Changes = {
-  toAdd: { classId: string; hidden: boolean }[];
+  toAdd: { classId: string; isHidden: boolean }[];
   toRemove: string[];
-  toUpdate: { classId: string; hidden: boolean }[];
+  toUpdate: { classId: string; isHidden: boolean }[];
 };
 
 const initialChanges: Changes = { toAdd: [], toRemove: [], toUpdate: [] };
 
-export const ClassAssociationManager = ({
+export const ResourceClassAssociationManager = ({
   open,
   onClose,
   resourceId,
@@ -46,18 +45,26 @@ export const ClassAssociationManager = ({
   const { user } = useUser();
 
   const [localAssociations, setLocalAssociations] = useState<
-    Map<string, AssociationState>
+    Map<string, ClassResourceAssociation>
   >(new Map());
   const [initialState, setInitialState] = useState<
-    Map<string, AssociationState>
+    Map<string, ClassResourceAssociation>
   >(new Map());
   const [changes, setChanges] = useState<Changes>(initialChanges);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const { setCriteria, firstPage, lastPage, data, isLoading, error } = usePaginatedSearch<
-    AssociationState,
-    ClassResourceAssosiationCriteria
+  const {
+    setCriteria,
+    firstPage,
+    lastPage,
+    data,
+    isLoading,
+    error,
+    refreshSearch,
+  } = usePaginatedSearch<
+    ClassResourceAssociation,
+    ClassResourceAssociationCriteria
   >(
     "/resources/assigned",
     {
@@ -65,62 +72,67 @@ export const ClassAssociationManager = ({
       professorId: user.id,
       resourceId: resourceId,
     },
-    {
-      autoFetch: false,
-    },
+    { autoFetch: open }
   );
 
   useEffect(() => {
-    if (open) {
-      // When modal opens, if there's data, initialize the states
-      if (data) {
-        const initialMap = new Map(data.results.map((a) => [a.classId, a]));
-        setInitialState(initialMap);
-        setLocalAssociations(initialMap);
-        setChanges(initialChanges);
-        setSubmitError(null);
-      }
+    if (open) refreshSearch();
+  }, [open, refreshSearch]);
+
+  useEffect(() => {
+    if (open && data) {
+      const initialMap = new Map(data.results.map((a) => [a.classId, a]));
+      setInitialState(initialMap);
+      setLocalAssociations(initialMap);
+      setChanges(initialChanges);
+      setSubmitError(null);
     }
   }, [open, data]);
 
   const handleAssociationToggle = (
     classId: string,
-    currentIsAssociated: boolean,
+    currentIsAssociated: boolean
   ) => {
     const wasOriginallyAssociated =
-      initialState.get(classId)?.isAssosiated ?? false;
+      initialState.get(classId)?.isAssociated ?? false;
+    const newIsAssociated = !currentIsAssociated;
 
     setLocalAssociations((prev) => {
       const newMap = new Map(prev);
       const current = newMap.get(classId)!;
-      newMap.set(classId, { ...current, isAssosiated: !currentIsAssociated });
+      newMap.set(classId, { ...current, isAssociated: newIsAssociated });
       return newMap;
     });
 
     setChanges((prev) => {
-      const newChanges: Changes = { ...prev };
-      if (!currentIsAssociated) {
-        // Toggling ON
+      const newChanges: Changes = {
+        toAdd: [...prev.toAdd],
+        toRemove: [...prev.toRemove],
+        toUpdate: [...prev.toUpdate],
+      };
+
+      if (newIsAssociated === wasOriginallyAssociated) {
+        newChanges.toAdd = newChanges.toAdd.filter((c) => c.classId !== classId);
         newChanges.toRemove = newChanges.toRemove.filter(
-          (id) => id !== classId,
+          (id) => id !== classId
         );
-        if (!wasOriginallyAssociated) {
-          newChanges.toAdd = newChanges.toAdd.filter(
-            (c) => c.classId !== classId,
-          );
-          newChanges.toAdd.push({ classId, hidden: false });
+      } else if (newIsAssociated) {
+        newChanges.toRemove = newChanges.toRemove.filter(
+          (id) => id !== classId
+        );
+        if (!newChanges.toAdd.find((c) => c.classId === classId)) {
+          newChanges.toAdd.push({
+            classId,
+            isHidden: initialState.get(classId)?.isHidden ?? false,
+          });
         }
       } else {
-        // Toggling OFF
-        newChanges.toAdd = newChanges.toAdd.filter(
-          (c) => c.classId !== classId,
-        );
+        newChanges.toAdd = newChanges.toAdd.filter((c) => c.classId !== classId);
         newChanges.toUpdate = newChanges.toUpdate.filter(
-          (c) => c.classId !== classId,
+          (c) => c.classId !== classId
         );
-        if (wasOriginallyAssociated) {
-          if (!newChanges.toRemove.includes(classId))
-            newChanges.toRemove.push(classId);
+        if (!newChanges.toRemove.includes(classId)) {
+          newChanges.toRemove.push(classId);
         }
       }
       return newChanges;
@@ -128,35 +140,50 @@ export const ClassAssociationManager = ({
   };
 
   const handleHiddenToggle = (classId: string, currentIsHidden: boolean) => {
+    const newIsHidden = !currentIsHidden;
+
     setLocalAssociations((prev) => {
       const newMap = new Map(prev);
       const current = newMap.get(classId)!;
-      newMap.set(classId, { ...current, isHidden: !currentIsHidden });
+      newMap.set(classId, { ...current, isHidden: newIsHidden });
       return newMap;
     });
 
     setChanges((prev) => {
       const newChanges: Changes = { ...prev };
-      const newHiddenState = !currentIsHidden;
-      const wasOriginallyAssociated =
-        initialState.get(classId)?.isAssosiated ?? false;
+      const original = initialState.get(classId);
+      const wasOriginallyAssociated = original?.isAssociated ?? false;
 
       const pendingAdd = newChanges.toAdd.find((c) => c.classId === classId);
       if (pendingAdd) {
-        pendingAdd.hidden = newHiddenState;
+        pendingAdd.isHidden = newIsHidden;
         return newChanges;
       }
 
       if (wasOriginallyAssociated) {
-        newChanges.toUpdate = newChanges.toUpdate.filter(
-          (c) => c.classId !== classId,
-        );
-        if (initialState.get(classId)!.isHidden !== newHiddenState) {
-          newChanges.toUpdate.push({ classId, hidden: newHiddenState });
+        if (newIsHidden === original.isHidden) {
+          newChanges.toUpdate = newChanges.toUpdate.filter(
+            (c) => c.classId !== classId
+          );
+        } else {
+          const existingUpdate = newChanges.toUpdate.find(
+            (c) => c.classId === classId
+          );
+          if (existingUpdate) {
+            existingUpdate.isHidden = newIsHidden;
+          } else {
+            newChanges.toUpdate.push({ classId, isHidden: newIsHidden });
+          }
         }
       }
       return newChanges;
     });
+  };
+
+  const handleClose = () => {
+    if (isSubmitting) return;
+    setChanges(initialChanges);
+    onClose();
   };
 
   const handleSubmit = async () => {
@@ -167,34 +194,41 @@ export const ClassAssociationManager = ({
         ...changes.toAdd.map((c) =>
           apiPost(
             "/resources/association",
-            { resourceId, classId: c.classId, hidden: c.hidden },
-            { parseResponse: "void" },
-          ),
+            {
+              resourceId,
+              classId: c.classId,
+              hidden: c.isHidden,
+            } as NewClassResourceDTO,
+            { parseResponse: "void" }
+          )
         ),
         ...changes.toUpdate.map((c) =>
-          apiPost(
+          apiPut(
             "/resources/association",
-            { resourceId, classId: c.classId, hidden: c.hidden },
-            { parseResponse: "void" },
-          ),
+            {
+              resourceId,
+              classId: c.classId,
+              hidden: c.isHidden,
+            } as NewClassResourceDTO, // Assuming the DTO is the same for PUT
+            { parseResponse: "void" }
+          )
         ),
         ...changes.toRemove.map((classId) =>
-          apiDelete<void>(`/resources/association/${resourceId}/${classId}`),
+          apiDelete<void>(`/resources/association/${resourceId}/${classId}`)
         ),
       ];
       await Promise.all(promises);
       onSuccess();
-      onClose();
+      handleClose();
     } catch (e) {
       setSubmitError(
-        e instanceof Error ? e.message : "Error inesperado al guardar.",
+        e instanceof Error ? e.message : "Error inesperado al guardar."
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleClose = () => !isSubmitting && onClose();
   const hasChanges =
     changes.toAdd.length > 0 ||
     changes.toRemove.length > 0 ||
@@ -203,7 +237,7 @@ export const ClassAssociationManager = ({
   const currentViewAssociations = useMemo(() => {
     return (
       data?.results.map(
-        (assoc) => localAssociations.get(assoc.classId) || assoc,
+        (assoc) => localAssociations.get(assoc.classId) || assoc
       ) || []
     );
   }, [data, localAssociations]);
@@ -234,19 +268,18 @@ export const ClassAssociationManager = ({
         ) : (
           <List sx={{ bgcolor: "background.paper", borderRadius: 1 }}>
             {currentViewAssociations.map((assoc, index) => (
-              <>
-                <ListItem key={assoc.classId} dense sx={{ py: 1.5 }}>
-                  <ListItemText
-                    primary={assoc.className}
-                    sx={{ flexGrow: 1 }}
-                  />
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {assoc.isAssosiated && (
+              <div key={assoc.classId}>
+                <ListItem dense sx={{ py: 1.5 }}>
+                  <ListItemText primary={assoc.className} sx={{ flexGrow: 1 }} />
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                  >
+                    {assoc.isAssociated && (
                       <FormControlLabel
                         sx={{ mr: 0, color: "text.secondary" }}
                         control={
                           <Switch
-                            checked={assoc.isHidden}
+                            checked={!assoc.isHidden} // isHidden: false -> checked: true (Visible)
                             onChange={() =>
                               handleHiddenToggle(assoc.classId, assoc.isHidden)
                             }
@@ -254,31 +287,31 @@ export const ClassAssociationManager = ({
                             size="small"
                           />
                         }
-                        label="Oculto"
+                        label="Visible"
                         labelPlacement="start"
                       />
                     )}
                     <Button
                       variant="outlined"
                       size="small"
-                      color={assoc.isAssosiated ? "error" : "primary"}
+                      color={assoc.isAssociated ? "error" : "primary"}
                       onClick={() =>
                         handleAssociationToggle(
                           assoc.classId,
-                          assoc.isAssosiated,
+                          assoc.isAssociated
                         )
                       }
                       disabled={isSubmitting}
                       sx={{ width: "90px" }}
                     >
-                      {assoc.isAssosiated ? "Eliminar" : "Agregar"}
+                      {assoc.isAssociated ? "Quitar" : "Agregar"}
                     </Button>
                   </Box>
                 </ListItem>
                 {index < currentViewAssociations.length - 1 && (
                   <Divider component="li" />
                 )}
-              </>
+              </div>
             ))}
           </List>
         )}

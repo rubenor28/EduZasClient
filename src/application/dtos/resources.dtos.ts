@@ -37,14 +37,15 @@ export type ResourceSummary = {
   professorId: number;
 };
 
-export type ClassResourceAssosiation = {
+export type ClassResourceAssociation = {
   resourceId: string;
   classId: string;
   className: string;
-  isAssosiated: boolean;
+  isAssociated: boolean;
+  isHidden: boolean;
 };
 
-export type ClassResourceAssosiationCriteria = Criteria  & {
+export type ClassResourceAssociationCriteria = Criteria  & {
   professorId: number;
   resourceId: string;
 };

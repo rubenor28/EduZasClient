@@ -6,3 +6,5 @@ export * from "./contact";
 export * from "./user";
 export * from "./pagination";
 export * from "./resources";
+export * from "./test";
+export * from "./common";

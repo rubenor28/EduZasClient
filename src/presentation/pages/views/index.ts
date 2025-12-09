@@ -6,3 +6,4 @@ export * from "./DatabaseManagement";
 export * from "./ContactsView";
 export * from "./ResourceEditorPage";
 export * from "./UsersView";
+export * from "./TestEditorPage";

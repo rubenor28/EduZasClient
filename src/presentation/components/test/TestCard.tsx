@@ -1,0 +1,140 @@
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  Typography,
+  Box,
+  IconButton,
+  Menu,
+  MenuItem,
+  CircularProgress,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import type { TestSummary } from "@application";
+import { useState } from "react";
+import type { MenuOption } from "@presentation";
+
+/**
+ * Props para el componente TestCard.
+ */
+type TestCardProps = {
+  /** Datos del resumen de la evaluación a mostrar. */
+  testData: TestSummary;
+  /** Indica si hay una operación en curso sobre esta tarjeta. */
+  isLoading: boolean;
+  /** Función a ejecutar al hacer clic en la tarjeta. */
+  onClick: (id: string) => void;
+  /** Opciones a mostrar en el menú de la tarjeta. */
+  menuOptions?: MenuOption[];
+};
+
+/**
+ * Un componente de tarjeta para mostrar un resumen de una evaluación.
+ */
+export const TestCard = ({
+  testData,
+  isLoading,
+  onClick,
+  menuOptions = [],
+}: TestCardProps) => {
+  const { id, title, modifiedAt } = testData;
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isMenuOpen = Boolean(anchorEl);
+
+  const handleCardClick = () => {
+    onClick(id);
+  };
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent,
+    callback: () => void,
+  ) => {
+    event.stopPropagation();
+    callback();
+    setAnchorEl(null);
+  };
+
+  return (
+    <Card sx={{ maxWidth: 300, borderRadius: 2, boxShadow: 3 }}>
+      <CardActionArea onClick={handleCardClick} component="div">
+        <Box
+          sx={{
+            height: 100,
+            backgroundColor: "info.main", // Un color diferente para distinguir de otros cards
+            position: "relative",
+            p: 2,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                color: "white",
+                fontWeight: "bold",
+                textShadow: "1px 1px 3px rgba(0,0,0,0.3)",
+                mr: "40px",
+              }}
+              noWrap
+            >
+              {title}
+            </Typography>
+          </Box>
+          <Box sx={{ position: "absolute", top: 8, right: 8 }}>
+            {isLoading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              menuOptions.length > 0 && (
+                <IconButton
+                  aria-label="opciones"
+                  onClick={handleMenuClick}
+                  sx={{ color: "white" }}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+              )
+            )}
+          </Box>
+        </Box>
+        <CardContent sx={{ height: 80, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1}}>
+              <AssignmentIcon color="action" sx={{ fontSize: 40 }}/>
+            </Box>
+            <Typography variant="caption" color="text.secondary" align="right">
+              Modificado: {new Date(modifiedAt).toLocaleDateString()}
+            </Typography>
+        </CardContent>
+      </CardActionArea>
+      <Menu
+        anchorEl={anchorEl}
+        open={isMenuOpen}
+        onClose={handleCloseMenu}
+        onClick={(e) => e.stopPropagation()}
+        MenuListProps={{ "aria-labelledby": "basic-button" }}
+      >
+        {menuOptions.map((option) => (
+          <MenuItem
+            key={option.name}
+            onClick={(e) => handleMenuItemClick(e, option.callback)}
+          >
+            {option.name}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Card>
+  );
+};
