@@ -30,6 +30,17 @@ import {
   UserEditorModal,
 } from "@presentation";
 
+/**
+ * Vista de administración de usuarios.
+ *
+ * Funcionalidades:
+ * 1. Listar todos los usuarios del sistema (paginado).
+ * 2. Filtrar usuarios por criterios (nombre, email, rol).
+ * 3. Crear nuevos usuarios (Admin).
+ * 4. Editar usuarios existentes.
+ * 5. Archivar/Desarchivar usuarios (soft delete).
+ * 6. Eliminar usuarios permanentemente.
+ */
 export const UsersView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -89,7 +100,7 @@ export const UsersView = () => {
       });
       setSelectedUser(null);
     } catch (err) {
-      if(err instanceof InputError){
+      if (err instanceof InputError) {
         console.error(err.message)
         console.error(err.errors);
       }
@@ -123,7 +134,7 @@ export const UsersView = () => {
       });
     }
   };
-  
+
   const handleSuccess = () => {
     refetch();
     setIsModalOpen(false);
@@ -131,7 +142,7 @@ export const UsersView = () => {
   };
 
   const renderContent = () => {
-    if (isLoading) return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 4 }}/>;
+    if (isLoading) return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 4 }} />;
     if (error)
       return <Alert severity="error">Error al cargar los usuarios: {error.message}</Alert>;
     if (!data || data.results.length === 0) {
@@ -156,42 +167,42 @@ export const UsersView = () => {
         criteria={criteria}
         setCriteria={setCriteria}
       />
-      
+
       <Paper>
         <Toolbar sx={{ justifyContent: "flex-end", gap: 1 }}>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={handleOpenCreateModal}
-            >
-              Nuevo
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<EditIcon />}
-              onClick={handleOpenEditModal}
-              disabled={!selectedUser}
-            >
-              Editar
-            </Button>
-            <Button
-              variant="outlined"
-              color="warning"
-              startIcon={selectedUser?.active ? <ArchiveIcon /> : <UnarchiveIcon />}
-              onClick={handleToggleArchive}
-              disabled={!selectedUser}
-            >
-              {selectedUser?.active ? "Archivar" : "Desarchivar"}
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleDelete}
-              disabled={!selectedUser}
-            >
-              Eliminar
-            </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleOpenCreateModal}
+          >
+            Nuevo
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={handleOpenEditModal}
+            disabled={!selectedUser}
+          >
+            Editar
+          </Button>
+          <Button
+            variant="outlined"
+            color="warning"
+            startIcon={selectedUser?.active ? <ArchiveIcon /> : <UnarchiveIcon />}
+            onClick={handleToggleArchive}
+            disabled={!selectedUser}
+          >
+            {selectedUser?.active ? "Archivar" : "Desarchivar"}
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={handleDelete}
+            disabled={!selectedUser}
+          >
+            Eliminar
+          </Button>
         </Toolbar>
         <Divider />
         {renderContent()}

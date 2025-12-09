@@ -23,23 +23,42 @@ import type {
 import { apiPost, apiDelete, apiPut } from "@application";
 import { useUser, usePaginatedSearch, PaginationControls } from "@presentation";
 
+/**
+ * Estructura interna para rastrear cambios pendientes en las asociaciones.
+ */
 type Changes = {
+  /** Nuevas asociaciones a crear. */
   toAdd: { classId: string; hidden: boolean }[];
+  /** Asociaciones a eliminar. */
   toRemove: string[];
+  /** Asociaciones existentes a actualizar (ej. cambiar visibilidad). */
   toUpdate: { classId: string; hidden: boolean }[];
 };
 
 const initialChanges: Changes = { toAdd: [], toRemove: [], toUpdate: [] };
 
+/**
+ * Modal complejo para gestionar la asignación de un recurso a múltiples clases.
+ *
+ * Funcionalidades:
+ * 1. Listar clases del profesor (paginadas).
+ * 2. Mostrar estado actual de asignación (Asignado/No asignado, Visible/Oculto).
+ * 3. Permitir cambios en local (optimistic UI) y acumularlos en `changes`.
+ * 4. Enviar todos los cambios en lote al guardar (Batch Update).
+ */
 export const ResourceClassAssociationManager = ({
   open,
   onClose,
   resourceId,
   onSuccess,
 }: {
+  /** Controla la visibilidad del modal. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
+  /** ID del recurso que se está asignando. */
   resourceId: string;
+  /** Callback tras guardar cambios exitosamente. */
   onSuccess: () => void;
 }) => {
   const { user } = useUser();
@@ -156,7 +175,7 @@ export const ResourceClassAssociationManager = ({
     setChanges((prev) => {
       const newChanges = { ...prev };
       const original = initialState.get(classId);
-      
+
       const pendingAdd = newChanges.toAdd.find((c) => c.classId === classId);
       if (pendingAdd) {
         pendingAdd.hidden = newIsHidden;
@@ -283,7 +302,7 @@ export const ResourceClassAssociationManager = ({
                         sx={{ mr: 0, color: "text.secondary" }}
                         control={
                           <Switch
-                            checked={!assoc.isHidden} 
+                            checked={!assoc.isHidden}
                             onChange={() =>
                               handleHiddenToggle(assoc.classId, assoc.isHidden)
                             }

@@ -18,6 +18,17 @@ type AntiforgeryToken = {
   requestToken: string;
 };
 
+/**
+ * Vista de administración para la gestión de la base de datos.
+ *
+ * Funcionalidades:
+ * 1. Descargar un respaldo (.sql) de la base de datos actual.
+ * 2. Restaurar la base de datos desde un archivo .sql.
+ *
+ * Seguridad:
+ * - Requiere un token antiforgery (`/auth/antiforgery/token`) para autorizar la subida del archivo.
+ * - Solo accesible para administradores.
+ */
 export const DatabaseManagement = () => {
   const [restoreFile, setRestoreFile] = useState<File | null>(null);
   const [isRestoring, setIsRestoring] = useState(false);

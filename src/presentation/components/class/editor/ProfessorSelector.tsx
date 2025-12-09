@@ -41,14 +41,32 @@ export type ProfessorSelectorChanges = {
   toUpdate: { userId: number; isOwner: boolean }[];
 };
 
+/**
+ * Props para el selector de profesores.
+ */
 type ProfessorSelectorProps = {
+  /** Indica si se está editando una clase existente. */
   isEditMode?: boolean;
+  /** Lista inicial de profesores de la clase. */
   initialProfessors: { user: User; isOwner: boolean }[];
+  /** Indica si el usuario actual es el dueño de la clase (tiene permisos de gestión). */
   isCurrentUserOwner: boolean;
+  /** Callback para notificar cambios en la lista de profesores. */
   onChange: (changes: ProfessorSelectorChanges) => void;
+  /** Indica si el modal padre está abierto (para controlar efectos). */
   open: boolean;
 };
 
+/**
+ * Componente complejo para gestionar la lista de profesores de una clase.
+ *
+ * Funcionalidades:
+ * 1. Listar profesores actuales.
+ * 2. Añadir nuevos profesores desde la lista de contactos del usuario.
+ * 3. Eliminar profesores (o marcar para eliminar).
+ * 4. Cambiar el rol de dueño (`isOwner`) de los profesores.
+ * 5. Gestionar el estado intermedio de cambios (añadidos, eliminados, modificados) antes de guardar.
+ */
 export const ProfessorSelector = ({
   isEditMode = false,
   initialProfessors,
@@ -142,8 +160,8 @@ export const ProfessorSelector = ({
         professor.status === "added"
           ? prev.filter((p) => p.info.id !== profId)
           : prev.map((p) =>
-              p.info.id === profId ? { ...p, status: "removed" } : p,
-            );
+            p.info.id === profId ? { ...p, status: "removed" } : p,
+          );
 
       const activeProfessors = updatedList.filter(
         (p) => p.status !== "removed",

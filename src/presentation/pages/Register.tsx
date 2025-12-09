@@ -6,9 +6,15 @@ import { UserForm } from "../components/forms/UserForm";
 import { Snackbar, Alert } from "@mui/material";
 
 /**
- * Página de registro de nuevos usuarios.
- * Utiliza el componente reutilizable UserForm y le proporciona la lógica
- * específica para el endpoint de auto-registro.
+ * Página de registro de nuevos usuarios (Self-Service).
+ *
+ * Reutiliza el componente `UserForm` para la interfaz, pero inyecta la lógica específica
+ * para el endpoint de registro público (`/auth/sign-in`).
+ *
+ * Flujo:
+ * 1. El usuario completa el formulario.
+ * 2. Se envía la petición POST a `/auth/sign-in`.
+ * 3. Si es exitoso, muestra un Snackbar y redirige al Login tras 2 segundos.
  */
 export function Register() {
   const navigate = useNavigate();

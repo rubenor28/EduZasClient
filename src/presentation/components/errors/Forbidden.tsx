@@ -6,10 +6,14 @@ interface ForbiddenProps {
   showHome?: boolean;
 }
 
-export function Forbidden({ 
+/**
+ * Componente de error para respuestas 403 (Forbidden).
+ * Indica que el usuario está autenticado pero no tiene permisos para acceder al recurso.
+ */
+export function Forbidden({
   message = "No tienes permisos para acceder a esta página.",
   onClear,
-  showHome = true 
+  showHome = true
 }: ForbiddenProps) {
   return (
     <BaseError

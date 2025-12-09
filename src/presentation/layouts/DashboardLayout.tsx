@@ -3,11 +3,12 @@ import { Navbar } from "../components/navbar/Navbar";
 import { Box } from "@mui/material";
 
 /**
- * Layout para las vistas principales del dashboard que incluyen la barra de navegación.
+ * Layout principal para la aplicación una vez autenticado.
+ * Incluye la barra de navegación superior (`Navbar`) y un contenedor para el contenido dinámico.
  *
- * Este componente asume que ya está envuelto en un `UserProvider`, por lo que
- * `Navbar` y las rutas anidadas en `<Outlet />` pueden usar el hook `useUser`
- * de forma segura.
+ * @remarks
+ * Este componente debe estar envuelto en un `UserProvider` (ver `router.tsx`),
+ * ya que la `Navbar` consume el contexto de usuario.
  */
 export const DashboardLayout = () => {
   return (

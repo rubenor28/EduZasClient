@@ -31,11 +31,19 @@ import {
 } from "@application";
 import { useUser } from "@presentation";
 
+/**
+ * Props para el modal de edición de clases.
+ */
 type ClassEditorModalProps = {
+  /** Controla la visibilidad del modal. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
+  /** Clase a editar (si es null, se asume creación). */
   classToEdit?: Class | null;
+  /** Indica si el usuario actual es el propietario de la clase. */
   isCurrentUserOwner: boolean;
+  /** Callback ejecutado tras guardar cambios exitosamente. */
   onSuccess: () => void;
 };
 
@@ -59,6 +67,15 @@ const cleanFormData = (data: ClassFormData): ClassFormData => {
   return cleaned;
 };
 
+/**
+ * Modal principal para crear o editar una clase.
+ *
+ * Funcionalidades:
+ * 1. Gestionar los datos básicos de la clase (nombre, asignatura, color, etc.) mediante `ClassForm`.
+ * 2. Gestionar la lista de profesores colaboradores mediante `ProfessorSelector`.
+ * 3. Manejar la lógica de guardado (POST para crear, PUT para editar).
+ * 4. Manejar la lógica de actualización de profesores (añadir, quitar, cambiar dueño).
+ */
 export const ClassEditorModal = ({
   open,
   onClose,

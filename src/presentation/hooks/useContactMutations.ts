@@ -16,9 +16,10 @@ type ContactMutationState = {
 };
 
 /**
- * Hook para gestionar la creación y actualización de contactos.
+ * Hook para gestionar las operaciones de escritura (creación y actualización) de contactos.
+ * Centraliza el manejo de errores de validación (400) y conflictos (409).
  *
- * @returns Funciones para crear y actualizar contactos, junto con el estado de la mutación.
+ * @returns Funciones `createContact` y `updateContact`, junto con el estado de la operación.
  */
 export const useContactMutations = () => {
   const [state, setState] = useState<ContactMutationState>({

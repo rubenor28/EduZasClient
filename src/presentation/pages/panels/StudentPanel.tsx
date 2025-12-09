@@ -19,6 +19,10 @@ const actions = [
   },
 ];
 
+/**
+ * Panel principal para usuarios con rol de Estudiante.
+ * Permite acceder a las clases inscritas y otras funciones académicas.
+ */
 export const StudentPanel = () => {
   const navigate = useNavigate();
 

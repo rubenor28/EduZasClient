@@ -1,10 +1,20 @@
 import { Grid, Paper, Box, Typography } from "@mui/material";
 
+/**
+ * Props para el componente AuthLayout.
+ */
 interface AuthLayoutProps {
+  /** Título que se mostrará en la cabecera del formulario. */
   title: string;
+  /** Contenido del formulario (inputs, botones, etc.). */
   children: React.ReactNode;
 }
 
+/**
+ * Layout específico para páginas de autenticación (Login, Registro).
+ * Muestra un formulario a la izquierda y una imagen de fondo a la derecha.
+ * Diseño responsivo: en móviles solo muestra el formulario.
+ */
 export const AuthLayout = ({ title, children }: AuthLayoutProps) => {
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>

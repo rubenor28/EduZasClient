@@ -25,13 +25,24 @@ export type UserFormData = {
   active: boolean;
 };
 
+/**
+ * Props para el formulario de edición de usuarios.
+ */
 type UserFormProps = {
+  /** Datos actuales del formulario. */
   formData: UserFormData;
+  /** Manejador de cambios en los campos. */
   onFormChange: (name: string, value: unknown) => void;
+  /** Indica si se está en modo edición (afecta validaciones y campos deshabilitados). */
   isEditMode: boolean;
+  /** Errores de validación por campo. */
   fieldErrors?: FieldErrorDTO[];
 };
 
+/**
+ * Formulario presentacional para la gestión de usuarios (Admin).
+ * Incluye campos para datos personales, credenciales y rol.
+ */
 export const UserEditorForm = ({
   formData,
   onFormChange,

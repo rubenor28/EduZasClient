@@ -35,7 +35,12 @@ import type { OutputData } from "@editorjs/editorjs";
 
 /**
  * Vista para que los profesores gestionen sus evaluaciones.
- * Permite ver, crear, editar, archivar y eliminar evaluaciones.
+ *
+ * Funcionalidades:
+ * 1. Listar evaluaciones creadas por el profesor.
+ * 2. Crear nuevas evaluaciones (inicializa un documento con cabecera y párrafo).
+ * 3. Navegar al editor de evaluaciones (`TestEditorPage`).
+ * 4. Archivar, desarchivar y eliminar evaluaciones.
  */
 export const Evaluaciones = () => {
   const { user } = useUser();

@@ -15,13 +15,24 @@ import { useState } from "react";
 import BookIcon from '@mui/icons-material/Book';
 import type { MenuOption } from "presentation/types";
 
+/**
+ * Props para el componente ResourceCard.
+ */
 type ResourceCardProps = {
+  /** Datos resumidos del recurso. */
   resourceData: ResourceSummary;
+  /** Indica si se está cargando alguna acción. */
   isLoading: boolean;
+  /** Callback al hacer click en la tarjeta. */
   onClick: (id: string) => void;
+  /** Opciones del menú contextual. */
   menuOptions?: MenuOption[];
 };
 
+/**
+ * Tarjeta para mostrar un recurso académico en la lista.
+ * Muestra el título y un icono representativo.
+ */
 export const ResourceCard = ({
   resourceData,
   isLoading,
@@ -101,7 +112,7 @@ export const ResourceCard = ({
           </Box>
         </Box>
         <CardContent sx={{ height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <BookIcon color="action" sx={{ fontSize: 40 }}/>
+          <BookIcon color="action" sx={{ fontSize: 40 }} />
         </CardContent>
       </CardActionArea>
       <Menu

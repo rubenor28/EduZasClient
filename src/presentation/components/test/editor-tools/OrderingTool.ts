@@ -54,7 +54,7 @@ export class OrderingTool extends BaseQuestionTool<OrderingData> {
       const addButton = this._createButton("Añadir Ítem", () => {
         const newItem = { id: uuidv4(), text: "" };
         this.data.items.push(newItem);
-        this._renderAllItems(container); // Re-render to add the new item
+        this._renderAllItems(container); // Re-renderizar para añadir el nuevo ítem
       });
       addButton.classList.add("self-start", "mt-4");
       this.wrapper.appendChild(addButton);
@@ -64,9 +64,9 @@ export class OrderingTool extends BaseQuestionTool<OrderingData> {
   }
 
   private _renderAllItems(container: HTMLElement) {
-    // Clear previous items
+    // Limpiar ítems anteriores
     container.innerHTML = '';
-    // Render new list
+    // Renderizar nueva lista
     this.data.items.forEach(item => {
       const itemElement = this._createItemElement(item, container);
       container.appendChild(itemElement);
@@ -81,7 +81,7 @@ export class OrderingTool extends BaseQuestionTool<OrderingData> {
     row.draggable = true;
     row.dataset.id = item.id;
 
-    // Drag and Drop Event Listeners
+    // Listeners de eventos Drag and Drop
     row.addEventListener('dragstart', (e) => this._handleDragStart(e, item));
     row.addEventListener('dragover', this._handleDragOver);
     row.addEventListener('dragleave', this._handleDragLeave);
@@ -107,7 +107,7 @@ export class OrderingTool extends BaseQuestionTool<OrderingData> {
       const deleteButton = this._createButton("×", () => {
         if (this.data.items.length <= 1) return;
         this.data.items = this.data.items.filter((i) => i.id !== item.id);
-        this._renderAllItems(container); // Re-render the list
+        this._renderAllItems(container); // Re-renderizar la lista
       }, ['!bg-transparent', 'text-gray-400', 'hover:text-red-600', 'hover:!bg-red-100', 'rounded-full', 'w-8', 'h-8', 'flex', 'items-center', 'justify-center', 'text-2xl', 'font-bold', 'flex-shrink-0', 'transition-colors']);
       row.appendChild(deleteButton);
     }
@@ -115,7 +115,7 @@ export class OrderingTool extends BaseQuestionTool<OrderingData> {
     return row;
   }
 
-  // --- Drag and Drop Handlers ---
+  // --- Manejadores de Drag and Drop ---
 
   private _handleDragStart(e: DragEvent, item: OrderableItem) {
     this.draggedItemId = item.id;
@@ -145,13 +145,13 @@ export class OrderingTool extends BaseQuestionTool<OrderingData> {
 
     if (draggedIndex === -1 || targetIndex === -1) return;
 
-    // Remove the dragged item from its original position
+    // Eliminar el ítem arrastrado de su posición original
     const [draggedItem] = this.data.items.splice(draggedIndex, 1);
-    
-    // Insert it at the new position
+
+    // Insertarlo en la nueva posición
     this.data.items.splice(targetIndex, 0, draggedItem);
-    
-    // Re-render the entire list to reflect the new order
+
+    // Re-renderizar toda la lista para reflejar el nuevo orden
     this._renderAllItems(container);
   }
 
@@ -159,7 +159,7 @@ export class OrderingTool extends BaseQuestionTool<OrderingData> {
     this.draggedItemId = null;
     const target = e.target as HTMLElement;
     target.classList.remove('opacity-50');
-    // Clean up all drop indicators
+    // Limpiar todos los indicadores de drop
     document.querySelectorAll('.border-t-2.border-blue-500').forEach(el => el.classList.remove('border-t-2', 'border-blue-500'));
   }
 }

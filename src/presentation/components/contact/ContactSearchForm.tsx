@@ -7,11 +7,18 @@ type ContactSearchFormProps = {
   setCriteria: React.Dispatch<React.SetStateAction<ContactCriteria>>;
 };
 
+/**
+ * Helper para crear un objeto StringQuery tipo "LIKE".
+ */
 const createStringQuery = (value: string): StringQuery | undefined => {
   // "LIKE" es un valor estándar para búsquedas de tipo "contains" o "contiene".
   return value ? { text: value, searchType: SearchType.LIKE } : undefined;
 };
 
+/**
+ * Formulario de búsqueda para contactos.
+ * Permite filtrar por alias y por etiqueta.
+ */
 export const ContactSearchForm = ({
   criteria,
   setCriteria,

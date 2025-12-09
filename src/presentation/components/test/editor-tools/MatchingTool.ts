@@ -61,7 +61,7 @@ export class MatchingTool extends BaseQuestionTool<MatchingData> {
     answerHeader.textContent = "Definición / Respuesta";
     headerRow.appendChild(promptHeader);
     headerRow.appendChild(answerHeader);
-    // Remove placeholder for delete button to align columns
+    // Eliminar marcador de posición para el botón de eliminar para alinear columnas
     headerRow.appendChild(this._createElement('div', ['w-8', 'flex-shrink-0']));
     container.appendChild(headerRow);
 
@@ -108,7 +108,7 @@ export class MatchingTool extends BaseQuestionTool<MatchingData> {
         pair.answer = (e.target as HTMLInputElement).value;
       },
     });
-    
+
     row.appendChild(promptInput);
     row.appendChild(answerInput);
 

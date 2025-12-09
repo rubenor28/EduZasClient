@@ -36,6 +36,15 @@ const createDefaultBlock = (): Block => ({
   children: [],
 });
 
+/**
+ * Página de edición de contenido académico (Recursos).
+ *
+ * Funcionalidades:
+ * 1. Cargar el contenido existente del recurso (si `resourceId` está presente).
+ * 2. Gestionar el estado del editor (título y bloques de contenido).
+ * 3. Guardar los cambios en el backend.
+ * 4. Gestionar la asignación del recurso a clases (`ResourceClassAssociationManager`).
+ */
 export const ResourceEditorPage = () => {
   const { resourceId } = useParams<{ resourceId: string }>();
   const navigate = useNavigate();

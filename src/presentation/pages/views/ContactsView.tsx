@@ -25,6 +25,16 @@ import {
 import type { Contact } from "@domain";
 import { apiDelete, type ContactCriteria } from "@application";
 
+/**
+ * Vista de gestión de contactos ("Mis Contactos").
+ *
+ * Funcionalidades:
+ * 1. Listar contactos de la agenda del usuario.
+ * 2. Añadir nuevos contactos (buscando por email).
+ * 3. Editar el alias o notas de un contacto.
+ * 4. Eliminar contactos.
+ * 5. Gestionar etiquetas (tags) de contactos (delegado en `ContactCard`).
+ */
 export const ContactsView = () => {
   const { user: currentUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -119,7 +129,7 @@ export const ContactsView = () => {
           <Grid item key={contact.userId} xs={12} sm={6} md={4} lg={3}>
             <ContactCard
               contact={contact}
-              onClick={() => {}}
+              onClick={() => { }}
               onEdit={() => handleOpenEdit(contact)}
               onDelete={() => handleDeleteRequest(contact)}
             />

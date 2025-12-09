@@ -3,6 +3,14 @@ import { apiGet } from "@application";
 import { NotFoundError } from "@application";
 import type { ClassProfessor } from "@domain";
 
+/**
+ * Hook para obtener la relación entre un usuario y una clase.
+ * Útil para determinar si un usuario es profesor o propietario de una clase específica.
+ *
+ * @param classId - ID de la clase.
+ * @param userId - ID del usuario.
+ * @returns Objeto con la relación, estado de carga y error.
+ */
 export const useClassProfessorRelation = (classId?: string, userId?: number) => {
   const [relation, setRelation] = useState<ClassProfessor | null>(null);
   const [isLoading, setIsLoading] = useState(false);

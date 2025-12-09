@@ -8,12 +8,22 @@ import {
 } from "@mui/material";
 import { SearchType, type ClassCriteria } from "@application";
 
+/**
+ * Props para el formulario de búsqueda de clases.
+ */
 type ClassSearchFormProps = {
+  /** Estado actual de los criterios de búsqueda. */
   criteria: ClassCriteria;
+  /** Función para actualizar los criterios. */
   setCriteria: React.Dispatch<React.SetStateAction<ClassCriteria>>;
+  /** Componentes adicionales específicos de la vista (ej. filtro de propietario). */
   viewSpecificFields?: React.ReactNode;
 };
 
+/**
+ * Formulario reutilizable para filtrar clases.
+ * Permite buscar por nombre, asignatura y estado (activas/inactivas).
+ */
 export const ClassSearchForm = ({
   criteria,
   setCriteria,
@@ -40,8 +50,8 @@ export const ClassSearchForm = ({
         newValue === "all"
           ? undefined
           : newValue === "true"
-          ? true
-          : false,
+            ? true
+            : false,
     }));
   };
 
@@ -49,8 +59,8 @@ export const ClassSearchForm = ({
     criteria.active === undefined
       ? "all"
       : criteria.active
-      ? "true"
-      : "false";
+        ? "true"
+        : "false";
 
   return (
     <Paper sx={{ p: 2, mb: 3 }}>

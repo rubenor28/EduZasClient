@@ -26,11 +26,11 @@ export abstract class BaseChoiceTool<T extends BaseChoiceData> extends BaseQuest
   constructor(options: BlockToolConstructorOptions<T>) {
     super(options);
     const defaultOptions = [{ id: uuidv4(), text: "" }];
-    this.data.options = options.data?.options && options.data.options.length > 0 
-      ? options.data.options 
+    this.data.options = options.data?.options && options.data.options.length > 0
+      ? options.data.options
       : defaultOptions;
   }
-  
+
   /**
    * Renderiza el contenedor de opciones y el botón para añadir nuevas.
    * Delega la creación de cada fila de opción a la subclase.
@@ -51,10 +51,10 @@ export abstract class BaseChoiceTool<T extends BaseChoiceData> extends BaseQuest
         container.appendChild(newOptionElement);
       });
       addButton.classList.add("self-start", "mt-2");
-      // Appends to the main wrapper, not the options container
+      // Se añade al contenedor principal, no al de opciones
       this.wrapper.appendChild(addButton);
     }
-    
+
     return container;
   }
 

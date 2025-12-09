@@ -17,12 +17,22 @@ import {
   InputError,
 } from "@application";
 
+/**
+ * Props para el modal de inscripción.
+ */
 type EnrollClassModalProps = {
+  /** Controla la visibilidad del modal. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
-  onSuccess: () => void; // Callback para refrescar la lista
+  /** Callback ejecutado tras una inscripción exitosa. */
+  onSuccess: () => void;
 };
 
+/**
+ * Modal para que los estudiantes se inscriban en una clase mediante su código (UUID).
+ * Maneja la validación del código y los errores de API (código no encontrado, conflicto, etc.).
+ */
 export const EnrollClassModal = ({
   open,
   onClose,

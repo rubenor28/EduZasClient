@@ -6,11 +6,15 @@ interface NotFoundErrorProps {
   showRetry?: boolean;
 }
 
-export function NotFound({ 
+/**
+ * Componente de error para respuestas 404 (Not Found).
+ * Muestra la URL solicitada y opciones para volver atrás o ir al inicio.
+ */
+export function NotFound({
   resource = "página",
 }: NotFoundErrorProps) {
   const location = useLocation();
-  
+
   return (
     <BaseError
       title="Página No Encontrada"
@@ -21,7 +25,7 @@ export function NotFound({
     >
       <div className="text-sm text-gray-600 space-y-2">
         <p>URL solicitada: <code className="bg-gray-100 px-2 py-1 rounded text-xs">{location.pathname}</code></p>
-        
+
         <div className="flex flex-wrap gap-2 justify-center mt-4">
           <Link
             to="/"

@@ -7,6 +7,10 @@ interface InternalServerErrorProps {
   onClear?: () => void;
 }
 
+/**
+ * Componente de error para respuestas 500 (Internal Server Error) o errores inesperados.
+ * Permite mostrar detalles técnicos del error (stack trace) si se habilita `showDetails`.
+ */
 export function InternalServerError({
   error,
   showDetails = false,

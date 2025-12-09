@@ -10,6 +10,9 @@ import { TestClassAssociationManager } from './TestClassAssociationManager';
 /**
  * Props para el componente TestEditor.
  */
+/**
+ * Props para el componente TestEditor.
+ */
 type TestEditorProps = {
   /** Título inicial de la evaluación. */
   initialTitle: string;
@@ -23,7 +26,7 @@ type TestEditorProps = {
   onAssociationChange: () => void;
   /** Mensaje de error para el título. */
   titleError?: string;
-  /** Indica si el editor debe estar deshabilitado. */
+  /** Indica si el editor debe estar deshabilitado (solo lectura). */
   disabled?: boolean;
 };
 
@@ -32,7 +35,7 @@ type TestEditorProps = {
  * utilizando Editor.js.
  */
 
-// i18n configuration for Spanish
+// Configuración de i18n para español
 const EDITOR_I18N = {
   messages: {
     toolNames: {
@@ -83,7 +86,7 @@ export const TestEditor = ({
   const [isEditorReady, setIsEditorReady] = useState(false);
   const holderId = `editorjs-container-${testId || "new"}`;
 
-  // Effect for initializing and destroying the editor
+  // Efecto para inicializar y destruir el editor
   useEffect(() => {
     if (!editorInstance.current) {
       const editor = new EditorJS({
@@ -92,43 +95,43 @@ export const TestEditor = ({
         data: initialContent || { blocks: [] },
         i18n: EDITOR_I18N,
         tools: {
-            header: {
-              class: Header as any,
-              config: {
-                placeholder: "Encabezado",
-                levels: [2, 3, 4],
-                defaultLevel: 2,
-              },
-            },
-            paragraph: {
-              class: Paragraph as any,
-              inlineToolbar: true,
-            },
-            multipleChoice: {
-              class: MultipleChoiceTool as any,
-            },
-            openQuestion: {
-              class: OpenQuestionTool as any,
-            },
-            multipleSelection: {
-                class: MultipleSelectionTool as any,
-            },
-            matching: {
-                class: MatchingTool as any,
-            },
-            ordering: {
-                class: OrderingTool as any,
-            },
-            trueFalse: {
-                class: TrueFalseTool as any,
-            },
-            shortAnswer: {
-                class: ShortAnswerTool as any,
-            },
-            cloze: {
-                class: ClozeTool as any,
+          header: {
+            class: Header as any,
+            config: {
+              placeholder: "Encabezado",
+              levels: [2, 3, 4],
+              defaultLevel: 2,
             },
           },
+          paragraph: {
+            class: Paragraph as any,
+            inlineToolbar: true,
+          },
+          multipleChoice: {
+            class: MultipleChoiceTool as any,
+          },
+          openQuestion: {
+            class: OpenQuestionTool as any,
+          },
+          multipleSelection: {
+            class: MultipleSelectionTool as any,
+          },
+          matching: {
+            class: MatchingTool as any,
+          },
+          ordering: {
+            class: OrderingTool as any,
+          },
+          trueFalse: {
+            class: TrueFalseTool as any,
+          },
+          shortAnswer: {
+            class: ShortAnswerTool as any,
+          },
+          cloze: {
+            class: ClozeTool as any,
+          },
+        },
         onChange: async () => {
           if (editorInstance.current) {
             const content = await editorInstance.current.save();
@@ -156,22 +159,22 @@ export const TestEditor = ({
         setIsEditorReady(false);
       }
     };
-  }, []); // Empty dependency array ensures this runs only once on mount and cleanup on unmount
+  }, []); // El array de dependencias vacío asegura que esto se ejecute solo una vez al montar y limpiar al desmontar
 
-  // Effect to toggle read-only state
+  // Efecto para alternar el estado de solo lectura
   useEffect(() => {
     if (isEditorReady && editorInstance.current?.readOnly) {
       editorInstance.current.readOnly.toggle(disabled);
     }
   }, [disabled, isEditorReady]);
 
-  // Effect to update content from external changes
+  // Efecto para actualizar el contenido ante cambios externos
   useEffect(() => {
     if (isEditorReady && initialContent && editorInstance.current?.render) {
-        editorInstance.current.render(initialContent);
+      editorInstance.current.render(initialContent);
     }
   }, [initialContent, isEditorReady]);
-  
+
   return (
     <>
       <Box

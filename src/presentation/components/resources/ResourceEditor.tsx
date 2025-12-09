@@ -8,16 +8,29 @@ import type { Block } from "@blocknote/core";
 import { ResourceClassAssociationManager } from "./ResourceClassAssociationManager";
 import { useParams } from "react-router-dom";
 
+/**
+ * Props para el editor de recursos.
+ */
 type ResourceEditorProps = {
+  /** Título inicial del recurso. */
   initialTitle: string;
+  /** Contenido inicial (bloques JSON o string JSON). */
   initialContent?: Block[] | string;
+  /** Callback al cambiar el título. */
   onTitleChange: (title: string) => void;
+  /** Callback al cambiar el contenido (auto-guardado o estado local). */
   onContentChange: (content: Block[]) => void;
+  /** Callback al cambiar asociaciones (refrescar datos). */
   onAssociationChange: () => void;
+  /** Error de validación del título. */
   titleError?: string;
+  /** Si es true, el editor es de solo lectura. */
   disabled?: boolean;
 };
 
+/**
+ * Helper para parsear el contenido, que puede venir como string JSON o array de bloques.
+ */
 const parseContent = (content?: Block[] | string): Block[] => {
   if (!content) return [];
   if (typeof content === "string") {
@@ -31,6 +44,15 @@ const parseContent = (content?: Block[] | string): Block[] => {
   return content;
 };
 
+/**
+ * Wrapper alrededor del editor `BlockNote`.
+ *
+ * Responsabilidades:
+ * 1. Inicializar el editor con el contenido proporcionado.
+ * 2. Gestionar el campo de título.
+ * 3. Integrar el modal de asignación a clases (`ResourceClassAssociationManager`).
+ * 4. Manejar actualizaciones del contenido externo.
+ */
 export const ResourceEditor = ({
   initialTitle,
   initialContent,

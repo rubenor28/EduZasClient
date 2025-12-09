@@ -13,10 +13,17 @@ import type { User } from "@domain";
 import type { NewUser, UpdateUser, FieldErrorDTO } from "@application";
 import { apiPostInput, apiPutInput } from "@application";
 
+/**
+ * Props para el modal de gestión de usuarios.
+ */
 type UserEditorModalProps = {
+  /** Controla la visibilidad del modal. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
+  /** Usuario a editar (null para crear). */
   userToEdit?: User | null;
+  /** Callback tras operación exitosa. */
   onSuccess: () => void;
 };
 
@@ -35,6 +42,11 @@ const getInitialFormData = (user?: User | null): UserFormData => ({
   active: user ? user.active : true,
 });
 
+/**
+ * Modal contenedor para crear o editar usuarios (Admin).
+ * Gestiona la lógica de negocio, llamadas a API y transformación de datos
+ * antes de pasarlos al `UserEditorForm`.
+ */
 export const UserEditorModal = ({
   open,
   onClose,

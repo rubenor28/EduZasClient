@@ -4,9 +4,10 @@ import type { User } from "@domain";
 import { NotFoundError } from "@application";
 
 /**
- * Hook para buscar un usuario por su email.
+ * Hook para buscar un usuario por su correo electrónico.
+ * Valida el formato del email antes de realizar la petición.
  *
- * @returns Un objeto con el estado de la búsqueda y la función para ejecutarla.
+ * @returns Objeto con el usuario encontrado (si existe), estado de carga y error.
  */
 export const useUserSearchByEmail = () => {
   const [user, setUser] = useState<User | null>(null);

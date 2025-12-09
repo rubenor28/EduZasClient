@@ -12,11 +12,20 @@ import {
 } from "@mui/material";
 import { SearchType, type UserCriteria } from "@application";
 
+/**
+ * Props para el formulario de búsqueda de usuarios.
+ */
 type UserSearchFormProps = {
+  /** Criterios de búsqueda actuales. */
   criteria: UserCriteria;
+  /** Función para actualizar criterios. */
   setCriteria: React.Dispatch<React.SetStateAction<UserCriteria>>;
 };
 
+/**
+ * Formulario avanzado para filtrar usuarios en el panel de administración.
+ * Permite buscar por nombre, apellido, email, rol y estado.
+ */
 export const UserSearchForm = ({
   criteria,
   setCriteria,
@@ -42,8 +51,8 @@ export const UserSearchForm = ({
         newValue === "all"
           ? undefined
           : newValue === "true"
-          ? true
-          : false,
+            ? true
+            : false,
     }));
   };
 
@@ -59,8 +68,8 @@ export const UserSearchForm = ({
     criteria.active === undefined
       ? "all"
       : criteria.active
-      ? "true"
-      : "false";
+        ? "true"
+        : "false";
 
   const roleValue = criteria.role === undefined ? "all" : criteria.role;
 

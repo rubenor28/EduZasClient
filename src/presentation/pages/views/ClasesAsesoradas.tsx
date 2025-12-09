@@ -31,6 +31,18 @@ import {
   useOwnership,
 } from "@presentation";
 
+/**
+ * Vista principal para profesores: "Clases Asesoradas".
+ *
+ * Funcionalidades:
+ * 1. Listar clases donde el usuario es profesor o colaborador.
+ * 2. Crear nuevas clases.
+ * 3. Editar clases existentes (si es propietario o admin).
+ * 4. Archivar/Desarchivar clases.
+ * 5. Eliminar clases (si es propietario o admin).
+ *
+ * Utiliza `usePaginatedSearch` para la carga de datos y `useOwnership` para determinar permisos.
+ */
 export const ClasesAsesoradas = () => {
   const { user } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -162,8 +174,8 @@ export const ClasesAsesoradas = () => {
     criteria.withProfessor?.isOwner === undefined
       ? "all"
       : criteria.withProfessor.isOwner
-      ? "true"
-      : "false";
+        ? "true"
+        : "false";
 
   const isOwnerToggle = (
     <ToggleButtonGroup
@@ -221,7 +233,7 @@ export const ClasesAsesoradas = () => {
             <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
               <ClassCard
                 classData={classData}
-                onClick={() => {}}
+                onClick={() => { }}
                 isLoading={isLoading}
                 menuOptions={menuOptions}
               />

@@ -8,12 +8,22 @@ import {
 } from "@mui/material";
 import { SearchType, type ResourceCriteria } from "@application";
 
+/**
+ * Props para el formulario de búsqueda de recursos.
+ */
 type ResourceSearchFormProps = {
+  /** Criterios actuales. */
   criteria: ResourceCriteria;
+  /** Setter de criterios. */
   setCriteria: React.Dispatch<React.SetStateAction<ResourceCriteria>>;
+  /** Campos adicionales opcionales. */
   viewSpecificFields?: React.ReactNode;
 };
 
+/**
+ * Formulario de búsqueda para recursos académicos.
+ * Filtra por título y estado (activo/inactivo).
+ */
 export const ResourceSearchForm = ({
   criteria,
   setCriteria,
@@ -40,8 +50,8 @@ export const ResourceSearchForm = ({
         newValue === "all"
           ? undefined
           : newValue === "true"
-          ? true
-          : false,
+            ? true
+            : false,
     }));
   };
 
@@ -49,8 +59,8 @@ export const ResourceSearchForm = ({
     criteria.active === undefined
       ? "all"
       : criteria.active
-      ? "true"
-      : "false";
+        ? "true"
+        : "false";
 
   return (
     <Paper sx={{ p: 2, mb: 3 }}>

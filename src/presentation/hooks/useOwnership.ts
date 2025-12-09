@@ -4,15 +4,14 @@ import type { Class, ClassProfessor } from "@domain";
 import { useUser } from "@presentation";
 
 /**
- * Hook para determinar la propiedad (ownership) de un conjunto de clases para el usuario actual.
+ * Hook para verificar si el usuario actual es propietario de una lista de clases.
  *
- * @param classes - Un array de objetos `Class` para los cuales se verificará la propiedad.
- * @returns Un `Map<string, boolean>` donde la clave es el ID de la clase y el valor es `true` si el usuario actual es propietario, de lo contrario `false`.
+ * @param classes - Lista de clases a verificar.
+ * @returns Un mapa donde la clave es el ID de la clase y el valor es `true` si es propietario.
  *
  * @remarks
- * Este hook realiza una llamada a la API por cada clase en la lista para verificar la relación profesor-clase.
- * Esto puede ser ineficiente para listas grandes (problema N+1).
- * Una futura optimización sería modificar el backend para que devuelva esta información en la consulta de clases principal.
+ * **Nota de Rendimiento:** Actualmente realiza una petición por cada clase (problema N+1).
+ * Idealmente, el backend debería devolver esta información en la lista de clases.
  */
 export const useOwnership = (classes: Class[] | undefined) => {
   const { user } = useUser();

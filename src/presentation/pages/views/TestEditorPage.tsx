@@ -50,6 +50,17 @@ const createDefaultContent = (): OutputData => ({
  * Página de edición para evaluaciones.
  * Permite a los profesores editar el título y el contenido de una evaluación existente.
  */
+/**
+ * Página de edición de evaluaciones.
+ *
+ * Funcionalidades:
+ * 1. Cargar la evaluación existente.
+ * 2. Gestionar el estado del editor (título, bloques de preguntas, tiempo límite).
+ * 3. Guardar los cambios en el backend.
+ *
+ * Nota: A diferencia de los recursos, las evaluaciones no se asignan directamente desde aquí
+ * (aunque podría implementarse en el futuro), sino que se gestionan desde la vista de lista o detalles.
+ */
 export const TestEditorPage = () => {
   const { testId } = useParams<{ testId: string }>();
   const navigate = useNavigate();

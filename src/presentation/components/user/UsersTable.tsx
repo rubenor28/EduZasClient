@@ -11,9 +11,15 @@ import {
 } from "@mui/material";
 import type { User } from "@domain";
 
+/**
+ * Props para la tabla de usuarios.
+ */
 type UsersTableProps = {
+  /** Lista de usuarios a mostrar. */
   users: User[];
+  /** Usuario actualmente seleccionado (para resaltado). */
   selectedUser: User | null;
+  /** Callback al seleccionar un usuario. */
   onSelectUser: (user: User) => void;
 };
 
@@ -23,6 +29,10 @@ const roleMap: { [key: number]: { label: string; color: "primary" | "secondary" 
   2: { label: "Admin", color: "success" },
 };
 
+/**
+ * Tabla para visualizar la lista de usuarios.
+ * Muestra información clave y permite la selección de filas.
+ */
 export const UsersTable = ({
   users,
   selectedUser,

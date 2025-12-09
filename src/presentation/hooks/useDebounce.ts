@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 
 /**
- * Hook que retrasa la actualización de un valor.
+ * Hook que retrasa la actualización de un valor hasta que el usuario deja de escribir.
+ * Útil para evitar llamadas excesivas a la API durante la búsqueda en tiempo real.
  *
- * @param value El valor a "debounced".
- * @param delay El tiempo de espera en milisegundos.
- * @returns El valor después del tiempo de espera.
+ * @param value - El valor a observar.
+ * @param delay - El tiempo de espera en milisegundos.
+ * @returns El valor "debounced" que se actualiza solo después del retraso.
  */
 export const useDebounce = <T>(value: T, delay: number): T => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);

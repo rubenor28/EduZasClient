@@ -4,6 +4,11 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "@presentation";
 import { AppError, errorService, InternalServerError } from "@application";
 
+/**
+ * Punto de entrada principal de la aplicación React.
+ * Configura el enrutador, el manejo global de errores y renderiza el árbol de componentes.
+ */
+
 // --- MANEJO DE ERRORES GLOBALES ---
 
 // Captura errores síncronos no controlados

@@ -11,8 +11,10 @@ const roleToPathMap: { [key: number]: string } = {
 };
 
 /**
- * Componente que redirige al usuario a su panel principal por defecto
- * basada en su rol, una vez que está autenticado.
+ * Componente "Router" interno que redirige al usuario a su panel correspondiente.
+ *
+ * Se renderiza en la ruta raíz `/` cuando el usuario está autenticado.
+ * Decide el destino basándose en el rol del usuario (Estudiante, Profesor, Admin).
  */
 export const HomePage = () => {
   const { user } = useUser();

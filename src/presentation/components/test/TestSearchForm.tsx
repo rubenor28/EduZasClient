@@ -46,8 +46,8 @@ export const TestSearchForm = ({
         newValue === "all"
           ? undefined
           : newValue === "true"
-          ? true
-          : false,
+            ? true
+            : false,
     }));
   };
 
@@ -55,8 +55,8 @@ export const TestSearchForm = ({
     criteria.active === undefined
       ? "all"
       : criteria.active
-      ? "true"
-      : "false";
+        ? "true"
+        : "false";
 
   return (
     <Paper sx={{ p: 2, mb: 3 }}>

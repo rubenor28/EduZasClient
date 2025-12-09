@@ -40,6 +40,10 @@ const actions = [
   },
 ];
 
+/**
+ * Panel principal para usuarios con rol de Profesor.
+ * Ofrece acceso rápido a la gestión de clases, contactos, evaluaciones y contenido.
+ */
 export const ProfessorPanel = () => {
   const navigate = useNavigate();
 

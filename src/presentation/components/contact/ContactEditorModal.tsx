@@ -21,10 +21,17 @@ import { useDebounce } from "../../hooks/useDebounce";
 import { useContactTags } from "../../hooks/useContactTags";
 import { apiGet } from "@application";
 
+/**
+ * Props para el modal de edición de contactos.
+ */
 type ContactEditorModalProps = {
+  /** Controla la visibilidad del modal. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
+  /** Callback ejecutado tras una operación exitosa (crear/editar). */
   onSuccess: () => void;
+  /** Contacto a editar (si es null, se asume creación). */
   contactToEdit: Contact | null;
 };
 
@@ -34,6 +41,18 @@ const initialState = {
   notes: "",
 };
 
+/**
+ * Modal completo para la gestión de contactos.
+ *
+ * Funcionalidades:
+ * 1. Crear nuevo contacto:
+ *    - Buscar usuario por email (con debounce).
+ *    - Añadir alias, notas y etiquetas iniciales.
+ * 2. Editar contacto existente:
+ *    - Modificar alias y notas.
+ *    - Gestionar etiquetas (añadir/eliminar) en tiempo real.
+ * 3. Validación de errores de backend y feedback visual.
+ */
 export const ContactEditorModal = ({
   open,
   onClose,

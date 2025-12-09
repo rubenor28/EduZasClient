@@ -11,10 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
 
 /**
- * Define el tipo de valor que contendrá el contexto de usuario.
- * Forzamos que siempre sea un objeto `User` para los consumidores del contexto.
+ * Estructura de datos que provee el contexto de usuario.
+ * Garantiza que los consumidores reciban un objeto `User` válido.
  */
 type UserContextType = {
+  /** El usuario autenticado actualmente. */
   user: User;
 };
 
@@ -33,11 +34,13 @@ type UserProviderProps = {
 };
 
 /**
- * Componente proveedor que obtiene los datos del usuario y los
- * pone a disposición de sus hijos a través del `UserContext`.
+ * Proveedor de contexto que gestiona la sesión del usuario.
  *
- * Muestra una pantalla de carga mientras se obtienen los datos y
- * redirige al login si el usuario no está autenticado.
+ * Responsabilidades:
+ * 1. Obtener el usuario actual desde la API (`/auth/me`).
+ * 2. Mostrar un indicador de carga (`CircularProgress`) durante la petición.
+ * 3. Redirigir al login si el usuario no está autenticado (error 401).
+ * 4. Exponer el usuario a los componentes hijos una vez cargado.
  */
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
@@ -88,7 +91,10 @@ export const UserProvider = ({ children }: UserProviderProps) => {
 };
 
 /**
- * Hook personalizado para acceder a los datos del usuario desde el contexto.
+ * Hook personalizado para consumir el contexto de usuario.
+ *
+ * @throws {Error} Si se usa fuera de un `UserProvider`.
+ * @returns El objeto `UserContextType` con el usuario autenticado.
  */
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);

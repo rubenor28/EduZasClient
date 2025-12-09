@@ -14,13 +14,25 @@ import type { Class } from "@domain";
 import { useState } from "react";
 import type { MenuOption } from "presentation/types";
 
+/**
+ * Props para el componente ClassCard.
+ */
 type ClassCardProps = {
+  /** Datos de la clase a mostrar. */
   classData: Class;
+  /** Indica si se está realizando alguna acción sobre la tarjeta (ej. cargando menú). */
   isLoading: boolean;
+  /** Callback al hacer click en la tarjeta principal. */
   onClick: (id: string) => void;
+  /** Opciones del menú contextual (tres puntos). */
   menuOptions?: MenuOption[];
 };
 
+/**
+ * Tarjeta que representa una clase en el dashboard.
+ * Muestra el nombre, sección, asignatura y color de la clase.
+ * Incluye un menú contextual opcional para acciones adicionales.
+ */
 export const ClassCard = ({
   classData,
   isLoading,

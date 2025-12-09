@@ -2,10 +2,8 @@ import { useUser } from "../context/UserContext";
 import { Typography, Paper, Box } from "@mui/material";
 
 /**
- * Página principal del panel de control que da la bienvenida al usuario.
- *
- * Esta página está diseñada para ser renderizada dentro del `AuthenticatedLayout`,
- * por lo que puede consumir de forma segura el `useUser` hook.
+ * Componente visual simple para la bienvenida al panel de control.
+ * Muestra información básica del usuario actual.
  */
 export const Dashboard = () => {
   const { user } = useUser();

@@ -10,6 +10,14 @@ type NavPage = {
   minimumRole: number;
 };
 
+/**
+ * Barra de navegación superior.
+ *
+ * Responsabilidades:
+ * 1. Mostrar el nombre del usuario autenticado.
+ * 2. Renderizar enlaces de navegación basados en el rol del usuario.
+ * 3. Proveer la funcionalidad de Cerrar Sesión.
+ */
 export const Navbar = () => {
   const { user } = useUser();
   const navigate = useNavigate();

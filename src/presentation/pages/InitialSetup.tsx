@@ -6,8 +6,11 @@ import { UserForm } from "../components/forms/UserForm";
 import { Snackbar, Alert } from "@mui/material";
 
 /**
- * Página para la configuración inicial del sistema.
- * Permite registrar al primer usuario administrador cuando no hay usuarios en la base de datos.
+ * Página de configuración inicial (First Run).
+ *
+ * Se muestra solo cuando el sistema detecta que no existen usuarios en la base de datos.
+ * Permite crear la primera cuenta de Administrador sin necesidad de autenticación previa.
+ * Utiliza el endpoint especial `/auth/first-user`.
  */
 export function InitialSetup() {
   const navigate = useNavigate();

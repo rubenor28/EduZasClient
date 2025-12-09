@@ -111,12 +111,12 @@ export const TestCard = ({
           </Box>
         </Box>
         <CardContent sx={{ height: 80, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <Box sx={{display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1}}>
-              <AssignmentIcon color="action" sx={{ fontSize: 40 }}/>
-            </Box>
-            <Typography variant="caption" color="text.secondary" align="right">
-              Modificado: {new Date(modifiedAt).toLocaleDateString()}
-            </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexGrow: 1 }}>
+            <AssignmentIcon color="action" sx={{ fontSize: 40 }} />
+          </Box>
+          <Typography variant="caption" color="text.secondary" align="right">
+            Modificado: {new Date(modifiedAt).toLocaleDateString()}
+          </Typography>
         </CardContent>
       </CardActionArea>
       <Menu

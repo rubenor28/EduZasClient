@@ -10,13 +10,24 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+/**
+ * Props para el componente ContactCard.
+ */
 type ContactCardProps = {
+  /** Datos del contacto a mostrar. */
   contact: Contact;
+  /** Callback al hacer click en la tarjeta (navegación). */
   onClick: () => void;
+  /** Callback al hacer click en editar. */
   onEdit: () => void;
+  /** Callback al hacer click en eliminar. */
   onDelete: () => void;
 };
 
+/**
+ * Tarjeta simple para mostrar un contacto en la lista.
+ * Muestra el alias del contacto y botones para editar o eliminar.
+ */
 export const ContactCard = ({
   contact,
   onClick,

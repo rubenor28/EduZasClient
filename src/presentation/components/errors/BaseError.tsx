@@ -1,15 +1,34 @@
 import { Link } from 'react-router-dom';
 
+/**
+ * Props para el componente BaseError.
+ */
 interface BaseErrorProps {
+  /** Título principal del error (ej. "Página No Encontrada"). */
   title: string;
+  /** Subtítulo o código de error (ej. "404 - No encontrado"). */
   subtitle: string;
+  /** Código numérico para mostrar en el icono (ej. 404). */
   code: number;
+  /** Descripción detallada del error para el usuario. */
   description: string;
+  /**
+   * Acción de reintento.
+   * - Si es una función, se ejecuta al hacer click en "Intentar de nuevo".
+   * - Si es `true`, recarga la página (`window.location.reload()`).
+   * - Si es `false` o `undefined`, no muestra el botón.
+   */
   onRetry?: (() => void) | boolean;
+  /** Si es true, muestra un botón para ir al inicio. */
   showHome?: boolean;
+  /** Contenido adicional opcional para renderizar dentro de la tarjeta de error. */
   children?: React.ReactNode;
 }
 
+/**
+ * Componente base de UI para mostrar pantallas de error consistentes.
+ * Provee una estructura visual común (tarjeta centrada, icono, título, acciones).
+ */
 export default function BaseError({
   title,
   code,
@@ -33,7 +52,7 @@ export default function BaseError({
           <div className="w-24 h-24 mx-auto mb-6 bg-blue-100 rounded-full flex items-center justify-center">
             <span className="text-4xl text-blue-600 font-bold">{code}</span>
           </div>
-          
+
           <h2 className="text-3xl font-bold text-gray-800 mb-2">{title}</h2>
           <p className="text-gray-500 mb-8">{description}</p>
 
@@ -47,7 +66,7 @@ export default function BaseError({
                 Intentar de nuevo
               </button>
             )}
-            
+
             {showHome && (
               <Link
                 to="/"

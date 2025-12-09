@@ -21,9 +21,18 @@ import { SystemGuard } from "./components/auth/SystemGuard";
 import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 
+/**
+ * Configuración principal del enrutador de la aplicación (React Router).
+ * Define la estructura de navegación, rutas protegidas, layouts y manejo de errores.
+ */
 export const router = createBrowserRouter([
   {
     path: "/",
+    /**
+     * SystemGuard: Componente de alto nivel que verifica el estado inicial del sistema.
+     * - Si no hay usuarios registrados, redirige a /setup.
+     * - Si hay usuarios, permite el acceso a las rutas hijas.
+     */
     element: <SystemGuard />, // El guardián envuelve toda la aplicación
     errorElement: <PublicErrorPage />,
     children: [
@@ -32,7 +41,11 @@ export const router = createBrowserRouter([
         path: "setup",
         element: <InitialSetup />,
       },
-      // --- Rutas Públicas (accesibles solo si hay usuarios) ---
+      /**
+       * Rutas Públicas: Accesibles sin autenticación (Login, Registro).
+       * AuthErrorAs500Boundary: Captura errores de autenticación inesperados en estas rutas
+       * y los muestra como errores genéricos para no filtrar información.
+       */
       {
         element: (
           <AuthErrorAs500Boundary>
@@ -44,7 +57,12 @@ export const router = createBrowserRouter([
           { path: "register", element: <Register /> },
         ],
       },
-      // --- Rutas Protegidas (requieren autenticación) ---
+      /**
+       * Rutas Protegidas: Requieren que el usuario haya iniciado sesión.
+       * - UserProvider: Provee el contexto del usuario autenticado a todos los componentes hijos.
+       * - DashboardLayout: Estructura visual común (barra lateral, cabecera) para el panel principal.
+       * - ProtectedErrorPage: Maneja errores específicos de rutas protegidas (ej. 403 Forbidden).
+       */
       {
         element: (
           <UserProvider>
@@ -57,6 +75,7 @@ export const router = createBrowserRouter([
             index: true,
             element: <HomePage />,
           },
+          // --- Rutas de Administrador ---
           {
             path: "admin",
             element: <Outlet />,
@@ -66,6 +85,7 @@ export const router = createBrowserRouter([
               { path: "users", element: <UsersView /> },
             ],
           },
+          // --- Rutas de Profesor ---
           {
             path: "professor",
             element: <Outlet />,
@@ -79,6 +99,7 @@ export const router = createBrowserRouter([
               { path: "content/:resourceId", element: <ResourceEditorPage /> },
             ],
           },
+          // --- Rutas de Estudiante ---
           {
             path: "student",
             element: <Outlet />,

@@ -9,11 +9,13 @@ import { Outlet, Navigate, useLocation } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
 
 /**
- * Un componente guardián que gestiona el estado de inicialización del sistema.
+ * Componente "Guardián" de alto nivel.
  *
- * - Redirige a /setup si no hay usuarios y se intenta acceder a otra página.
- * - Redirige a /login si ya hay usuarios y se intenta acceder a /setup.
- * - Permite el acceso a las rutas solicitadas en todos los demás casos.
+ * Responsabilidades:
+ * 1. Verificar si el sistema ya ha sido inicializado (si existen usuarios).
+ * 2. Redirigir a `/setup` si no hay usuarios (First Run).
+ * 3. Bloquear el acceso a `/setup` si ya existen usuarios (Seguridad).
+ * 4. Renderizar el contenido de la aplicación (`Outlet`) si todo está correcto.
  */
 export const SystemGuard = () => {
   const [isLoading, setIsLoading] = useState(true);

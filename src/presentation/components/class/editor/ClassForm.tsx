@@ -10,15 +10,26 @@ const PREDEFINED_COLORS = [
 // Tipo que puede ser para una nueva clase o para una actualización
 export type ClassFormData = Omit<NewClass & ClassUpdate, "ownerId" | "id">;
 
+/**
+ * Props para el formulario de datos de la clase.
+ */
 type ClassFormProps = {
+  /** Datos actuales del formulario. */
   formData: ClassFormData;
+  /** Manejador de cambios en inputs de texto. */
   onFormChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
+  /** Manejador de cambio de color. */
   onColorChange: (color: string) => void;
+  /** Errores de validación por campo. */
   fieldErrors?: FieldErrorDTO[];
 };
 
+/**
+ * Formulario presentacional para editar los detalles de una clase.
+ * Incluye campos para nombre, asignatura, sección y un selector de color.
+ */
 export const ClassForm = ({
   formData,
   onFormChange,

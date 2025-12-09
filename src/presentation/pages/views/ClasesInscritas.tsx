@@ -29,6 +29,15 @@ import {
   PaginationControls,
 } from "@presentation";
 
+/**
+ * Vista principal para estudiantes: "Clases Inscritas".
+ *
+ * Funcionalidades:
+ * 1. Listar clases en las que el estudiante está inscrito.
+ * 2. Inscribirse en nuevas clases mediante código.
+ * 3. Ocultar/Mostrar clases (soft delete visual para el estudiante).
+ * 4. Abandonar clases.
+ */
 export const ClasesInscritas = () => {
   const { user } = useUser();
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
@@ -151,8 +160,8 @@ export const ClasesInscritas = () => {
     criteria.withStudent?.hidden === undefined
       ? "all"
       : criteria.withStudent.hidden
-      ? "true"
-      : "false";
+        ? "true"
+        : "false";
 
   const hiddenToggle = (
     <ToggleButtonGroup
@@ -191,7 +200,7 @@ export const ClasesInscritas = () => {
           <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
             <ClassCard
               classData={classData}
-              onClick={() => {}}
+              onClick={() => { }}
               isLoading={isLoading}
               menuOptions={getMenuOptions(classData)}
             />

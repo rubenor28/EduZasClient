@@ -15,8 +15,16 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 /**
- * Página de inicio de sesión de usuario.
- * Utiliza el AuthLayout para la presentación y se centra en la lógica del formulario.
+ * Página de inicio de sesión.
+ *
+ * Responsabilidades:
+ * 1. Gestionar el estado del formulario (email, password).
+ * 2. Enviar las credenciales a la API (`/auth/login`).
+ * 3. Manejar la respuesta:
+ *    - Éxito: Redirigir al usuario a la página principal (`/`).
+ *    - Error 400 (Input): Mostrar errores de validación en los campos correspondientes.
+ *    - Error 409 (Conflict) o 401 (Unauthorized): Mostrar un mensaje de error general.
+ * 4. Mostrar mensajes de éxito si se viene de un registro exitoso.
  */
 export function Login() {
   const navigate = useNavigate();

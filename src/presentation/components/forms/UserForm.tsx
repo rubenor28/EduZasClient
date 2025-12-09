@@ -13,15 +13,30 @@ import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import type { FieldErrorDTO, NewUser } from "@application";
 
+/**
+ * Props para el componente UserForm.
+ */
 type UserFormProps = {
+  /** Función a ejecutar al enviar el formulario. */
   onSubmit: (payload: NewUser) => Promise<void>;
+  /** Indica si el formulario se está enviando (deshabilita inputs). */
   isSubmitting: boolean;
+  /** Lista de errores de validación por campo. */
   fieldErrors: FieldErrorDTO[];
+  /** Error general del formulario (no asociado a un campo específico). */
   formError: string | null;
+  /** Texto del botón de envío (ej. "Registrarse", "Crear Admin"). */
   submitButtonText: string;
+  /** Si es true, muestra un enlace para ir al Login. */
   showLoginLink?: boolean;
 };
 
+/**
+ * Formulario reutilizable para la creación de usuarios.
+ * Se utiliza tanto en el Registro Público como en la Configuración Inicial.
+ *
+ * Maneja internamente el estado de los campos y la visibilidad de la contraseña.
+ */
 export const UserForm = ({
   onSubmit,
   isSubmitting,

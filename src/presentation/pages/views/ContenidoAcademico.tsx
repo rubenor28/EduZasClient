@@ -33,6 +33,15 @@ import {
 } from "@presentation";
 import type { Block } from "@blocknote/core";
 
+/**
+ * Vista para la gestión de contenido académico (recursos/notas).
+ *
+ * Funcionalidades:
+ * 1. Listar recursos creados por el profesor.
+ * 2. Crear nuevos recursos (inicializa un documento con un bloque de párrafo vacío).
+ * 3. Navegar al editor de recursos (`ResourceEditorPage`).
+ * 4. Archivar, desarchivar y eliminar recursos.
+ */
 export const ContenidoAcademico = () => {
   const { user } = useUser();
   const navigate = useNavigate();

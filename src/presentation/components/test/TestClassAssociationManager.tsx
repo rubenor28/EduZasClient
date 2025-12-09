@@ -29,13 +29,30 @@ type Changes = {
 
 const initialChanges: Changes = { toAdd: [], toRemove: [], toUpdate: [] };
 
+/**
+ * Props para el gestor de asignación de evaluaciones.
+ */
 type TestClassAssociationManagerProps = {
+  /** Controla la visibilidad del modal. */
   open: boolean;
+  /** Función para cerrar el modal. */
   onClose: () => void;
+  /** Callback tras guardar cambios exitosamente. */
   onSuccess: () => void;
+  /** ID de la evaluación que se está asignando. */
   testId: string;
 };
 
+/**
+ * Modal para gestionar la asignación de una evaluación a múltiples clases.
+ * Similar a `ResourceClassAssociationManager`, pero para evaluaciones.
+ *
+ * Funcionalidades:
+ * 1. Listar clases del profesor.
+ * 2. Asignar/Desasignar evaluación a clases.
+ * 3. Controlar la visibilidad de la evaluación para los alumnos.
+ * 4. Guardado en lote de los cambios.
+ */
 export const TestClassAssociationManager = ({
   open,
   onClose,
@@ -124,7 +141,7 @@ export const TestClassAssociationManager = ({
         if (!newChanges.toAdd.find((c) => c.classId === classId)) {
           newChanges.toAdd.push({
             classId,
-            visible: true, // Default to visible
+            visible: true, // Visible por defecto
           });
         }
       } else {

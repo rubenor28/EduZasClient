@@ -42,9 +42,9 @@ export abstract class BaseQuestionTool<T extends BaseQuestionData> implements Bl
    * Las subclases DEBEN sobreescribir este método estático para aparecer en la caja de herramientas.
    */
   static get toolbox(): ToolboxConfig {
-      throw new Error("La configuración de 'toolbox' debe ser implementada por la subclase.");
+    throw new Error("La configuración de 'toolbox' debe ser implementada por la subclase.");
   }
-  
+
   /**
    * Construye el DOM del bloque, combinando el enunciado común y el cuerpo específico de la pregunta.
    */
@@ -64,21 +64,21 @@ export abstract class BaseQuestionTool<T extends BaseQuestionData> implements Bl
     questionContainer.appendChild(questionInput);
 
     if (!this.readOnly) {
-        const hintIcon = this._createElement('div', ['text-gray-500', 'cursor-help', 'flex-shrink-0']);
-        hintIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
-        hintIcon.title = this.getProfessorHint();
-        questionContainer.appendChild(hintIcon);
+      const hintIcon = this._createElement('div', ['text-gray-500', 'cursor-help', 'flex-shrink-0']);
+      hintIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+      hintIcon.title = this.getProfessorHint();
+      questionContainer.appendChild(hintIcon);
     }
-    
+
     this.wrapper.appendChild(questionContainer);
 
-    // --- Image URL Container ---
+    // --- Contenedor de URL de Imagen ---
     const imageContainer = this._createElement('div', ['flex', 'flex-col', 'gap-2', 'mt-2']);
-    
+
     const urlInputWrapper = this._createElement('div', ['flex', 'items-center', 'gap-2']);
     const urlInput = this._createInput({
       value: this.data.imageUrl || '',
-      placeholder: 'Pega la URL de la imagen aquí...', 
+      placeholder: 'Pega la URL de la imagen aquí...',
       classes: [this.api.styles.input, 'flex-grow'],
       onInput: (e) => {
         const url = (e.target as HTMLInputElement).value;
@@ -94,26 +94,26 @@ export abstract class BaseQuestionTool<T extends BaseQuestionData> implements Bl
     const imageAddButton = this._createButton(!this.data.imageUrl ? '🖼️ Añadir Imagen' : '🖼️ Cambiar/Quitar Imagen', () => {
       urlInputWrapper.hidden = !urlInputWrapper.hidden;
     }, ['mt-2', 'w-full', 'justify-center']);
-    
+
     if (!this.readOnly) {
       this.wrapper.appendChild(imageAddButton);
     }
-    
+
     urlInputWrapper.appendChild(urlInput);
-    urlInputWrapper.hidden = true; // Always hide initially, user must click button
+    urlInputWrapper.hidden = true; // Ocultar inicialmente, el usuario debe hacer clic en el botón
 
     const imagePreview = this._createElement('img', ['image-preview', 'max-w-sm', 'h-auto', 'rounded-lg', 'border', 'border-gray-200', 'mx-auto']) as HTMLImageElement;
     if (this.data.imageUrl) {
-        imagePreview.src = this.data.imageUrl;
+      imagePreview.src = this.data.imageUrl;
     } else {
-        imagePreview.hidden = true;
+      imagePreview.hidden = true;
     }
 
     imageContainer.appendChild(urlInputWrapper);
     imageContainer.appendChild(imagePreview);
     this.wrapper.appendChild(imageContainer);
-    
-    // --- Tool-specific body ---
+
+    // --- Cuerpo específico de la herramienta ---
     const toolBody = this.renderToolBody();
     this.wrapper.appendChild(toolBody);
 
@@ -140,7 +140,7 @@ export abstract class BaseQuestionTool<T extends BaseQuestionData> implements Bl
   save(): T {
     return this.data;
   }
-  
+
   // --- Métodos de Ayuda para crear elementos del DOM ---
 
   protected _createElement(tagName: string, cssClasses: string | string[] = []): HTMLElement {

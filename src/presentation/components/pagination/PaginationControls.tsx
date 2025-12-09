@@ -30,17 +30,13 @@ interface PaginationControlsProps<T, C extends Criteria> {
 }
 
 /**
- * Un componente reutilizable para mostrar controles de paginación (números de página).
- * Está diseñado para funcionar con los datos proporcionados por el hook `usePaginatedSearch`.
+ * Componente visual para la navegación entre páginas de resultados.
  *
- * @template T - El tipo de dato de los resultados.
- * @template C - El tipo de criterio de búsqueda que extiende `Criteria`.
+ * Se integra con el hook `usePaginatedSearch` para recibir los datos y las funciones de control.
+ * Muestra botones de "Primera", "Última" y una paginación numérica central.
  *
- * @example
- * const { data, criteria, setCriteria, firstPage, lastPage } = usePaginatedSearch<MyType, MyCriteria>("/my-endpoint", { page: 1 });
- *
- * // ... en el JSX
- * <PaginationControls data={data} setCriteria={setCriteria} firstPage={firstPage} lastPage={lastPage} />
+ * @template T - Tipo de dato de los resultados (no usado visualmente, pero necesario para tipado).
+ * @template C - Tipo de criterio de búsqueda.
  */
 export const PaginationControls = <T, C extends Criteria>({
   data,

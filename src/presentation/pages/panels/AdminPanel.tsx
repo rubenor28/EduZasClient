@@ -27,6 +27,11 @@ const actions = [
   // Futuras acciones del administrador pueden ir aquí
 ];
 
+/**
+ * Panel principal para usuarios con rol de Administrador.
+ * Muestra un grid de tarjetas con accesos directos a las funciones administrativas
+ * (gestión de base de datos, usuarios, etc.).
+ */
 export const AdminPanel = () => {
   const navigate = useNavigate();
 
