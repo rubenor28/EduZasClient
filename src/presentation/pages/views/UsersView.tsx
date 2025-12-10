@@ -61,7 +61,7 @@ export const UsersView = () => {
     lastPage,
   } = usePaginatedSearch<User, UserCriteria>("/users/all", {
     page: 1,
-    pageSize: 8,
+    pageSize: 6,
     active: true,
   });
 

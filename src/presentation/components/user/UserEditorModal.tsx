@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { UserEditorForm, type UserFormData } from "./UserEditorForm";
 import type { User } from "@domain";
 import type { NewUser, UpdateUser, FieldErrorDTO } from "@application";
-import { apiPostInput, apiPutInput } from "@application";
+import { apiPostInput, apiPutInput, Conflict, InputError } from "@application";
 
 /**
  * Props para el modal de gestión de usuarios.
@@ -129,39 +129,36 @@ export const UserEditorModal = ({
 
       switch (formPayload.mode) {
         case "update": {
-          const result = await apiPutInput("/users", formPayload.data);
-          result.match(
-            () => {
-              onSuccess();
-              onClose();
-            },
-            (error) => {
-              if (error.type === "input-error") {
-                setFieldErrors(error.data);
-              } else {
-                setFormError(error.message || "Error al actualizar.");
-              }
-            },
-          );
+          try {
+            await apiPutInput("/users", formPayload.data);
+            onSuccess();
+            onClose();
+          } catch (e) {
+            if (e instanceof InputError) {
+              setFieldErrors(e.errors);
+            } else if (e instanceof Conflict) {
+              setFormError(e.message);
+            } else {
+              setFormError("Error al crear el usuario.");
+            }
+          }
           break;
         }
         case "create": {
-          const result = await apiPostInput("/users", formPayload.data);
-          result.match(
-            () => {
-              onSuccess();
-              onClose();
-            },
-            (error) => {
-              if (error.type === "input-error") {
-                setFieldErrors(error.data);
-              } else if (error.type === "conflict") {
-                setFormError(error.message);
-              } else {
-                setFormError("Error al crear el usuario.");
-              }
-            },
-          );
+          try {
+            await apiPostInput("/users", formPayload.data);
+            onSuccess();
+            onClose();
+          } catch (error) {
+            if (error instanceof InputError) {
+              setFieldErrors(error.errors);
+            } else if (error instanceof Conflict) {
+              setFormError(error.message);
+            } else {
+              setFormError("Error al crear el usuario.");
+            }
+          }
+
           break;
         }
       }

@@ -45,7 +45,7 @@ export const ClassContentView = () => {
         const criteria: ClassContentCriteria = {
           classId,
           page: 1,
-          pageSize: 999999,
+          pageSize: 30,
         };
         const result = await apiPost<ClassContentResponse>(`/classes/content`, criteria);
         setData(result);

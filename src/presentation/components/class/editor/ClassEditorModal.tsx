@@ -118,10 +118,14 @@ export const ClassEditorModal = ({
         setIsLoadingProfessors(true);
         try {
           // 1. Obtener la lista de usuarios (profesores)
-          const professorsResult = await apiPost<PaginatedQuery<ClassProfessorSummary, ClassProfessorSummaryCriteria>>(
-            `/classes/${classToEdit.id}/professors/${user.id}`, // user.id for authorization, not filtering
-            { page: 1, pageSize: 9999, ProfessorId: user.id, classId: classToEdit.id}, // Pass ProfessorId for alias resolution
-          );
+          const professorsResult = await apiPost<
+            PaginatedQuery<ClassProfessorSummary, ClassProfessorSummaryCriteria>
+          >(`/classes/${classToEdit.id}/professors/${user.id}`, {
+            page: 1,
+            pageSize: 6,
+            ProfessorId: user.id,
+            classId: classToEdit.id,
+          });
           setInitialProfessors(professorsResult.results);
         } catch (e) {
           setFormError(
