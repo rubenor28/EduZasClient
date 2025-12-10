@@ -142,3 +142,8 @@ export type ClassProfessorSummary = {
   /** Indica si el profesor es el propietario de la clase. */
   owner: boolean;
 };
+
+export type ClassProfessorSummaryCriteria = Criteria & {
+  ClassId: string;
+  ProfessorId: number;
+};

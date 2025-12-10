@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import type { Contact } from "@domain";
-import { usePaginatedSearch, useUser } from "@presentation";
+import { usePaginatedSearch, useUser, ContactSearchForm } from "@presentation";
 import type { ContactCriteria, ClassProfessorSummary } from "@application";
 
 // Tipos unificados para la gestión interna del componente
@@ -86,6 +86,8 @@ export const ProfessorSelector = ({
   const {
     data: contactsData,
     isLoading: isLoadingContacts,
+    criteria: contactCriteria,
+    setCriteria: setContactCriteria,
     error: contactsError,
     refreshSearch: searchContacts,
   } = usePaginatedSearch<Contact, ContactCriteria>(
@@ -108,6 +110,15 @@ export const ProfessorSelector = ({
       setManagedProfessors([]);
     }
   }, [open, hasSearchedContacts, searchContacts]);
+
+  // Si cambian los criterios (alias/etiqueta/página) y el modal está abierto,
+  // refrescamos la búsqueda para mostrar resultados actualizados.
+  useEffect(() => {
+    if (open) {
+      searchContacts();
+      setHasSearchedContacts(true);
+    }
+  }, [contactCriteria, open, searchContacts]);
 
   useEffect(() => {
     // Cuando el modal se abre o los profesores iniciales cambian, resetea el estado
@@ -391,8 +402,14 @@ export const ProfessorSelector = ({
         <Chip label="Añadir desde Contactos" />
       </Divider>
 
+      <Box sx={{ mb: 2 }}>
+        <ContactSearchForm
+          criteria={contactCriteria}
+          setCriteria={setContactCriteria}
+        />
+      </Box>
+
       {renderContactList()}
     </Box>
   );
 };
-

@@ -224,7 +224,7 @@ export const ClassEditorModal = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>
         {isEditMode ? "Editar Clase" : "Crear Nueva Clase"}
       </DialogTitle>
