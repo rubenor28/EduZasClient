@@ -3,6 +3,7 @@ import { useUser } from "../../context/UserContext";
 import type { User } from "@domain";
 import { apiDelete } from "@application";
 import { useNavigate, NavLink } from "react-router-dom";
+import { NotificationBell } from "../notifications/NotificationBell";
 
 type NavPage = {
   title: string;
@@ -74,9 +75,10 @@ export const Navbar = () => {
               </NavLink>
             ))}
         </Box>
+        <NotificationBell />
         <Typography
           onClick={handleLogout}
-          sx={{ cursor: "pointer", color: "inherit" }}
+          sx={{ cursor: "pointer", color: "inherit", ml: 2 }}
         >
           Cerrar Sesión
         </Typography>

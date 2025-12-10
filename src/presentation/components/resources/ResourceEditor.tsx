@@ -98,7 +98,7 @@ export const ResourceEditor = ({
         }}
       >
         <TextField
-          inputProps={{ maxLength: 100 }}
+          inputProps={{ maxLength: 59 }}
           label="Título"
           value={initialTitle}
           onChange={(e) => onTitleChange(e.target.value)}
