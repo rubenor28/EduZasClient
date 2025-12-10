@@ -118,12 +118,16 @@ export const TestEditorPage = () => {
       const payload: TestUpdate = {
         id: testId,
         title,
+        color,
         content: content,
         active: active,
         professorId: user.id,
         timeLimitMinutes: timeLimitMinutes,
       };
-      await apiPut("/test", payload, { parseResponse: "void" });
+
+      console.log(color);
+
+      await apiPut("/test", payload, { parseResponse: "json" });
       setSnackbar({ open: true, message: "Evaluación guardada exitosamente." });
     } catch (e) {
       if (e instanceof InputError) {

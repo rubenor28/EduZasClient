@@ -16,9 +16,9 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import type { User, Contact } from "@domain";
+import type { Contact } from "@domain";
 import { usePaginatedSearch, useUser } from "@presentation";
-import type { ContactCriteria } from "@application";
+import type { ContactCriteria, ClassProfessorSummary } from "@application";
 
 // Tipos unificados para la gestión interna del componente
 export type ProfessorInfo = {
@@ -48,13 +48,15 @@ type ProfessorSelectorProps = {
   /** Indica si se está editando una clase existente. */
   isEditMode?: boolean;
   /** Lista inicial de profesores de la clase. */
-  initialProfessors: { user: User; isOwner: boolean }[];
+  initialProfessors: ClassProfessorSummary[];
   /** Indica si el usuario actual es el dueño de la clase (tiene permisos de gestión). */
   isCurrentUserOwner: boolean;
   /** Callback para notificar cambios en la lista de profesores. */
   onChange: (changes: ProfessorSelectorChanges) => void;
   /** Indica si el modal padre está abierto (para controlar efectos). */
   open: boolean;
+  /** ID de la clase que se está editando (solo si isEditMode es true). */
+  classId?: string;
 };
 
 /**
@@ -73,6 +75,7 @@ export const ProfessorSelector = ({
   isCurrentUserOwner,
   onChange,
   open,
+  classId,
 }: ProfessorSelectorProps) => {
   const { user } = useUser();
   const [managedProfessors, setManagedProfessors] = useState<
@@ -87,7 +90,11 @@ export const ProfessorSelector = ({
     refreshSearch: searchContacts,
   } = usePaginatedSearch<Contact, ContactCriteria>(
     "/contacts/me",
-    { page: 1, agendaOwnerId: user.id },
+    {
+      page: 1,
+      agendaOwnerId: user.id,
+      ...(isEditMode && classId ? { notProfessorInClass: classId } : {}),
+    },
     { autoFetch: false },
   );
 
@@ -105,18 +112,16 @@ export const ProfessorSelector = ({
   useEffect(() => {
     // Cuando el modal se abre o los profesores iniciales cambian, resetea el estado
     if (open) {
-      const initial: ManagedProfessor[] = initialProfessors.map(
-        ({ user: p, isOwner }) => ({
-          info: {
-            id: p.id,
-            name: `${p.firstName} ${p.fatherLastname}`,
-            email: p.email,
-          },
-          isOwner,
-          status: "existing",
-          originalIsOwner: isOwner,
-        }),
-      );
+      const initial: ManagedProfessor[] = initialProfessors.map((p) => ({
+        info: {
+          id: p.userId,
+          name: p.alias || `${p.firstName} ${p.fatherLastName}`,
+          email: p.email, // Now ClassProfessorSummary contains email
+        },
+        isOwner: p.owner,
+        status: "existing",
+        originalIsOwner: p.owner,
+      }));
       setManagedProfessors(initial);
     }
   }, [open, initialProfessors]);
@@ -160,8 +165,8 @@ export const ProfessorSelector = ({
         professor.status === "added"
           ? prev.filter((p) => p.info.id !== profId)
           : prev.map((p) =>
-            p.info.id === profId ? { ...p, status: "removed" } : p,
-          );
+              p.info.id === profId ? { ...p, status: "removed" } : p,
+            );
 
       const activeProfessors = updatedList.filter(
         (p) => p.status !== "removed",
@@ -320,10 +325,7 @@ export const ProfessorSelector = ({
       <List dense>
         {availableContacts.map((contact) => (
           <ListItem key={contact.userId}>
-            <ListItemText
-              primary={contact.alias}
-              secondary={(contact as any).email}
-            />
+            <ListItemText primary={contact.alias} />
             <ListItemSecondaryAction>
               <Button
                 size="small"
@@ -393,3 +395,4 @@ export const ProfessorSelector = ({
     </Box>
   );
 };
+

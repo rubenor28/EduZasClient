@@ -71,7 +71,7 @@ export const TestCard = ({
         <Box
           sx={{
             height: 100,
-            backgroundColor: "info.main", // Un color diferente para distinguir de otros cards
+            backgroundColor: testData.color, // Un color diferente para distinguir de otros cards
             position: "relative",
             p: 2,
             display: "flex",

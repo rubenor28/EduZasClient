@@ -10,6 +10,8 @@ export type TestSummary = {
   id: string;
   /** Título de la evaluación. */
   title: string;
+  /** Color de la carta de evaluacion. */
+  color: string;
   /** Indica si la evaluación está activa (no archivada). */
   active: boolean;
   /** Fecha de la última modificación. */
@@ -22,6 +24,8 @@ export type TestSummary = {
 export type NewTest = {
   /** Título de la evaluación. */
   title: string;
+  /** Color. */
+  color: string;
   /** Contenido de la evaluación en formato de bloques. */
   content: OutputData;
   /** Límite de tiempo en minutos (opcional). */
@@ -36,6 +40,8 @@ export type NewTest = {
 export type TestUpdate = {
   /** Identificador único de la evaluación a actualizar. */
   id: string;
+  /** Color. */
+  color: string;
   /** Nuevo título de la evaluación. */
   title: string;
   /** Nuevo contenido de la evaluación en formato de bloques. */

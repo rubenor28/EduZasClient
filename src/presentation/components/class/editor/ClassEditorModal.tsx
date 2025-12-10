@@ -13,21 +13,22 @@ import {
   ProfessorSelector,
   type ProfessorSelectorChanges,
 } from "./ProfessorSelector";
-import type { Class, User } from "@domain";
+import type { Class } from "@domain"; // User removed
 import type {
   NewClass,
   ClassUpdate,
   FieldErrorDTO,
   Professor,
   PaginatedQuery,
-  UserCriteria,
+  ClassProfessorSummary, // Added
+  ClassProfessorSummaryCriteria, // Added
 } from "@application";
 import {
   apiPost,
   apiPut,
   InputError,
   apiDelete,
-  apiGet,
+  // apiGet, // Removed unused import
 } from "@application";
 import { useUser } from "@presentation";
 
@@ -48,9 +49,9 @@ type ClassEditorModalProps = {
 };
 
 // Se usa para obtener el isOwner de un profesor
-type ClassProfessorRelation = {
-  isOwner: boolean;
-};
+// type ClassProfessorRelation = { // Removed unused type
+//   isOwner: boolean;
+// };
 
 const getInitialFormData = (classData?: Class | null): ClassFormData => ({
   className: classData?.className || "",
@@ -94,7 +95,7 @@ export const ClassEditorModal = ({
       toUpdate: [],
     });
   const [initialProfessors, setInitialProfessors] = useState<
-    { user: User; isOwner: boolean }[]
+    ClassProfessorSummary[] // Updated type
   >([]);
   const [isLoadingProfessors, setIsLoadingProfessors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -117,24 +118,11 @@ export const ClassEditorModal = ({
         setIsLoadingProfessors(true);
         try {
           // 1. Obtener la lista de usuarios (profesores)
-          const usersResult = await apiPost<PaginatedQuery<User, UserCriteria>>(
-            "/users/all",
-            { teachingInClass: classToEdit.id },
+          const professorsResult = await apiPost<PaginatedQuery<ClassProfessorSummary, ClassProfessorSummaryCriteria>>(
+            `/classes/${classToEdit.id}/professors/${user.id}`, // user.id for authorization, not filtering
+            { page: 1, pageSize: 9999, ProfessorId: user.id, classId: classToEdit.id}, // Pass ProfessorId for alias resolution
           );
-
-          // 2. Para cada profesor, obtener su estado de propiedad
-          const professorDataPromises = usersResult.results.map(
-            async (profUser) => {
-              const relation = await apiGet<ClassProfessorRelation>(
-                `/classes/professors/${classToEdit.id}/${profUser.id}`,
-              );
-              return { user: profUser, isOwner: relation.isOwner };
-            },
-          );
-
-          const fullProfessorData = await Promise.all(professorDataPromises);
-
-          setInitialProfessors(fullProfessorData);
+          setInitialProfessors(professorsResult.results);
         } catch (e) {
           setFormError(
             e instanceof Error ? e.message : "Error al cargar profesores.",
@@ -261,6 +249,7 @@ export const ClassEditorModal = ({
             isCurrentUserOwner={isCurrentUserOwner}
             onChange={setProfessorChanges}
             open={open}
+            classId={classToEdit?.id}
           />
         )}
       </DialogContent>

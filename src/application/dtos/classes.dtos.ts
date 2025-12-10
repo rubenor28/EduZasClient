@@ -122,3 +122,23 @@ export type StudentClassesSummaryCriteria = Criteria & {
   section?: StringQuery;
   studentId: number;
 };
+
+/** DTO para el resumen de un profesor en una clase. */
+export type ClassProfessorSummary = {
+  /** ID del usuario profesor. */
+  userId: number;
+  /** Correo electrónico del profesor. */
+  email: string;
+  /** Alias del profesor (si existe en contactos). */
+  alias?: string;
+  /** Primer nombre del profesor. */
+  firstName: string;
+  /** Segundo nombre del profesor (opcional). */
+  midName?: string;
+  /** Apellido paterno del profesor. */
+  fatherLastName: string;
+  /** Apellido materno del profesor (opcional). */
+  motherLastname?: string;
+  /** Indica si el profesor es el propietario de la clase. */
+  owner: boolean;
+};

@@ -10,6 +10,8 @@ export type Test = {
   /** Indica si la evaluación está activa. */
   active: boolean;
   /** Título de la evaluación. */
+  color: string;
+  /** Título de la evaluación. */
   title: string;
   /** Contenido de la evaluación, estructurado como un array de bloques. */
   content: OutputData;

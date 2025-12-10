@@ -101,6 +101,7 @@ export const Evaluaciones = () => {
     try {
       const payload: NewTest = {
         title: "Nueva Evaluación",
+        color: "#1976d2",
         content: createDefaultContent(),
         professorId: user.id,
       };
