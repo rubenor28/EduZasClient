@@ -142,9 +142,10 @@ export const ResourceClassAssociationManager = ({
           (id) => id !== classId
         );
         if (!newChanges.toAdd.find((c) => c.classId === classId)) {
+          const currentAssoc = localAssociations.get(classId);
           newChanges.toAdd.push({
             classId,
-            hidden: false, // Default to visible
+            hidden: currentAssoc?.isHidden ?? false,
           });
         }
       } else {
@@ -173,32 +174,57 @@ export const ResourceClassAssociationManager = ({
     });
 
     setChanges((prev) => {
-      const newChanges = { ...prev };
       const original = initialState.get(classId);
+      const pendingAdd = prev.toAdd.find((c) => c.classId === classId);
 
-      const pendingAdd = newChanges.toAdd.find((c) => c.classId === classId);
+      // Caso 1: La asociación está pendiente de crear
       if (pendingAdd) {
-        pendingAdd.hidden = newIsHidden;
-        return newChanges;
+        return {
+          toAdd: prev.toAdd.map((c) =>
+            c.classId === classId ? { ...c, hidden: newIsHidden } : c
+          ),
+          toRemove: prev.toRemove,
+          toUpdate: prev.toUpdate,
+        };
       }
 
+      // Caso 2: La asociación ya existía (está en initialState)
       if (original?.isAssociated) {
         if (newIsHidden === original.isHidden) {
-          newChanges.toUpdate = newChanges.toUpdate.filter(
-            (c) => c.classId !== classId
-          );
+          // Revertimos al estado original, quitamos del update
+          return {
+            toAdd: prev.toAdd,
+            toRemove: prev.toRemove,
+            toUpdate: prev.toUpdate.filter((c) => c.classId !== classId),
+          };
         } else {
-          const existingUpdate = newChanges.toUpdate.find(
+          // Hay un cambio, lo añadimos o actualizamos
+          const existingUpdate = prev.toUpdate.find(
             (c) => c.classId === classId
           );
           if (existingUpdate) {
-            existingUpdate.hidden = newIsHidden;
+            return {
+              toAdd: prev.toAdd,
+              toRemove: prev.toRemove,
+              toUpdate: prev.toUpdate.map((c) =>
+                c.classId === classId ? { ...c, hidden: newIsHidden } : c
+              ),
+            };
           } else {
-            newChanges.toUpdate.push({ classId, hidden: newIsHidden });
+            return {
+              toAdd: prev.toAdd,
+              toRemove: prev.toRemove,
+              toUpdate: [...prev.toUpdate, { classId, hidden: newIsHidden }],
+            };
           }
         }
       }
-      return newChanges;
+
+      // Caso 3: Algo está mal
+      console.warn(
+        `Intento de modificar visibilidad de asociación inexistente: ${classId}`
+      );
+      return prev;
     });
   };
 
