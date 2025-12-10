@@ -12,12 +12,12 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import type { Class } from "@domain";
 import {
   apiDelete,
   apiPut,
   NotFoundError,
-  type ClassCriteria,
+  type StudentClassesSummary,
+  type StudentClassesSummaryCriteria,
 } from "@application";
 import {
   ClassCard,
@@ -57,12 +57,16 @@ export const ClasesInscritas = () => {
     refreshSearch: refetch,
     firstPage,
     lastPage,
-  } = usePaginatedSearch<Class, ClassCriteria>("/classes/enrolled", {
-    page: 1,
-    pageSize: 12,
-    active: true,
-    withStudent: { id: user.id, hidden: false },
-  });
+  } = usePaginatedSearch<StudentClassesSummary, StudentClassesSummaryCriteria>(
+    "/classes/enrolled",
+    {
+      page: 1,
+      pageSize: 12,
+      active: true,
+      studentId: user.id,
+      hidden: false,
+    },
+  );
 
   const handleToggleHidden = async (classId: string, shouldHide: boolean) => {
     const action = shouldHide ? "ocultar" : "mostrar";
@@ -117,25 +121,25 @@ export const ClasesInscritas = () => {
     }
   };
 
-  const getMenuOptions = (classData: Class): MenuOption[] => {
+  const getMenuOptions = (classData: StudentClassesSummary): MenuOption[] => {
     const options: MenuOption[] = [
       {
         name: "Abandonar Clase",
-        callback: () => handleUnenroll(classData.id),
+        callback: () => handleUnenroll(classData.classId),
       },
     ];
 
-    const isHidden = data?.criteria.withStudent?.hidden;
+    const isHidden = classData.hidden;
     // Opciones de ocultar/mostrar clase, se añaden después de abandonar
     if (isHidden) {
       options.push({
         name: "Mostrar clase",
-        callback: () => handleToggleHidden(classData.id, false),
+        callback: () => handleToggleHidden(classData.classId, false),
       });
     } else {
       options.push({
         name: "Ocultar clase",
-        callback: () => handleToggleHidden(classData.id, true),
+        callback: () => handleToggleHidden(classData.classId, true),
       });
     }
     return options;
@@ -149,20 +153,13 @@ export const ClasesInscritas = () => {
     setCriteria((prev) => ({
       ...prev,
       page: 1,
-      withStudent: {
-        ...prev.withStudent!,
-        hidden:
-          newValue === "all" ? undefined : newValue === "true" ? true : false,
-      },
+      hidden:
+        newValue === "all" ? undefined : newValue === "true" ? true : false,
     }));
   };
 
   const hiddenValue =
-    criteria.withStudent?.hidden === undefined
-      ? "all"
-      : criteria.withStudent.hidden
-        ? "true"
-        : "false";
+    criteria.hidden === undefined ? "all" : criteria.hidden ? "true" : "false";
 
   const hiddenToggle = (
     <ToggleButtonGroup
@@ -198,9 +195,16 @@ export const ClasesInscritas = () => {
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
         {data.results.map((classData) => (
-          <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
+          <Grid item key={classData.classId} xs={12} sm={6} md={4} lg={3}>
             <ClassCard
-              classData={classData}
+              classData={{
+                id: classData.classId,
+                active: classData.active,
+                className: classData.className,
+                subject: classData.subject,
+                section: classData.section,
+                color: classData.color,
+              }}
               onClick={() => {}}
               isLoading={isLoading}
               menuOptions={getMenuOptions(classData)}
@@ -233,11 +237,8 @@ export const ClasesInscritas = () => {
         </Button>
       </Box>
 
-      <ClassSearchForm
-        criteria={criteria}
-        setCriteria={setCriteria}
-        viewSpecificFields={hiddenToggle}
-      />
+      <ClassSearchForm criteria={criteria} setCriteria={setCriteria} />
+      {hiddenToggle}
 
       {renderContent()}
 

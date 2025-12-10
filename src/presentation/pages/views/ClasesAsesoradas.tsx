@@ -7,28 +7,25 @@ import {
   Alert,
   Button,
   Snackbar,
-  ToggleButton,
-  ToggleButtonGroup,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import type { Class } from "@domain";
+import type { ProfessorClassesSummary } from "@application";
 import {
   type ClassUpdate,
   apiDelete,
   apiPut,
   ForbiddenError,
-  type ClassCriteria,
+  type ProfessorClassesSummaryCriteria,
 } from "@application";
 import {
-  ClassCard,
   ClassSearchForm,
   ClassEditorModal,
   useUser,
   usePaginatedSearch,
   type MenuOption,
   PaginationControls,
-  useOwnership,
+  ClassCard,
 } from "@presentation";
 
 /**
@@ -46,8 +43,8 @@ import {
 export const ClasesAsesoradas = () => {
   const { user } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingClass, setEditingClass] = useState<Class | null>(null);
-  const [editingClassIsOwner, setEditingClassIsOwner] = useState(false);
+  const [editingClass, setEditingClass] =
+    useState<ProfessorClassesSummary | null>(null);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -65,28 +62,27 @@ export const ClasesAsesoradas = () => {
     refreshSearch: refetch,
     firstPage,
     lastPage,
-  } = usePaginatedSearch<Class, ClassCriteria>("/classes/assigned", {
+  } = usePaginatedSearch<
+    ProfessorClassesSummary,
+    ProfessorClassesSummaryCriteria
+  >("/classes/assigned", {
     page: 1,
     pageSize: 12,
     active: true,
-    withProfessor: { id: user.id },
+    professorId: user.id,
   });
-
-  const ownershipMap = useOwnership(data?.results);
 
   const handleOpenCreateModal = () => {
     setEditingClass(null);
-    setEditingClassIsOwner(true);
     setIsModalOpen(true);
   };
 
-  const handleOpenEditModal = (classData: Class, isOwner: boolean) => {
+  const handleOpenEditModal = (classData: ProfessorClassesSummary) => {
     setEditingClass(classData);
-    setEditingClassIsOwner(isOwner);
     setIsModalOpen(true);
   };
 
-  const handleArchive = async (classData: Class) => {
+  const handleArchive = async (classData: ProfessorClassesSummary) => {
     if (
       !window.confirm(
         `¿Estás seguro de que quieres archivar la clase '${classData.className}'?`,
@@ -94,7 +90,11 @@ export const ClasesAsesoradas = () => {
     )
       return;
     try {
-      const payload: ClassUpdate = { ...classData, active: false };
+      const payload: ClassUpdate = {
+        ...classData,
+        active: false,
+        id: classData.classId,
+      };
       await apiPut("/classes", payload, { parseResponse: "void" });
       refetch();
       setSnackbar({
@@ -111,7 +111,7 @@ export const ClasesAsesoradas = () => {
     }
   };
 
-  const handleUnarchive = async (classData: Class) => {
+  const handleUnarchive = async (classData: ProfessorClassesSummary) => {
     if (
       !window.confirm(
         `¿Estás seguro de que quieres desarchivar la clase '${classData.className}'?`,
@@ -119,7 +119,11 @@ export const ClasesAsesoradas = () => {
     )
       return;
     try {
-      const payload: ClassUpdate = { ...classData, active: true };
+      const payload: ClassUpdate = {
+        ...classData,
+        active: true,
+        id: classData.classId,
+      };
       await apiPut("/classes", payload, { parseResponse: "void" });
       refetch();
       setSnackbar({
@@ -156,41 +160,6 @@ export const ClasesAsesoradas = () => {
     }
   };
 
-  const handleIsOwnerChange = (
-    _e: React.MouseEvent<HTMLElement>,
-    newValue: string | null,
-  ) => {
-    if (newValue === null) return;
-    setCriteria((prev) => ({
-      ...prev,
-      page: 1,
-      withProfessor: {
-        ...prev.withProfessor!,
-        isOwner: newValue === "all" ? undefined : newValue === "true",
-      },
-    }));
-  };
-
-  const isOwnerValue =
-    criteria.withProfessor?.isOwner === undefined
-      ? "all"
-      : criteria.withProfessor.isOwner
-        ? "true"
-        : "false";
-
-  const isOwnerToggle = (
-    <ToggleButtonGroup
-      value={isOwnerValue}
-      exclusive
-      onChange={handleIsOwnerChange}
-      size="small"
-    >
-      <ToggleButton value="true">Propias</ToggleButton>
-      <ToggleButton value="false">Ajenas</ToggleButton>
-      <ToggleButton value="all">Todas</ToggleButton>
-    </ToggleButtonGroup>
-  );
-
   const renderContent = () => {
     if (isLoading) return <CircularProgress />;
     if (error)
@@ -201,13 +170,13 @@ export const ClasesAsesoradas = () => {
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
         {data.results.map((classData) => {
-          const isOwner = ownershipMap.get(classData.id) ?? false;
+          const isOwner = classData.owner;
           const menuOptions: MenuOption[] = [];
 
           if (isOwner || isAdmin) {
             menuOptions.push({
               name: "Modificar",
-              callback: () => handleOpenEditModal(classData, isOwner),
+              callback: () => handleOpenEditModal(classData),
             });
           }
 
@@ -226,15 +195,15 @@ export const ClasesAsesoradas = () => {
           if (isOwner || isAdmin) {
             menuOptions.push({
               name: "Eliminar",
-              callback: () => handleDelete(classData.id),
+              callback: () => handleDelete(classData.classId),
             });
           }
 
           return (
-            <Grid item key={classData.id} xs={12} sm={6} md={4} lg={3}>
+            <Grid item key={classData.classId} xs={12} sm={6} md={4} lg={3}>
               <ClassCard
-                classData={classData}
-                onClick={() => { }}
+                classData={{ ...classData, id: classData.classId }}
+                onClick={() => {}}
                 isLoading={isLoading}
                 menuOptions={menuOptions}
               />
@@ -266,21 +235,33 @@ export const ClasesAsesoradas = () => {
         </Button>
       </Box>
 
-      <ClassSearchForm
-        criteria={criteria}
-        setCriteria={setCriteria}
-        viewSpecificFields={isOwnerToggle}
-      />
+      <ClassSearchForm criteria={criteria} setCriteria={setCriteria} />
 
       {renderContent()}
 
-      <PaginationControls data={data ?? undefined} setCriteria={setCriteria} firstPage={firstPage} lastPage={lastPage} />
+      <PaginationControls
+        data={data ?? undefined}
+        setCriteria={setCriteria}
+        firstPage={firstPage}
+        lastPage={lastPage}
+      />
 
       <ClassEditorModal
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        classToEdit={editingClass}
-        isCurrentUserOwner={isAdmin || editingClassIsOwner}
+        classToEdit={
+          editingClass
+            ? {
+                id: editingClass.classId,
+                active: editingClass.active,
+                className: editingClass.className,
+                subject: editingClass.subject,
+                section: editingClass.section,
+                color: editingClass.color,
+              }
+            : null
+        }
+        isCurrentUserOwner={isAdmin || (editingClass?.owner ?? false)}
         onSuccess={refetch}
       />
       <Snackbar

@@ -6,29 +6,26 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import { SearchType, type ClassCriteria } from "@application";
+import { SearchType, type StringQuery, type Criteria } from "@application";
 
 /**
  * Props para el formulario de búsqueda de clases.
  */
-type ClassSearchFormProps = {
+type ClassSearchFormProps<T extends Criteria & { active?: boolean; className?: StringQuery; subject?: StringQuery; section?: StringQuery; }> = {
   /** Estado actual de los criterios de búsqueda. */
-  criteria: ClassCriteria;
+  criteria: T;
   /** Función para actualizar los criterios. */
-  setCriteria: React.Dispatch<React.SetStateAction<ClassCriteria>>;
-  /** Componentes adicionales específicos de la vista (ej. filtro de propietario). */
-  viewSpecificFields?: React.ReactNode;
+  setCriteria: React.Dispatch<React.SetStateAction<T>>;
 };
 
 /**
  * Formulario reutilizable para filtrar clases.
  * Permite buscar por nombre, asignatura y estado (activas/inactivas).
  */
-export const ClassSearchForm = ({
+export const ClassSearchForm = <T extends Criteria & { active?: boolean; className?: StringQuery; subject?: StringQuery; section?: StringQuery; }>({
   criteria,
   setCriteria,
-  viewSpecificFields,
-}: ClassSearchFormProps) => {
+}: ClassSearchFormProps<T>) => {
   const handleStringChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -94,7 +91,6 @@ export const ClassSearchForm = ({
           <ToggleButton value="false">Inactivas</ToggleButton>
           <ToggleButton value="all">Todas</ToggleButton>
         </ToggleButtonGroup>
-        {viewSpecificFields}
       </Box>
     </Paper>
   );

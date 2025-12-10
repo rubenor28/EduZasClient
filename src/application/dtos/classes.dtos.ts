@@ -85,3 +85,40 @@ export type ClassProfessorCriteria = Criteria & {
   /** Filtrar por estado de propiedad. */
   isOwner?: boolean;
 };
+
+export type ProfessorClassesSummary = {
+  classId: string;
+  active: boolean;
+  className: string;
+  subject?: string;
+  section?: string;
+  color: string;
+  owner: boolean;
+};
+
+export type ProfessorClassesSummaryCriteria = Criteria & {
+  active?: boolean;
+  className?: StringQuery;
+  subject?: StringQuery;
+  section?: StringQuery;
+  professorId: number;
+};
+
+export type StudentClassesSummary = {
+  classId: string;
+  active: boolean;
+  className: string;
+  subject?: string;
+  section?: string;
+  color: string;
+  hidden: boolean;
+};
+
+export type StudentClassesSummaryCriteria = Criteria & {
+  active?: boolean;
+  hidden?: boolean;
+  className?: StringQuery;
+  subject?: StringQuery;
+  section?: StringQuery;
+  studentId: number;
+};
