@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { ProfessorClassesSummary } from "@application";
 import {
   type ClassUpdate,
@@ -42,6 +43,7 @@ import {
  */
 export const ClasesAsesoradas = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClass, setEditingClass] =
     useState<ProfessorClassesSummary | null>(null);
@@ -203,7 +205,7 @@ export const ClasesAsesoradas = () => {
             <Grid item key={classData.classId} xs={12} sm={6} md={4} lg={3}>
               <ClassCard
                 classData={{ ...classData, id: classData.classId }}
-                onClick={() => {}}
+                onClick={(id) => navigate(`/professor/classes/${id}/content`)}
                 isLoading={isLoading}
                 menuOptions={menuOptions}
               />

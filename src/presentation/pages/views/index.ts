@@ -7,3 +7,4 @@ export * from "./ContactsView";
 export * from "./ResourceEditorPage";
 export * from "./UsersView";
 export * from "./TestEditorPage";
+export * from "./classes/ClassContentView";

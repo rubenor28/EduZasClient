@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   apiDelete,
   apiPut,
@@ -40,6 +41,7 @@ import {
  */
 export const ClasesInscritas = () => {
   const { user } = useUser();
+  const navigate = useNavigate();
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
 
   const [snackbar, setSnackbar] = useState<{
@@ -205,7 +207,7 @@ export const ClasesInscritas = () => {
                 section: classData.section,
                 color: classData.color,
               }}
-              onClick={() => {}}
+              onClick={(id) => navigate(`/student/classes/${id}/content`)}
               isLoading={isLoading}
               menuOptions={getMenuOptions(classData)}
             />

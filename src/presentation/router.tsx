@@ -11,6 +11,7 @@ import {
   ResourceEditorPage,
   UsersView,
   TestEditorPage,
+  ClassContentView,
 } from "./pages/views";
 import {
   AuthErrorAs500Boundary,
@@ -96,6 +97,7 @@ export const router = createBrowserRouter([
               { path: "tests/:testId", element: <TestEditorPage /> },
               { path: "content", element: <ContenidoAcademico /> },
               { path: "content/:resourceId", element: <ResourceEditorPage /> },
+              { path: "classes/:classId/content", element: <ClassContentView /> },
             ],
           },
           // --- Rutas de Estudiante ---
@@ -105,6 +107,7 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <StudentPanel /> },
               { path: "courses", element: <ClasesInscritas /> },
+              { path: "classes/:classId/content", element: <ClassContentView /> },
             ],
           },
         ],
