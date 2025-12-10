@@ -1,5 +1,5 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import { Login, HomePage, Register, InitialSetup } from "./pages";
+import { Login, HomePage, InitialSetup } from "./pages";
 import { AdminPanel, ProfessorPanel, StudentPanel } from "./pages/panels";
 import {
   ClasesAsesoradas,
@@ -54,7 +54,6 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: "login", element: <Login /> },
-          { path: "register", element: <Register /> },
         ],
       },
       /**

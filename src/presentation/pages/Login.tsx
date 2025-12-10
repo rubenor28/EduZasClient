@@ -7,14 +7,13 @@ import {
 } from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState, useEffect } from "react";
-import { useNavigate, Link as RouterLink, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
   TextField,
   Button,
   CircularProgress,
   Alert,
-  Link,
   InputAdornment,
   IconButton,
 } from "@mui/material";
@@ -178,9 +177,6 @@ export function Login() {
             "Iniciar Sesión"
           )}
         </Button>
-        <Link component={RouterLink} to="/register" variant="body2">
-          {"¿No tienes una cuenta? Regístrate aquí"}
-        </Link>
       </Box>
     </AuthLayout>
   );
