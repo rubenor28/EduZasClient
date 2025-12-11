@@ -39,7 +39,7 @@ export const UsersTable = ({
   onSelectUser,
 }: UsersTableProps) => {
   const getFullName = (user: User) => {
-    return [user.firstName, user.midName, user.fatherLastname, user.motherLastname]
+    return [user.fatherLastname, user.motherLastname, user.firstName, user.midName]
       .filter(Boolean)
       .join(" ");
   };
