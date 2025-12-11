@@ -6,3 +6,4 @@ export * from "./resources.dtos.ts";
 export * from "./test.dtos.ts";
 export * from "./class-content.dtos.ts";
 export * from "./notifications.dtos.ts";
+export * from "./tags.dtos.ts";

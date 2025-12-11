@@ -1,9 +1,10 @@
 import { useState, useCallback } from "react";
 import { apiPost, apiDelete } from "@application";
 import type { PaginatedQuery, TagCriteria } from "@application";
+import type { Tag } from "domain/tag";
 
 type UseContactTagsReturn = {
-  tags: string[];
+  tags: Tag[];
   isLoading: boolean;
   error: string | null;
   fetchTags: (agendaOwnerId: number, contactId: number) => Promise<void>;
@@ -27,7 +28,7 @@ type UseContactTagsReturn = {
  * @returns Estado de las etiquetas y funciones para manipularlas.
  */
 export const useContactTags = (): UseContactTagsReturn => {
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,8 +42,8 @@ export const useContactTags = (): UseContactTagsReturn => {
       setError(null);
       try {
         let page = 1;
-        let search: PaginatedQuery<string, TagCriteria>;
-        let results: string[] = [];
+        let search: PaginatedQuery<Tag, TagCriteria>;
+        let results: Tag[] = [];
 
         // Bucle para obtener todas las páginas de etiquetas
         do {
@@ -52,7 +53,7 @@ export const useContactTags = (): UseContactTagsReturn => {
             page,
           };
 
-          search = await apiPost<PaginatedQuery<string, TagCriteria>>(
+          search = await apiPost<PaginatedQuery<Tag, TagCriteria>>(
             "/contacts/tags/search",
             criteria,
           );
@@ -79,9 +80,14 @@ export const useContactTags = (): UseContactTagsReturn => {
    */
   const addTag = useCallback(
     async (agendaOwnerId: number, contactId: number, tag: string) => {
-      if (tags.includes(tag)) return; // Evitar duplicados
+      if (tags.map((t) => t.text).includes(tag)) return; // Evitar duplicados
 
-      const optimisticTags = [...tags, tag];
+      let newTag: Tag = {
+        text: tag,
+        createdAt: new Date(Date.now()),
+      };
+
+      const optimisticTags = [...tags, newTag];
       setTags(optimisticTags); // Actualización optimista
 
       try {
@@ -105,7 +111,7 @@ export const useContactTags = (): UseContactTagsReturn => {
    */
   const removeTag = useCallback(
     async (agendaOwnerId: number, contactId: number, tag: string) => {
-      const optimisticTags = tags.filter((t) => t !== tag);
+      const optimisticTags = tags.filter((t) => t.text !== tag);
       setTags(optimisticTags); // Actualización optimista
 
       try {

@@ -20,6 +20,7 @@ import { useContactMutations } from "../../hooks/useContactMutations";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useContactTags } from "../../hooks/useContactTags";
 import { apiGet } from "@application";
+import type { Tag } from "domain/tag";
 
 /**
  * Props para el modal de edición de contactos.
@@ -66,7 +67,7 @@ export const ContactEditorModal = ({
   const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
   const [emailToEdit, setEmailToEdit] = useState<string>("");
   const [tagInput, setTagInput] = useState("");
-  const [creationTags, setCreationTags] = useState<string[]>([]);
+  const [creationTags, setCreationTags] = useState<Tag[]>([]);
 
   const {
     user: searchedUser,
@@ -161,11 +162,12 @@ export const ContactEditorModal = ({
   const handleTagInputKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault();
-      const newTag = tagInput.trim();
+      const newTagText = tagInput.trim();
       if (isEditMode && contactToEdit) {
-        addTag(currentUser.id, contactToEdit.userId, newTag);
+        addTag(currentUser.id, contactToEdit.userId, newTagText);
       } else {
-        if (!creationTags.includes(newTag)) {
+        if (!creationTags.some((tag) => tag.text === newTagText)) {
+          const newTag: Tag = { text: newTagText, createdAt: new Date() };
           setCreationTags([...creationTags, newTag]);
         }
       }
@@ -177,7 +179,7 @@ export const ContactEditorModal = ({
     if (isEditMode && contactToEdit) {
       removeTag(currentUser.id, contactToEdit.userId, tagToDelete);
     } else {
-      setCreationTags(creationTags.filter((tag) => tag !== tagToDelete));
+      setCreationTags(creationTags.filter((tag) => tag.text !== tagToDelete));
     }
   };
 
@@ -205,7 +207,7 @@ export const ContactEditorModal = ({
           userId: searchedUser.id,
           alias: formState.alias,
           notes: formState.notes,
-          tags: creationTags,
+          tags: creationTags.map((tag) => tag.text),
         },
         () => {
           onSuccess();
@@ -319,9 +321,9 @@ export const ContactEditorModal = ({
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}>
                 {tags.map((tag) => (
                   <Chip
-                    key={tag}
-                    label={tag}
-                    onDelete={() => handleTagDelete(tag)}
+                    key={tag.text}
+                    label={tag.text}
+                    onDelete={() => handleTagDelete(tag.text)}
                   />
                 ))}
               </Box>
