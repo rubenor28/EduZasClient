@@ -28,7 +28,8 @@ export const apiErrorHandlers: Record<number, ErrorHandler> = {
     return new InputError(errors);
   },
   409: async (res) => {
-    const response = (await res.json()).errors;
+    const response = (await res.json());
+    console.log(response);
     return new Conflict(response.message);
   },
 };
