@@ -11,7 +11,7 @@ import { useState, useEffect } from "react";
 import { UserEditorForm, type UserFormData } from "./UserEditorForm";
 import type { User } from "@domain";
 import type { NewUser, UpdateUser, FieldErrorDTO } from "@application";
-import { apiPostInput, apiPutInput, Conflict, InputError } from "@application";
+import { apiPost, apiPut, Conflict, InputError } from "@application";
 
 /**
  * Props para el modal de gestión de usuarios.
@@ -129,41 +129,26 @@ export const UserEditorModal = ({
 
       switch (formPayload.mode) {
         case "update": {
-          try {
-            await apiPutInput("/users", formPayload.data);
+            await apiPut("/users", formPayload.data);
             onSuccess();
             onClose();
-          } catch (e) {
-            if (e instanceof InputError) {
-              setFieldErrors(e.errors);
-            } else if (e instanceof Conflict) {
-              setFormError(e.message);
-            } else {
-              setFormError("Error al crear el usuario.");
-            }
-          }
           break;
         }
         case "create": {
-          try {
-            await apiPostInput("/users", formPayload.data);
+            await apiPost("/users", formPayload.data);
             onSuccess();
             onClose();
-          } catch (error) {
-            if (error instanceof InputError) {
-              setFieldErrors(error.errors);
-            } else if (error instanceof Conflict) {
-              setFormError(error.message);
-            } else {
-              setFormError("Error al crear el usuario.");
-            }
-          }
-
           break;
         }
       }
     } catch (e) {
-      setFormError(e instanceof Error ? e.message : "Error inesperado.");
+      if (e instanceof InputError) {
+        setFieldErrors(e.errors);
+      } else if (e instanceof Conflict) {
+        setFormError(e.message);
+      } else {
+        setFormError("Error al crear el usuario.");
+      }
     } finally {
       setIsSubmitting(false);
     }

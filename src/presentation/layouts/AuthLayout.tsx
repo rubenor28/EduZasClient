@@ -19,7 +19,7 @@ export const AuthLayout = ({ title, children }: AuthLayoutProps) => {
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       {/* Columna del Formulario */}
-      <Grid xs={12} sm={8} md={5}>
+      <Grid item xs={12} sm={8} md={5}>
         <Paper
           elevation={6}
           square
@@ -51,6 +51,7 @@ export const AuthLayout = ({ title, children }: AuthLayoutProps) => {
       </Grid>
       {/* Columna de la Imagen */}
       <Grid
+        item
         xs={false}
         sm={4}
         md={7}
