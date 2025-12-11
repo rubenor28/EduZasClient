@@ -129,8 +129,7 @@ export const ContactsView = () => {
           <Grid item key={contact.userId} xs={12} sm={6} md={4} lg={3}>
             <ContactCard
               contact={contact}
-              onClick={() => { }}
-              onEdit={() => handleOpenEdit(contact)}
+              onClick={() => handleOpenEdit(contact)}
               onDelete={() => handleDeleteRequest(contact)}
             />
           </Grid>

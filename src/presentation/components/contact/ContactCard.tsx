@@ -7,7 +7,6 @@ import {
   CardActions,
   IconButton,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 /**
@@ -18,8 +17,6 @@ type ContactCardProps = {
   contact: Contact;
   /** Callback al hacer click en la tarjeta (navegación). */
   onClick: () => void;
-  /** Callback al hacer click en editar. */
-  onEdit: () => void;
   /** Callback al hacer click en eliminar. */
   onDelete: () => void;
 };
@@ -31,7 +28,6 @@ type ContactCardProps = {
 export const ContactCard = ({
   contact,
   onClick,
-  onEdit,
   onDelete,
 }: ContactCardProps) => {
   return (
@@ -44,9 +40,6 @@ export const ContactCard = ({
         </CardContent>
       </CardActionArea>
       <CardActions sx={{ justifyContent: "center" }}>
-        <IconButton aria-label="edit" onClick={onEdit}>
-          <EditIcon />
-        </IconButton>
         <IconButton aria-label="delete" onClick={onDelete}>
           <DeleteIcon />
         </IconButton>
