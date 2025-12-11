@@ -124,42 +124,36 @@ export const ResourceClassAssociationManager = ({
     });
 
     setChanges((prev) => {
-      const newChanges: Changes = {
-        toAdd: [...prev.toAdd],
-        toRemove: [...prev.toRemove],
-        toUpdate: [...prev.toUpdate],
-      };
-
+      // Si el nuevo estado es el mismo que el original, es una reversión.
+      // Limpiamos la clase de todos los arrays de cambios.
       if (newIsAssociated === wasOriginallyAssociated) {
-        newChanges.toAdd = newChanges.toAdd.filter(
-          (c) => c.classId !== classId
-        );
-        newChanges.toRemove = newChanges.toRemove.filter(
-          (id) => id !== classId
-        );
-      } else if (newIsAssociated) {
-        newChanges.toRemove = newChanges.toRemove.filter(
-          (id) => id !== classId
-        );
-        if (!newChanges.toAdd.find((c) => c.classId === classId)) {
-          const currentAssoc = localAssociations.get(classId);
-          newChanges.toAdd.push({
-            classId,
-            hidden: currentAssoc?.isHidden ?? false,
-          });
-        }
-      } else {
-        newChanges.toAdd = newChanges.toAdd.filter(
-          (c) => c.classId !== classId
-        );
-        newChanges.toUpdate = newChanges.toUpdate.filter(
-          (c) => c.classId !== classId
-        );
-        if (!newChanges.toRemove.includes(classId)) {
-          newChanges.toRemove.push(classId);
-        }
+        return {
+          toAdd: prev.toAdd.filter((c) => c.classId !== classId),
+          toRemove: prev.toRemove.filter((id) => id !== classId),
+          toUpdate: prev.toUpdate.filter((c) => c.classId !== classId),
+        };
       }
-      return newChanges;
+
+      // Si se está asociando (y originalmente no lo estaba).
+      if (newIsAssociated) {
+        // La añadimos a `toAdd`. Si estaba en `toRemove`, la quitamos.
+        return {
+          ...prev,
+          toAdd: [
+            ...prev.toAdd,
+            { classId, hidden: initialState.get(classId)?.isHidden ?? false },
+          ],
+          toRemove: prev.toRemove.filter((id) => id !== classId),
+        };
+      } else {
+        // Si se está desasociando.
+        // La añadimos a `toRemove`. La quitamos de `toAdd` y `toUpdate` si estaba.
+        return {
+          toAdd: prev.toAdd.filter((c) => c.classId !== classId),
+          toRemove: [...prev.toRemove, classId],
+          toUpdate: prev.toUpdate.filter((c) => c.classId !== classId),
+        };
+      }
     });
   };
 
