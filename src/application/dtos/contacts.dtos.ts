@@ -30,6 +30,8 @@ export type ContactUpdate = {
 export type ContactCriteria = Criteria & {
   /** Filtrar por alias. */
   alias?: StringQuery;
+  /** Filtrar por alias. */
+  email?: StringQuery;
   /** Filtrar por propietario de la agenda. */
   agendaOwnerId?: number;
   /** Filtrar por ID de usuario contacto. */

@@ -1,6 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { Grid, TextField, Paper, Box, Button } from "@mui/material";
-import { SearchType, type ContactCriteria, type StringQuery } from "@application";
+import {
+  SearchType,
+  type ContactCriteria,
+  type StringQuery,
+} from "@application";
 
 type ContactSearchFormProps = {
   criteria: ContactCriteria;
@@ -25,6 +29,7 @@ export const ContactSearchForm = ({
 }: ContactSearchFormProps) => {
   const [alias, setAlias] = useState(criteria.alias?.text || "");
   const [tag, setTag] = useState(criteria.tags?.[0] || "");
+  const [email, setEmail] = useState(criteria.email?.text || "");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,6 +44,7 @@ export const ContactSearchForm = ({
   const handleClear = () => {
     setAlias("");
     setTag("");
+    setEmail("");
     setCriteria((prev) => ({
       ...prev,
       page: 1,
@@ -50,8 +56,8 @@ export const ContactSearchForm = ({
   return (
     <Paper sx={{ p: 2, mb: 3 }}>
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={5}>
+        <Grid container spacing={1} alignItems="center">
+          <Grid item xs={12} sm={3}>
             <TextField
               fullWidth
               label="Buscar por alias"
@@ -60,12 +66,21 @@ export const ContactSearchForm = ({
               onChange={(e) => setAlias(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={12} sm={3}>
             <TextField
               fullWidth
               label="Buscar por etiqueta"
               variant="outlined"
               value={tag}
+              onChange={(e) => setTag(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField
+              fullWidth
+              label="Buscar por email"
+              variant="outlined"
+              value={email}
               onChange={(e) => setTag(e.target.value)}
             />
           </Grid>
