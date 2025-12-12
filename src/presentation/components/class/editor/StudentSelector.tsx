@@ -12,10 +12,10 @@ import {
   Divider,
 } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
+import type { User } from "@domain";
 import type {
-  PublicUserDTO,
   PaginatedQuery,
-  UserCriteriaDTO,
+  UserCriteria,
 } from "@application";
 import { apiPost, apiDelete } from "@application";
 
@@ -40,7 +40,7 @@ export const StudentSelector = ({
   isCurrentUserOwner,
   open,
 }: StudentSelectorProps) => {
-  const [students, setStudents] = useState<PublicUserDTO[]>([]);
+  const [students, setStudents] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +50,7 @@ export const StudentSelector = ({
     setError(null);
     try {
       const result = await apiPost<
-        PaginatedQuery<PublicUserDTO, UserCriteriaDTO>
+        PaginatedQuery<User, UserCriteria>
       >(`/classes/${classId}/students`, { page: 1, pageSize: 100 }); // Se asume un máximo de 100 estudiantes, se podría añadir paginación.
       setStudents(result.results);
     } catch (e) {
@@ -106,7 +106,7 @@ export const StudentSelector = ({
             students.map((student) => (
               <ListItem key={student.id} divider>
                 <ListItemText
-                  primary={`${student.firstName} ${student.lastName}`}
+                  primary={`${student.firstName} ${student.fatherLastname}`}
                   secondary={student.email}
                 />
                 <ListItemSecondaryAction>
