@@ -1,9 +1,10 @@
-import { AppBar, Toolbar, Typography, Box } from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
 import { useUser } from "../../context/UserContext";
 import type { User } from "@domain";
 import { apiDelete } from "@application";
 import { useNavigate, NavLink } from "react-router-dom";
 import { NotificationBell } from "../notifications/NotificationBell";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 
 type NavPage = {
   title: string;
@@ -76,6 +77,11 @@ export const Navbar = () => {
             ))}
         </Box>
         <NotificationBell />
+        <NavLink to="/me" style={{ color: "inherit" }}>
+          <IconButton color="inherit" aria-label="Perfil de usuario">
+            <AccountCircle />
+          </IconButton>
+        </NavLink>
         <Typography
           onClick={handleLogout}
           sx={{ cursor: "pointer", color: "inherit", ml: 2 }}

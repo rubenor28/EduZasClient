@@ -159,7 +159,7 @@ export const ResourceEditorPage = () => {
           >
             Asignar a Clases
           </Button>
-          <Button onClick={() => navigate("/professor/content")} sx={{ mr: 2 }}>
+          <Button onClick={() => navigate(-1)} sx={{ mr: 2 }}>
             Volver
           </Button>
           <Button

@@ -25,6 +25,7 @@ import { SystemGuard } from "./components/auth/SystemGuard";
 import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
+import { UserProfileView } from "./pages/views/users/UserProfileView";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -57,9 +58,7 @@ export const router = createBrowserRouter([
             <Outlet />
           </AuthErrorAs500Boundary>
         ),
-        children: [
-          { path: "login", element: <Login /> },
-        ],
+        children: [{ path: "login", element: <Login /> }],
       },
       /**
        * Rutas Protegidas: Requieren que el usuario haya iniciado sesión.
@@ -78,6 +77,10 @@ export const router = createBrowserRouter([
           {
             index: true,
             element: <HomePage />,
+          },
+          {
+            path: "me",
+            element: <UserProfileView />,
           },
           // --- Rutas de Administrador ---
           {
@@ -104,7 +107,10 @@ export const router = createBrowserRouter([
               { path: "tests/:testId", element: <TestEditorPage /> },
               { path: "content", element: <ContenidoAcademico /> },
               { path: "content/:resourceId", element: <ResourceEditorPage /> },
-              { path: "classes/:classId/content", element: <ClassContentView /> },
+              {
+                path: "classes/:classId/content",
+                element: <ClassContentView />,
+              },
               {
                 path: "classes/resource/:classId/:resourceId",
                 element: <ResourcePreviewPage />,
@@ -122,9 +128,18 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <StudentPanel /> },
               { path: "courses", element: <ClasesInscritas /> },
-              { path: "classes/:classId/content", element: <ClassContentView /> },
-              { path: "classes/resource/:classId/:resourceId", element: <ResourcePreviewPage /> },
-              { path: "classes/test/:classId/:resourceId", element: <NotFound /> },
+              {
+                path: "classes/:classId/content",
+                element: <ClassContentView />,
+              },
+              {
+                path: "classes/resource/:classId/:resourceId",
+                element: <ResourcePreviewPage />,
+              },
+              {
+                path: "classes/test/:classId/:resourceId",
+                element: <NotFound />,
+              },
             ],
           },
         ],

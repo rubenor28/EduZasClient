@@ -13,6 +13,7 @@ import {
   ProfessorSelector,
   type ProfessorSelectorChanges,
 } from "./ProfessorSelector";
+import { StudentSelector } from "./StudentSelector";
 import type { Class } from "@domain"; // User removed
 import type {
   NewClass,
@@ -257,6 +258,14 @@ export const ClassEditorModal = ({
             onChange={setProfessorChanges}
             open={open}
             classId={classToEdit?.id}
+          />
+        )}
+
+        {isEditMode && (
+          <StudentSelector
+            classId={classToEdit.id!}
+            isCurrentUserOwner={isCurrentUserOwner}
+            open={open}
           />
         )}
       </DialogContent>
