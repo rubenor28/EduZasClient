@@ -9,3 +9,4 @@ export * from "./UsersView";
 export * from "./TestEditorPage";
 export * from "./classes/ClassContentView";
 export * from "./admin/ManageClassesView";
+export * from "./admin/ManageResourcesView";

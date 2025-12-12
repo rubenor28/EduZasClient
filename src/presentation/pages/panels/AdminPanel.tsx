@@ -10,6 +10,7 @@ import {
 import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from "@mui/icons-material/School";
+import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { useNavigate } from "react-router-dom";
 
 const actions = [
@@ -26,10 +27,16 @@ const actions = [
     path: "/admin/users",
   },
   {
-    title: "Gestión de Classes",
+    title: "Gestión de Clases",
     description: "Administra las clases dentro del sistema.",
     icon: <SchoolIcon fontSize="large" />,
     path: "/admin/classes",
+  },
+  {
+    title: "Gestión de Contenido Académico",
+    description: "Administra todo el contenido académico (recursos) del sistema.",
+    icon: <MenuBookIcon fontSize="large" />,
+    path: "/admin/resources",
   }
   // Futuras acciones del administrador pueden ir aquí
 ];
