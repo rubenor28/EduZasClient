@@ -11,12 +11,12 @@ type UseContactTagsReturn = {
   addTag: (
     agendaOwnerId: number,
     contactId: number,
-    tag: string,
+    tagText: string,
   ) => Promise<void>;
   removeTag: (
     agendaOwnerId: number,
     contactId: number,
-    tag: string,
+    tagId: number,
   ) => Promise<void>;
 };
 
@@ -79,11 +79,11 @@ export const useContactTags = (): UseContactTagsReturn => {
    * Actualiza el estado local inmediatamente (optimistic update) y luego llama a la API.
    */
   const addTag = useCallback(
-    async (agendaOwnerId: number, contactId: number, tag: string) => {
-      if (tags.map((t) => t.text).includes(tag)) return; // Evitar duplicados
+    async (agendaOwnerId: number, contactId: number, tagText: string) => {
+      if (tags.some((t) => t.text === tagText)) return; // Evitar duplicados
 
       let newTag: Tag = {
-        text: tag,
+        text: tagText,
         createdAt: new Date(Date.now()),
       };
 
@@ -94,7 +94,7 @@ export const useContactTags = (): UseContactTagsReturn => {
         await apiPost("/contacts/tags", {
           agendaOwnerId,
           userId: contactId,
-          tag,
+          tagText,
         });
       } catch (e) {
         setError("Error al añadir la etiqueta. Inténtalo de nuevo.");
@@ -110,12 +110,12 @@ export const useContactTags = (): UseContactTagsReturn => {
    * Actualiza el estado local inmediatamente (optimistic update) y luego llama a la API.
    */
   const removeTag = useCallback(
-    async (agendaOwnerId: number, contactId: number, tag: string) => {
-      const optimisticTags = tags.filter((t) => t.text !== tag);
+    async (agendaOwnerId: number, contactId: number, tagId: number) => {
+      const optimisticTags = tags.filter((t) => t.id !== tagId);
       setTags(optimisticTags); // Actualización optimista
 
       try {
-        await apiDelete(`/contacts/tags/${agendaOwnerId}/${contactId}/${tag}`);
+        await apiDelete(`/contacts/tags/${agendaOwnerId}/${contactId}/${tagId}`);
       } catch (e) {
         setError("Error al eliminar la etiqueta. Inténtalo de nuevo.");
         setTags(tags); // Revertir cambios si falla

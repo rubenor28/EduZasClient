@@ -175,11 +175,15 @@ export const ContactEditorModal = ({
     }
   };
 
-  const handleTagDelete = (tagToDelete: string) => {
+  const handleTagDelete = (tagToDelete: Tag) => {
     if (isEditMode && contactToEdit) {
-      removeTag(currentUser.id, contactToEdit.userId, tagToDelete);
+        if (tagToDelete.id === undefined) {
+            console.error("Attempted to delete a persisted tag without an ID.");
+            return;
+        }
+      removeTag(currentUser.id, contactToEdit.userId, tagToDelete.id);
     } else {
-      setCreationTags(creationTags.filter((tag) => tag.text !== tagToDelete));
+      setCreationTags(creationTags.filter((tag) => tag.text !== tagToDelete.text));
     }
   };
 
@@ -321,9 +325,9 @@ export const ContactEditorModal = ({
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mt: 2 }}>
                 {tags.map((tag) => (
                   <Chip
-                    key={tag.text}
+                    key={tag.id ?? tag.text}
                     label={tag.text}
-                    onDelete={() => handleTagDelete(tag.text)}
+                    onDelete={() => handleTagDelete(tag)}
                   />
                 ))}
               </Box>
