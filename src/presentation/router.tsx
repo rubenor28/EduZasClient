@@ -17,10 +17,12 @@ import {
   AuthErrorAs500Boundary,
   PublicErrorPage,
   ProtectedErrorPage,
+  NotFound,
 } from "./components/errors";
 import { SystemGuard } from "./components/auth/SystemGuard";
 import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
+import { ResourcePreviewPage } from "./pages/views/resource";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -98,6 +100,14 @@ export const router = createBrowserRouter([
               { path: "content", element: <ContenidoAcademico /> },
               { path: "content/:resourceId", element: <ResourceEditorPage /> },
               { path: "classes/:classId/content", element: <ClassContentView /> },
+              {
+                path: "classes/resource/:classId/:resourceId",
+                element: <ResourcePreviewPage />,
+              },
+              {
+                path: "classes/test/:classId/:resourceId",
+                element: <NotFound />,
+              },
             ],
           },
           // --- Rutas de Estudiante ---
@@ -108,6 +118,8 @@ export const router = createBrowserRouter([
               { index: true, element: <StudentPanel /> },
               { path: "courses", element: <ClasesInscritas /> },
               { path: "classes/:classId/content", element: <ClassContentView /> },
+              { path: "classes/resource/:classId/:resourceId", element: <ResourcePreviewPage /> },
+              { path: "classes/test/:classId/:resourceId", element: <NotFound /> },
             ],
           },
         ],

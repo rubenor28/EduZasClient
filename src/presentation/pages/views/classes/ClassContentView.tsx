@@ -5,11 +5,11 @@ import {
   CircularProgress,
   Alert,
   List,
-  ListItem,
+  ListItemButton,
   Chip,
   Divider,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import type { ClassContentDTO, ClassContentCriteria } from "@application";
 import {
@@ -30,6 +30,8 @@ export const ClassContentView = () => {
   const [data, setData] = useState<ClassContentResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (!classId) {
@@ -47,7 +49,10 @@ export const ClassContentView = () => {
           page: 1,
           pageSize: 30,
         };
-        const result = await apiPost<ClassContentResponse>(`/classes/content`, criteria);
+        const result = await apiPost<ClassContentResponse>(
+          `/classes/content`,
+          criteria,
+        );
         setData(result);
       } catch (err) {
         throw err; // Lanzar para que lo capture el error boundary
@@ -65,8 +70,15 @@ export const ClassContentView = () => {
   };
 
   const getContentTypeColor = (
-    type: number | ContentType
-  ): "default" | "primary" | "secondary" | "error" | "info" | "success" | "warning" => {
+    type: number | ContentType,
+  ):
+    | "default"
+    | "primary"
+    | "secondary"
+    | "error"
+    | "info"
+    | "success"
+    | "warning" => {
     const parsedType = parseContentType(type);
     return parsedType === ContentType.TEST ? "primary" : "secondary";
   };
@@ -81,9 +93,28 @@ export const ClassContentView = () => {
     });
   };
 
+  const handleContentClick = (content: ClassContentDTO) => {
+    const rolePath = location.pathname.startsWith("/student")
+      ? "student"
+      : "professor";
+
+    if (content.type === ContentType.RESOURCE)
+      navigate(`/${rolePath}/classes/resource/${classId}/${content.id}`);
+
+    if (content.type === ContentType.TEST)
+      navigate(`/${rolePath}/classes/test/${classId}/${content.id}`);
+  };
+
   if (isLoading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "60vh" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "60vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -114,13 +145,14 @@ export const ClassContentView = () => {
         <List sx={{ bgcolor: "background.paper", borderRadius: 1 }}>
           {contents.map((content, index) => (
             <Box key={content.id}>
-              <ListItem
+              <ListItemButton
                 sx={{
                   py: 2,
                   flexDirection: "column",
                   alignItems: "flex-start",
                   gap: 1,
                 }}
+                onClick={() => handleContentClick(content)}
               >
                 <Box
                   sx={{
@@ -140,7 +172,7 @@ export const ClassContentView = () => {
                 <Typography variant="body1" color="textSecondary">
                   {formatDate(content.publishDate)}
                 </Typography>
-              </ListItem>
+              </ListItemButton>
               {index < contents.length - 1 && <Divider component="li" />}
             </Box>
           ))}

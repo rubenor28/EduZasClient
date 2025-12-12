@@ -4,7 +4,7 @@ export * from "./ClasesInscritas";
 export * from "./Evaluaciones";
 export * from "./DatabaseManagement";
 export * from "./ContactsView";
-export * from "./ResourceEditorPage";
+export * from "./resource/ResourceEditorPage";
 export * from "./UsersView";
 export * from "./TestEditorPage";
 export * from "./classes/ClassContentView";
