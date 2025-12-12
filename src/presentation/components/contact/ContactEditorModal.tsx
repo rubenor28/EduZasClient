@@ -162,11 +162,11 @@ export const ContactEditorModal = ({
   const handleTagInputKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter" && tagInput.trim() !== "") {
       e.preventDefault();
-      const newTagText = tagInput.trim();
+      const newTagText: string = tagInput.trim().toUpperCase();
       if (isEditMode && contactToEdit) {
         addTag(currentUser.id, contactToEdit.userId, newTagText);
       } else {
-        if (!creationTags.some((tag) => tag.text === newTagText)) {
+        if (!creationTags.some((tag: Tag) => tag.text === newTagText)) {
           const newTag: Tag = { text: newTagText, createdAt: new Date() };
           setCreationTags([...creationTags, newTag]);
         }
@@ -175,15 +175,13 @@ export const ContactEditorModal = ({
     }
   };
 
-  const handleTagDelete = (tagToDelete: Tag) => {
+  const handleTagDelete = (tagTextToDelete: string): void => {
     if (isEditMode && contactToEdit) {
-        if (tagToDelete.id === undefined) {
-            console.error("Attempted to delete a persisted tag without an ID.");
-            return;
-        }
-      removeTag(currentUser.id, contactToEdit.userId, tagToDelete.id);
+      removeTag(currentUser.id, contactToEdit.userId, tagTextToDelete);
     } else {
-      setCreationTags(creationTags.filter((tag) => tag.text !== tagToDelete.text));
+      setCreationTags(
+        creationTags.filter((tag: Tag) => tag.text !== tagTextToDelete),
+      );
     }
   };
 
@@ -211,7 +209,7 @@ export const ContactEditorModal = ({
           userId: searchedUser.id,
           alias: formState.alias,
           notes: formState.notes,
-          tags: creationTags.map((tag) => tag.text),
+          tags: creationTags.map((tag: Tag) => tag.text),
         },
         () => {
           onSuccess();
@@ -327,7 +325,7 @@ export const ContactEditorModal = ({
                   <Chip
                     key={tag.id ?? tag.text}
                     label={tag.text}
-                    onDelete={() => handleTagDelete(tag)}
+                    onDelete={() => handleTagDelete(tag.text)}
                   />
                 ))}
               </Box>
