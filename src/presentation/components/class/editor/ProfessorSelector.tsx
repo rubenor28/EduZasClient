@@ -148,7 +148,8 @@ export const ProfessorSelector = ({
 
     const toUpdate = managedProfessors
       .filter((p) => p.status === "existing" && p.isOwner !== p.originalIsOwner)
-      .map((p) => ({ userId: p.info.id, isOwner: p.isOwner }));
+      .map((p) => ({ userId: p.info.id, isOwner: p.isOwner }))
+      .sort((a, b) => (a.isOwner === b.isOwner ? 0 : a.isOwner ? -1 : 1));
 
     onChange({ toAdd, toRemove, toUpdate });
   }, [managedProfessors, onChange]);
@@ -221,7 +222,7 @@ export const ProfessorSelector = ({
       <List dense>
         {managedProfessors.map((p) => {
           const isRemoved = p.status === "removed";
-          const isTheOnlyProfessor = activeProfessorsCount === 1 && !isRemoved;
+          const isTheOnlyProfessor = isEditMode && activeProfessorsCount === 1 && !isRemoved;
 
           return (
             <ListItem
@@ -281,7 +282,7 @@ export const ProfessorSelector = ({
                       size="small"
                       onClick={() => handleRemove(p.info.id)}
                       color="error"
-                      disabled={activeProfessorsCount <= 1}
+                      disabled={isTheOnlyProfessor}
                     >
                       {p.status === "added" ? "Quitar" : "Eliminar"}
                     </Button>

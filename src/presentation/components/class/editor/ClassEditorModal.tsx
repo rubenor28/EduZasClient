@@ -168,7 +168,8 @@ export const ClassEditorModal = ({
 
         // Aplicar cambios en profesores si el usuario es dueño
         if (isCurrentUserOwner) {
-          const changesPromises = [
+          // Ejecutar adiciones y eliminaciones en paralelo
+          const parallelPromises = [
             ...professorChanges.toAdd.map((p) =>
               apiPost(
                 "/classes/professor",
@@ -185,19 +186,21 @@ export const ClassEditorModal = ({
                 parseResponse: "void",
               }),
             ),
-            ...professorChanges.toUpdate.map((p) =>
-              apiPut(
-                "/classes/professors",
-                {
-                  classId: classToEdit!.id,
-                  userId: p.userId,
-                  isOwner: p.isOwner,
-                },
-                { parseResponse: "void" },
-              ),
-            ),
           ];
-          await Promise.all(changesPromises);
+          await Promise.all(parallelPromises);
+
+          // Ejecutar actualizaciones de ownership secuencialmente para evitar conflictos
+          for (const p of professorChanges.toUpdate) {
+            await apiPut(
+              "/classes/professors",
+              {
+                classId: classToEdit!.id,
+                userId: p.userId,
+                isOwner: p.isOwner,
+              },
+              { parseResponse: "void" },
+            );
+          }
         }
       } else {
         // Crear nueva clase
