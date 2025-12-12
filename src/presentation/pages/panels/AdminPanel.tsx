@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
+import SchoolIcon from "@mui/icons-material/School";
 import { useNavigate } from "react-router-dom";
 
 const actions = [
@@ -24,6 +25,12 @@ const actions = [
     icon: <PeopleIcon fontSize="large" />,
     path: "/admin/users",
   },
+  {
+    title: "Gestión de Classes",
+    description: "Administra las clases dentro del sistema.",
+    icon: <SchoolIcon fontSize="large" />,
+    path: "/admin/classes",
+  }
   // Futuras acciones del administrador pueden ir aquí
 ];
 

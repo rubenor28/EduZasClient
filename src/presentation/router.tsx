@@ -12,6 +12,7 @@ import {
   UsersView,
   TestEditorPage,
   ClassContentView,
+  ManageClassesView,
 } from "./pages/views";
 import {
   AuthErrorAs500Boundary,
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
               { index: true, element: <AdminPanel /> },
               { path: "database", element: <DatabaseManagement /> },
               { path: "users", element: <UsersView /> },
+              { path: "classes", element: <ManageClassesView /> },
             ],
           },
           // --- Rutas de Profesor ---

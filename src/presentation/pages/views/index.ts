@@ -8,3 +8,4 @@ export * from "./resource/ResourceEditorPage";
 export * from "./UsersView";
 export * from "./TestEditorPage";
 export * from "./classes/ClassContentView";
+export * from "./admin/ManageClassesView";
