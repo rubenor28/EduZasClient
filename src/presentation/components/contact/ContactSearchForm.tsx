@@ -81,7 +81,7 @@ export const ContactSearchForm = ({
               label="Buscar por email"
               variant="outlined"
               value={email}
-              onChange={(e) => setTag(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Grid>
           <Grid item xs={12} sm={2}>
