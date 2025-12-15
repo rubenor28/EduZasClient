@@ -78,17 +78,17 @@ export const UserSearchForm = ({
       <Typography variant="h6" sx={{ mb: 1 }}>
         Filtros de Búsqueda
       </Typography>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
         <TextField
-          label="Nombre"
-          name="firstName"
-          value={criteria.firstName?.text || ""}
+          label="Email"
+          name="email"
+          value={criteria.email?.text || ""}
           onChange={handleStringChange}
           variant="outlined"
           size="small"
         />
         <TextField
-          label="Apellido"
+          label="Apellido paterno"
           name="fatherLastname"
           value={criteria.fatherLastname?.text || ""}
           onChange={handleStringChange}
@@ -96,9 +96,25 @@ export const UserSearchForm = ({
           size="small"
         />
         <TextField
-          label="Email"
-          name="email"
-          value={criteria.email?.text || ""}
+          label="Apellido materno"
+          name="motherLastname"
+          value={criteria.motherLastname?.text || ""}
+          onChange={handleStringChange}
+          variant="outlined"
+          size="small"
+        />
+        <TextField
+          label="Primer nombre"
+          name="firstName"
+          value={criteria.firstName?.text || ""}
+          onChange={handleStringChange}
+          variant="outlined"
+          size="small"
+        />
+        <TextField
+          label="Segundo nombre"
+          name="midName"
+          value={criteria.midName?.text || ""}
           onChange={handleStringChange}
           variant="outlined"
           size="small"
