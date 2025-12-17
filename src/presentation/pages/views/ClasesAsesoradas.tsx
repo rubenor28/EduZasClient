@@ -74,6 +74,16 @@ export const ClasesAsesoradas = () => {
     professorId: user.id,
   });
 
+  const onSucces = () => {
+    refetch();
+    let action = editingClass === null ? "creada" : "actualizada";
+    setSnackbar({
+      open: true,
+      severity: "success",
+      message: `Clase ${action} correctamente`,
+    });
+  };
+
   const handleOpenCreateModal = () => {
     setEditingClass(null);
     setIsModalOpen(true);
@@ -264,7 +274,7 @@ export const ClasesAsesoradas = () => {
             : null
         }
         isCurrentUserOwner={isAdmin || (editingClass?.owner ?? false)}
-        onSuccess={refetch}
+        onSuccess={onSucces}
       />
       <Snackbar
         open={snackbar.open}

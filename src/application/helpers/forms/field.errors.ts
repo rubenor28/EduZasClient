@@ -1,6 +1,6 @@
 import type { FieldErrorDTO } from "application/value.objects";
 
-export const getErrorForField = (
+export const getFieldError = (
   fieldName: string,
   fieldErrors?: FieldErrorDTO[],
 ) =>

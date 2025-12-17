@@ -1,4 +1,10 @@
-import { type OutputData } from "@editorjs/editorjs";
+import type { AnyQuestion } from "./questions";
+
+/**
+ * Representa el contenido de una evaluación, mapeando un ID único (GUID)
+ * a una estructura de pregunta de cualquier tipo.
+ */
+export type TestContent = Record<string, AnyQuestion>;
 
 /**
  * Representa una entidad de Evaluación (Test).
@@ -13,8 +19,8 @@ export type Test = {
   color: string;
   /** Título de la evaluación. */
   title: string;
-  /** Contenido de la evaluación, estructurado como un array de bloques. */
-  content: OutputData;
+  /** Contenido de la evaluación, estructurado como un diccionario de preguntas. */
+  content: TestContent;
   /** Límite de tiempo en minutos para completar la evaluación (opcional). */
   timeLimitMinutes?: number;
   /** ID del profesor que creó la evaluación. */

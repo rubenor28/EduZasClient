@@ -1,88 +1,86 @@
 import {
-  Box,
   TextField,
-  Paper,
-  Typography,
-  ToggleButtonGroup,
-  ToggleButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+  Grid,
 } from "@mui/material";
 import { SearchType, type TestCriteria } from "@application";
+import type { Dispatch, SetStateAction } from "react";
 
 /**
- * Props para el componente TestSearchForm.
+ * Props para el componente {@link TestSearchForm}.
  */
 type TestSearchFormProps = {
-  /** Criterios de búsqueda actuales. */
+  /** Objeto que contiene los criterios de búsqueda actuales. */
   criteria: TestCriteria;
   /** Función para actualizar los criterios de búsqueda. */
-  setCriteria: React.Dispatch<React.SetStateAction<TestCriteria>>;
+  setCriteria: Dispatch<SetStateAction<TestCriteria>>;
 };
 
 /**
- * Un componente de formulario para buscar y filtrar evaluaciones.
+ * Formulario de búsqueda para filtrar exámenes.
+ *
+ * Permite buscar exámenes por título y filtrar por su estado (activos, archivados o todos).
+ * @param props - Las propiedades del componente.
  */
 export const TestSearchForm = ({
   criteria,
   setCriteria,
 }: TestSearchFormProps) => {
-  const handleStringChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCriteria((prev) => ({
       ...prev,
-      [name]: value ? { text: value, searchType: SearchType.LIKE } : undefined,
+      page: 1,
+      title: event.target.value
+        ? { text: event.target.value, searchType: SearchType.LIKE }
+        : undefined,
     }));
   };
 
-  const handleActiveChange = (
-    _e: React.MouseEvent<HTMLElement>,
-    newValue: string | null,
-  ) => {
-    if (newValue === null) return;
+  const handleActiveChange = (value: string) => {
     setCriteria((prev) => ({
       ...prev,
-      active:
-        newValue === "all"
-          ? undefined
-          : newValue === "true"
-            ? true
-            : false,
+      page: 1,
+      active: value === "all" ? undefined : value === "true",
     }));
   };
-
-  const activeValue =
-    criteria.active === undefined
-      ? "all"
-      : criteria.active
-        ? "true"
-        : "false";
 
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
-      <Typography variant="h6" sx={{ mb: 1 }}>
-        Filtros de Búsqueda
-      </Typography>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
-        <TextField
-          label="Título"
-          name="title"
-          value={criteria.title?.text || ""}
-          onChange={handleStringChange}
-          variant="outlined"
-          size="small"
-        />
-        <ToggleButtonGroup
-          value={activeValue}
-          exclusive
-          onChange={handleActiveChange}
-          size="small"
-        >
-          <ToggleButton value="true">Activas</ToggleButton>
-          <ToggleButton value="false">Inactivas</ToggleButton>
-          <ToggleButton value="all">Todas</ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
-    </Paper>
+    <Box component="form" noValidate autoComplete="off" sx={{ mb: 3 }}>
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={8}>
+          <TextField
+            label="Buscar por Título"
+            variant="outlined"
+            fullWidth
+            value={criteria.title?.text || ""}
+            onChange={handleTitleChange}
+          />
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Estado</InputLabel>
+            <Select
+              value={
+                criteria.active === undefined
+                  ? "all"
+                  : criteria.active
+                  ? "true"
+                  : "false"
+              }
+              onChange={(e) => handleActiveChange(e.target.value)}
+              label="Estado"
+            >
+              <MenuItem value="all">Todos</MenuItem>
+              <MenuItem value="true">Activos</MenuItem>
+              <MenuItem value="false">Archivados</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };

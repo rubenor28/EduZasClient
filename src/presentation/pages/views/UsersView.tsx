@@ -90,7 +90,7 @@ export const UsersView = () => {
       const payload: UpdateUser = {
         ...selectedUser,
         active: !isArchiving,
-        password: null
+        password: null,
       };
       await apiPut("/users", payload, { parseResponse: "void" });
       refetch();
@@ -102,7 +102,7 @@ export const UsersView = () => {
       setSelectedUser(null);
     } catch (err) {
       if (err instanceof InputError) {
-        console.error(err.message)
+        console.error(err.message);
         console.error(err.errors);
       }
       setSnackbar({
@@ -115,7 +115,11 @@ export const UsersView = () => {
 
   const handleDelete = async () => {
     if (!selectedUser) return;
-    if (!window.confirm("¿Estás seguro de que quieres eliminar este usuario? Esta acción es permanente."))
+    if (
+      !window.confirm(
+        "¿Estás seguro de que quieres eliminar este usuario? Esta acción es permanente.",
+      )
+    )
       return;
 
     try {
@@ -138,16 +142,35 @@ export const UsersView = () => {
 
   const handleSuccess = () => {
     refetch();
+
     setIsModalOpen(false);
     setSelectedUser(null);
+
+    const action = selectedUser !== null ? "actualizado" : "creado";
+    setSnackbar({
+      open: true,
+      message: `El usuario ha sido ${action} exitosamente.`,
+      severity: "success",
+    });
   };
 
   const renderContent = () => {
-    if (isLoading) return <CircularProgress sx={{ display: 'block', margin: 'auto', mt: 4 }} />;
+    if (isLoading)
+      return (
+        <CircularProgress sx={{ display: "block", margin: "auto", mt: 4 }} />
+      );
     if (error)
-      return <Alert severity="error">Error al cargar los usuarios: {error.message}</Alert>;
+      return (
+        <Alert severity="error">
+          Error al cargar los usuarios: {error.message}
+        </Alert>
+      );
     if (!data || data.results.length === 0) {
-      return <Typography sx={{ mt: 4, textAlign: 'center' }}>No se encontraron usuarios.</Typography>;
+      return (
+        <Typography sx={{ mt: 4, textAlign: "center" }}>
+          No se encontraron usuarios.
+        </Typography>
+      );
     }
     return (
       <UsersTable
@@ -164,10 +187,7 @@ export const UsersView = () => {
         Gestión de Usuarios
       </Typography>
 
-      <UserSearchForm
-        criteria={criteria}
-        setCriteria={setCriteria}
-      />
+      <UserSearchForm criteria={criteria} setCriteria={setCriteria} />
 
       <Paper>
         <Toolbar sx={{ justifyContent: "flex-end", gap: 1 }}>
@@ -189,7 +209,9 @@ export const UsersView = () => {
           <Button
             variant="outlined"
             color="warning"
-            startIcon={selectedUser?.active ? <ArchiveIcon /> : <UnarchiveIcon />}
+            startIcon={
+              selectedUser?.active ? <ArchiveIcon /> : <UnarchiveIcon />
+            }
             onClick={handleToggleArchive}
             disabled={!selectedUser}
           >
@@ -207,9 +229,13 @@ export const UsersView = () => {
         </Toolbar>
         <Divider />
         {renderContent()}
-        <PaginationControls data={data ?? undefined} setCriteria={setCriteria} firstPage={firstPage} lastPage={lastPage} />
+        <PaginationControls
+          data={data ?? undefined}
+          setCriteria={setCriteria}
+          firstPage={firstPage}
+          lastPage={lastPage}
+        />
       </Paper>
-
 
       <UserEditorModal
         open={isModalOpen}

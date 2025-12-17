@@ -1,6 +1,6 @@
 import type { FieldErrorDTO, UpdateUser } from "@application";
 import { Button, CircularProgress, Grid, TextField } from "@mui/material";
-import { getErrorForField } from "@application";
+import { getFieldError } from "@application";
 
 export type UserFormProps = {
   isEditting: boolean;
@@ -19,11 +19,11 @@ export function UserProfileForm({
   isSubmitting,
   onSubmit,
 }: UserFormProps) {
-  const firsNameError = getErrorForField("firstName", fieldErrors);
-  const midNameError = getErrorForField("midName", fieldErrors);
-  const fatherLastnameError = getErrorForField("fatherLastname", fieldErrors);
-  const motherLastnameError = getErrorForField("motherLastname", fieldErrors);
-  const emailError = getErrorForField("email", fieldErrors);
+  const firsNameError = getFieldError("firstName", fieldErrors);
+  const midNameError = getFieldError("midName", fieldErrors);
+  const fatherLastnameError = getFieldError("fatherLastname", fieldErrors);
+  const motherLastnameError = getFieldError("motherLastname", fieldErrors);
+  const emailError = getFieldError("email", fieldErrors);
 
   return (
     <>

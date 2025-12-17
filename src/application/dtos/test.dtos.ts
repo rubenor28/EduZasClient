@@ -1,4 +1,4 @@
-import type { OutputData } from "@editorjs/editorjs";
+import type { TestContent } from "@domain";
 import type { Criteria, StringQuery } from "./common";
 
 /**
@@ -25,9 +25,9 @@ export type NewTest = {
   /** Título de la evaluación. */
   title: string;
   /** Color. */
-  color: string;
-  /** Contenido de la evaluación en formato de bloques. */
-  content: OutputData;
+  color:string;
+  /** Contenido de la evaluación en formato de diccionario de preguntas. */
+  content: TestContent;
   /** Límite de tiempo en minutos (opcional). */
   timeLimitMinutes?: number;
   /** ID del profesor que crea la evaluación. */
@@ -44,8 +44,8 @@ export type TestUpdate = {
   color: string;
   /** Nuevo título de la evaluación. */
   title: string;
-  /** Nuevo contenido de la evaluación en formato de bloques. */
-  content: OutputData;
+  /** Nuevo contenido de la evaluación en formato de diccionario de preguntas. */
+  content: TestContent;
   /** Nuevo límite de tiempo en minutos (opcional). */
   timeLimitMinutes?: number;
   /** ID del profesor propietario. */

@@ -18,6 +18,7 @@ import {
   ContentTypeLabels,
   parseContentType,
 } from "@application";
+import { useUser } from "@presentation";
 
 interface ClassContentResponse {
   results: ClassContentDTO[];
@@ -32,6 +33,8 @@ export const ClassContentView = () => {
   const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useUser();
+  const isStudent = user.role === 0;
 
   useEffect(() => {
     if (!classId) {
@@ -163,11 +166,27 @@ export const ClassContentView = () => {
                   }}
                 >
                   <Typography variant="h4">{content.title}</Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "right",
+                    width: "100%",
+                  }}
+                >
                   <Chip
                     label={getContentTypeLabel(content.type)}
                     color={getContentTypeColor(content.type)}
                     size="small"
                   />
+                  {!isStudent && (
+                    <Chip
+                      label={content.hiden ? "Oculto" : "Visible"}
+                      color={content.hiden ? "primary" : "secondary"}
+                      size="small"
+                    />
+                  )}
+                  </Box>
                 </Box>
                 <Typography variant="body1" color="textSecondary">
                   {formatDate(content.publishDate)}

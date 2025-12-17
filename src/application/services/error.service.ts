@@ -1,4 +1,4 @@
-import { type AppError } from "@application";
+import { AppError, InternalServerError } from "@application";
 
 type Subscriber = (error: AppError | null) => void;
 

@@ -5,12 +5,10 @@ import {
   ClasesAsesoradas,
   ContenidoAcademico,
   ClasesInscritas,
-  Evaluaciones,
   DatabaseManagement,
   ContactsView,
   ResourceEditorPage,
   UsersView,
-  TestEditorPage,
   ClassContentView,
   ManageClassesView,
   ManageResourcesView,
@@ -26,6 +24,8 @@ import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
+import { MultipleChoiceQuestionBlock, OpenQuestionBlock } from "./components";
+import { QuestionTypes } from "@domain";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -103,8 +103,22 @@ export const router = createBrowserRouter([
               { index: true, element: <ProfessorPanel /> },
               { path: "courses", element: <ClasesAsesoradas /> },
               { path: "contacts", element: <ContactsView /> },
-              { path: "tests", element: <Evaluaciones /> },
-              { path: "tests/:testId", element: <TestEditorPage /> },
+              {
+                path: "tests",
+                element: (
+                  <MultipleChoiceQuestionBlock
+                    initialState={{
+                      title: "A",
+                      imageUrl: "",
+                      type: QuestionTypes.MultipleChoise,
+                      options: {"id": "a"},
+                      correctOption: "id"
+                    }}
+                    onChange={(c) => console.log(c)}
+                    onDelete={() => console.log("Eliminao")}
+                  />
+                ),
+              },
               { path: "content", element: <ContenidoAcademico /> },
               { path: "content/:resourceId", element: <ResourceEditorPage /> },
               {

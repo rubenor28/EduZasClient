@@ -44,6 +44,8 @@ export interface ClassContentDTO {
   title: string;
   /** Tipo de contenido como número (0=TEST, 1=RESOURCE) desde el backend. */
   type: number | ContentType;
+  /** Si el recurso esta oculto para los alumnos. */
+  hiden: boolean;
   /** Fecha en que fue asignado el contenido a la clase. */
   publishDate: string;
 }

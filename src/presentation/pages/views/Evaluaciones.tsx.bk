@@ -11,7 +11,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { QuestionTypes, type OpenQuestion, type Test } from "@domain";
+import type { Test } from "@domain";
 import {
   type TestUpdate,
   apiDelete,
@@ -31,8 +31,17 @@ import {
   type MenuOption,
   PaginationControls,
 } from "@presentation";
-import { v4 as uuidv4 } from "uuid";
+import type { OutputData } from "@editorjs/editorjs";
 
+/**
+ * Vista para que los profesores gestionen sus evaluaciones.
+ *
+ * Funcionalidades:
+ * 1. Listar evaluaciones creadas por el profesor.
+ * 2. Crear nuevas evaluaciones (inicializa un documento con cabecera y párrafo).
+ * 3. Navegar al editor de evaluaciones (`TestEditorPage`).
+ * 4. Archivar, desarchivar y eliminar evaluaciones.
+ */
 export const Evaluaciones = () => {
   const { user } = useUser();
   const navigate = useNavigate();
@@ -52,28 +61,48 @@ export const Evaluaciones = () => {
     refreshSearch: refetch,
     firstPage,
     lastPage,
-  } = usePaginatedSearch<TestSummary, TestCriteria>("/tests", {
-    page: 1,
-    pageSize: 12,
-    active: true,
-    professorId: user.id,
+  } = usePaginatedSearch<TestSummary, TestCriteria>(
+    "/tests", // Endpoint for searching tests
+    {
+      page: 1,
+      pageSize: 12,
+      professorId: user.id,
+    },
+  );
+
+  /**
+   * Crea una estructura de contenido por defecto para una nueva evaluación.
+   * @returns Un objeto `OutputData` para Editor.js.
+   */
+  const createDefaultContent = (): OutputData => ({
+    time: Date.now(),
+    blocks: [
+      {
+        id: crypto.randomUUID(),
+        type: "header",
+        data: {
+          text: "Título de la Pregunta",
+          level: 2,
+        },
+      },
+      {
+        id: crypto.randomUUID(),
+        type: "paragraph",
+        data: {
+          text: "Escribe aquí la descripción o el enunciado de la pregunta.",
+        },
+      },
+    ],
+    version: "2.31.0",
   });
 
   const handleCreate = async () => {
     setIsCreating(true);
     try {
-      const defaultQuestion: OpenQuestion = {
-        type: QuestionTypes.Open,
-        title: "Nueva pregunta",
-        imageUrl: null,
-      };
-
       const payload: NewTest = {
         title: "Nueva Evaluación",
         color: "#1976d2",
-        content: {
-          [uuidv4()]: defaultQuestion,
-        },
+        content: createDefaultContent(),
         professorId: user.id,
       };
       const newTest = await apiPost<TestSummary>("/test", payload);
@@ -94,6 +123,10 @@ export const Evaluaciones = () => {
     navigate(`/professor/tests/${testId}`);
   };
 
+  /**
+   * Maneja el archivado de una evaluación.
+   * Obtiene la evaluación completa, la actualiza a inactiva y la envía al backend.
+   */
   const handleArchive = async (testData: TestSummary) => {
     if (
       !window.confirm(
@@ -104,11 +137,7 @@ export const Evaluaciones = () => {
 
     try {
       const fullTest = await apiGet<Test>(`/tests/${testData.id}`);
-      const payload: TestUpdate = {
-        ...fullTest,
-        active: false,
-        professorId: user.id,
-      };
+      const payload: TestUpdate = { ...fullTest, active: false };
       await apiPut("/test", payload, { parseResponse: "void" });
       refetch();
       setSnackbar({
@@ -125,6 +154,10 @@ export const Evaluaciones = () => {
     }
   };
 
+  /**
+   * Maneja el desarchivado de una evaluación.
+   * Obtiene la evaluación completa, la actualiza a activa y la envía al backend.
+   */
   const handleUnarchive = async (testData: TestSummary) => {
     if (
       !window.confirm(
@@ -135,11 +168,7 @@ export const Evaluaciones = () => {
 
     try {
       const fullTest = await apiGet<Test>(`/tests/${testData.id}`);
-      const payload: TestUpdate = {
-        ...fullTest,
-        active: true,
-        professorId: user.id,
-      };
+      const payload: TestUpdate = { ...fullTest, active: true };
       await apiPut("/test", payload, { parseResponse: "void" });
       refetch();
       setSnackbar({
@@ -181,25 +210,42 @@ export const Evaluaciones = () => {
   const renderContent = () => {
     if (isLoading) return <CircularProgress />;
     if (error)
-      return <Alert severity="error">Error al cargar las evaluaciones.</Alert>;
+      return (
+        <Alert severity="error">Error al cargar las evaluaciones.</Alert>
+      );
     if (!data || data.results.length === 0) {
       return (
-        <Typography sx={{ mt: 2 }}>No se encontraron evaluaciones.</Typography>
+        <Typography sx={{ mt: 2 }}>
+          No se encontraron evaluaciones.
+        </Typography>
       );
     }
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
         {data.results.map((testData) => {
-          const menuOptions: MenuOption[] = [
-            { name: "Modificar", callback: () => handleEdit(testData.id) },
-            testData.active
-              ? { name: "Archivar", callback: () => handleArchive(testData) }
-              : {
-                  name: "Desarchivar",
-                  callback: () => handleUnarchive(testData),
-                },
-            { name: "Eliminar", callback: () => handleDelete(testData.id) },
-          ];
+          const menuOptions: MenuOption[] = [];
+
+          menuOptions.push({
+            name: "Modificar",
+            callback: () => handleEdit(testData.id),
+          });
+
+          if (testData.active) {
+            menuOptions.push({
+              name: "Archivar",
+              callback: () => handleArchive(testData),
+            });
+          } else {
+            menuOptions.push({
+              name: "Desarchivar",
+              callback: () => handleUnarchive(testData),
+            });
+          }
+
+          menuOptions.push({
+            name: "Eliminar",
+            callback: () => handleDelete(testData.id),
+          });
 
           return (
             <Grid item key={testData.id} xs={12} sm={6} md={4} lg={3}>
