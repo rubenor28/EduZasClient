@@ -11,6 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
 import type { MultipleSelectionQuestion, Question } from "@domain";
 import { QuestionBlock } from "./QuestionBlock";
+import { useControlledState } from "@presentation";
 
 /**
  * Props para el componente {@link MultipleSelectionQuestionBlock}.
@@ -37,39 +38,29 @@ export function MultipleSelectionQuestionBlock({
   onChange,
   onDelete,
 }: MultipleSelectionQuestionBlockProps) {
-  const { title, imageUrl, options, correctOptions } = initialState;
+  const [{ title, imageUrl, options, correctOptions }, setState] =
+    useControlledState(initialState, onChange);
 
-  const handleBaseChange = (base: Question) => {
-    onChange({
-      ...initialState,
-      ...base,
-    });
-  };
+  const setBase = (base: Question) => setState((q) => ({ ...q, ...base }));
 
-  const handleOptionsChange = (newOptions: Record<string, string>) => {
-    onChange({
-      ...initialState,
-      options: newOptions,
-    });
-  };
+  const setOptions = (options: Record<string, string>) =>
+    setState((q) => ({ ...q, options }));
+
+  const setCorrectOptions = (correctOptions: string[]) =>
+    setState((q) => ({ ...q, correctOptions }));
 
   const handleCorrectOptionsChange = (optionId: string) => {
     const newCorrectOptions = correctOptions.includes(optionId)
       ? correctOptions.filter((id) => id !== optionId) // Uncheck
       : [...correctOptions, optionId]; // Check
-    onChange({
-      ...initialState,
-      correctOptions: newCorrectOptions,
-    });
+
+    setCorrectOptions(newCorrectOptions);
   };
 
   const handleAddOption = () => {
     const newId = uuidv4();
     const newOptions = { ...options, [newId]: "Nueva opción" };
-    onChange({
-      ...initialState,
-      options: newOptions,
-    });
+    setOptions(newOptions);
   };
 
   const handleRemoveOption = (id: string) => {
@@ -80,21 +71,16 @@ export function MultipleSelectionQuestionBlock({
       (correctId) => correctId !== id,
     );
 
-    onChange({
-      ...initialState,
-      options: newOptions,
-      correctOptions: newCorrectOptions,
-    });
+    setCorrectOptions(newCorrectOptions);
   };
 
-  const handleOptionTextChange = (id: string, text: string) => {
-    handleOptionsChange({ ...options, [id]: text });
-  };
+  const handleOptionTextChange = (id: string, text: string) =>
+    setOptions({ ...options, [id]: text });
 
   return (
     <QuestionBlock
       initialState={{ title, imageUrl }}
-      onChange={handleBaseChange}
+      onChange={setBase}
       onDelete={onDelete}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
