@@ -1,6 +1,7 @@
 import { apiGet } from "@application";
 import { type Test, type TestContent } from "@domain";
 import { Box, CircularProgress } from "@mui/material";
+import { NotFound } from "@presentation";
 import { createContext, useContext, useEffect, useState } from "react";
 
 // Definir el Estado y las Acciones del Store
@@ -12,6 +13,7 @@ export interface TestContextType {
   setColor: (color: string) => void;
   setTimeLimit: (minutes: number | undefined) => void;
   setContent: (content: TestContent) => void;
+  setOrderedIds: (ids: string[]) => void;
 }
 
 const TestContext = createContext<TestContextType | null>(null);
@@ -23,16 +25,21 @@ type TestProviderProps = {
 
 export const TestProvider = ({ testId, children }: TestProviderProps) => {
   const [test, setTest] = useState<Test | null>(null);
+  const [orderedIds, setOrderedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const test = await apiGet<Test>("/auth/me");
-      setTest(test);
+    try {
+      const fetchUser = async () => {
+        const test = await apiGet<Test>(`/tests/${testId}`);
+        setTest(test);
+        setOrderedIds(Object.keys(test.content));
+      };
+      fetchUser();
+    } catch (e) {
+    } finally {
       setIsLoading(false);
-    };
-
-    fetchUser();
+    }
   }, [testId]);
 
   if (isLoading) {
@@ -48,17 +55,34 @@ export const TestProvider = ({ testId, children }: TestProviderProps) => {
     );
   }
 
+  if (!test) return <NotFound />;
+
+  const setTitle = (title: string) =>
+    setTest((prev) => (prev ? { ...prev, title } : null));
+
+  const setColor = (color: string) =>
+    setTest((prev) => (prev ? { ...prev, color } : null));
+
+  const setContent = (content: TestContent) => {
+    setTest((prev) => (prev ? { ...prev, content } : null));
+    setOrderedIds(Object.keys(content));
+  };
+
+  const setTimeLimit = (timeLimitMinutes?: number) =>
+    setTest((prev) => (prev ? { ...prev, timeLimitMinutes } : null));
+
   if (test) {
     return (
       <TestContext.Provider
         value={{
           test,
-          orderedIds: Object.keys(test),
+          orderedIds,
+          setOrderedIds,
           setTest,
-          setTitle: (title) => setTest((prev) => prev === null ? null  : { ...prev, title}),
-          setColor: (color) => setTest((prev) => prev === null ? null  : { ...prev, color}),
-          setContent: (content) => setTest((prev) => prev === null ? null  : { ...prev, content}),
-          setTimeLimit: (timeLimitMinutes) => setTest((prev) => prev === null ? null  : { ...prev, timeLimitMinutes}),
+          setTitle,
+          setColor,
+          setContent,
+          setTimeLimit,
         }}
       >
         {children}
@@ -68,7 +92,6 @@ export const TestProvider = ({ testId, children }: TestProviderProps) => {
 
   return null;
 };
-
 
 export const useTest = (): TestContextType => {
   const context = useContext(TestContext);

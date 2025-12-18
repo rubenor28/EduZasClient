@@ -50,11 +50,6 @@ export function QuestionBlock({
   return (
     <Card sx={{ mb: 2, border: "1px solid #eee", overflow: "visible" }}>
       <CardHeader
-        avatar={
-          <IconButton sx={{ cursor: "grab" }} aria-label="drag-handle">
-            <DragIndicatorIcon />
-          </IconButton>
-        }
         action={
           <IconButton onClick={onDelete} aria-label="delete-question">
             <DeleteIcon />
