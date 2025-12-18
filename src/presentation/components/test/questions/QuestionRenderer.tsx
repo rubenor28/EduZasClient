@@ -1,50 +1,46 @@
-import { type AnyQuestion, QuestionTypes } from "@domain";
+import { QuestionTypes, type AnyQuestion } from "@domain";
 import { OpenQuestionBlock } from "./OpenQuestionBlock";
 import { MultipleChoiceQuestionBlock } from "./MultipleChoiceQuestionBlock";
+import { InternalServerError } from "@application";
+import { MultipleSelectionQuestionBlock } from "./MultipleSelectionQuestionBlock";
+import { OrderingQuestionBlock } from "./OrderingQuestionBlock";
+import { ConceptRelationQuestionBlock } from "./ConceptRelationQuestionBlock";
+import type { AnyQuestionBlockProps } from "./QuestionBlock";
 
-/**
- * Props para el componente {@link QuestionRenderer}.
- */
 export type QuestionRendererProps = {
-  /** El estado inicial de cualquier tipo de pregunta. */
-  initialState: AnyQuestion;
-  /** Callback que se invoca cuando cualquier propiedad de la pregunta cambia. */
-  onChange: (value: AnyQuestion) => void;
-  /** Callback que se invoca para eliminar la pregunta. */
+  question: AnyQuestion;
+  onChange: (question: AnyQuestion) => void;
   onDelete: () => void;
 };
 
-/**
- * Componente encargado de renderizar dinámicamente el editor adecuado
- * para cada tipo de pregunta.
- *
- * Actúa como un *switch* que, basándose en la propiedad `type` de `initialState`,
- * renderiza el componente específico (`OpenQuestionBlock`, `MultipleChoiceQuestionBlock`, etc.)
- * y le pasa las props necesarias.
- * @param props - Las propiedades del componente.
- */
+type QuestionComponent = React.ComponentType<AnyQuestionBlockProps<any>>;
+
+const QUESTION_COMPONENTS: Partial<Record<QuestionTypes, QuestionComponent>> = {
+  [QuestionTypes.Open]: OpenQuestionBlock,
+  [QuestionTypes.MultipleChoise]: MultipleChoiceQuestionBlock,
+  [QuestionTypes.MultipleSelection]: MultipleSelectionQuestionBlock,
+  [QuestionTypes.Ordering]: OrderingQuestionBlock,
+  [QuestionTypes.ConceptRelation]: ConceptRelationQuestionBlock,
+};
+
 export function QuestionRenderer({
-  initialState,
+  question,
   onChange,
   onDelete,
 }: QuestionRendererProps) {
-  if (initialState.type === QuestionTypes.Open)
-    return (
-      <OpenQuestionBlock
-        initialState={initialState}
-        onChange={onChange}
-        onDelete={onDelete}
-      />
-    );
+  const ComponentToRender = QUESTION_COMPONENTS[question.type];
 
-  if (initialState.type === QuestionTypes.MultipleChoise)
-    return (
-      <MultipleChoiceQuestionBlock
-        initialState={initialState}
-        onChange={onChange}
-        onDelete={onDelete}
-      />
+  if (!ComponentToRender) {
+    throw new InternalServerError(
+      `Tipo de pregunta no soportada: ${question.type}`,
     );
+  }
 
-  throw Error("Tipo de pregunta no soportada");
+  return (
+    <ComponentToRender
+      question={question}
+      onChange={onChange}
+      onDelete={onDelete}
+    />
+  );
 }

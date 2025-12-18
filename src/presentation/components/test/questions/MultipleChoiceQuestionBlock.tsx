@@ -10,56 +10,36 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
 import type { MultipleChoiseQuestion, Question } from "@domain";
-import { QuestionBlock } from "./QuestionBlock";
-import { useControlledState } from "@presentation";
-
-/**
- * Props para el componente {@link MultipleChoiceQuestionBlock}.
- */
-type MultipleChoiceQuestionBlockProps = {
-  /** El estado inicial completo de la pregunta de opción múltiple. */
-  initialState: MultipleChoiseQuestion;
-  /**  Callback que se invoca cuando cualquier propiedad de la pregunta cambia. */
-  onChange: (value: MultipleChoiseQuestion) => void;
-  /** Callback que se invoca para eliminar la pregunta. */
-  onDelete: () => void;
-};
+import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
 
 /**
  * Componente para renderizar una pregunta de tipo "Opción Múltiple".
  *
- * Utiliza el componente {@link QuestionBlock} para los campos base (título, imagen)
- * y renderiza los controles para añadir, editar y eliminar las opciones de
- * respuesta como `children`. Es un componente totalmente controlado que delega
- * la gestión del estado al componente padre a través del callback `onChange`.
+ * Se suscribe al store de Zustand para obtener los datos de su pregunta
+ * y las acciones para modificarla y eliminarla.
  * @param props - Las propiedades del componente.
  */
 export function MultipleChoiceQuestionBlock({
-  initialState,
+  question,
   onChange,
   onDelete,
-}: MultipleChoiceQuestionBlockProps) {
-  const [{ title, imageUrl, options, correctOption, type }, setState] =
-    useControlledState<MultipleChoiseQuestion>(initialState, onChange);
+}: AnyQuestionBlockProps<MultipleChoiseQuestion>) {
+  const { options, correctOption, type } = question;
 
-  const setBase = (base: Question) => setState((q) => ({ ...q, ...base }));
+  const handleBaseChange = (base: Question) =>
+    onChange({ ...question, ...base });
 
-  const setOptions = (options: Record<string, string>) =>
-    setState((q) => ({ ...q, options }));
-
-  const setCorrectOption = (correctOption: string) =>
-    setState((q) => ({ ...q, correctOption }));
+  const handleUpdate = (newProps: Partial<MultipleChoiseQuestion>) =>
+    onChange({ ...question, ...newProps });
 
   const handleAddOption = () => {
     const newId = uuidv4();
     const newOptions = { ...options, [newId]: "Nueva opción" };
 
-    // Si es la primera opción, la marcamos como correcta por defecto
     if (Object.keys(options).length === 0) {
-      setOptions(newOptions);
-      setCorrectOption(newId);
+      handleUpdate({ options: newOptions, correctOption: newId });
     } else {
-      setOptions(newOptions);
+      handleUpdate({ options: newOptions });
     }
   };
 
@@ -67,23 +47,22 @@ export function MultipleChoiceQuestionBlock({
     const newOptions = { ...options };
     delete newOptions[id];
 
-    // Si la opción eliminada era la correcta, resetearla a la primera disponible
     if (correctOption === id) {
       const firstOptionId = Object.keys(newOptions)[0] ?? "";
-      setOptions(newOptions);
-      setCorrectOption(firstOptionId);
+      handleUpdate({ options: newOptions, correctOption: firstOptionId });
     } else {
-      setOptions(newOptions);
+      handleUpdate({ options: newOptions });
     }
   };
 
-  const handleOptionTextChange = (id: string, text: string) =>
-    setOptions({ ...options, [id]: text });
+  const handleOptionTextChange = (id: string, text: string) => {
+    handleUpdate({ options: { ...options, [id]: text } });
+  };
 
   return (
     <QuestionBlock
-      initialState={{ title, imageUrl }}
-      onChange={setBase}
+      question={question}
+      onChange={handleBaseChange}
       onDelete={onDelete}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
@@ -93,7 +72,7 @@ export function MultipleChoiceQuestionBlock({
               control={
                 <Radio
                   checked={correctOption === id}
-                  onChange={() => setCorrectOption(id)}
+                  onChange={() => handleUpdate({ correctOption: id })}
                   name={`correct-option-${type}`}
                 />
               }

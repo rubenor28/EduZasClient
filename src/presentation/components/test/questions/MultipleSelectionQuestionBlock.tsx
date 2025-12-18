@@ -10,57 +10,39 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
 import type { MultipleSelectionQuestion, Question } from "@domain";
-import { QuestionBlock } from "./QuestionBlock";
-import { useControlledState } from "@presentation";
-
-/**
- * Props para el componente {@link MultipleSelectionQuestionBlock}.
- */
-type MultipleSelectionQuestionBlockProps = {
-  /** El estado inicial completo de la pregunta de selección múltiple. */
-  initialState: MultipleSelectionQuestion;
-  /** Callback que se invoca cuando cualquier propiedad de la pregunta cambia. */
-  onChange: (value: MultipleSelectionQuestion) => void;
-  /** Callback que se invoca para eliminar la pregunta. */
-  onDelete: () => void;
-};
+import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
 
 /**
  * Componente para renderizar una pregunta de tipo "Selección Múltiple".
  *
- * Utiliza el componente {@link QuestionBlock} para los campos base (título, imagen)
- * y renderiza los controles para las opciones de respuesta con `Checkbox`,
- * permitiendo seleccionar varias respuestas correctas.
+ * Se suscribe al store de Zustand para obtener los datos de su pregunta
+ * y las acciones para modificarla y eliminarla.
  * @param props - Las propiedades del componente.
  */
 export function MultipleSelectionQuestionBlock({
-  initialState,
+  question,
   onChange,
   onDelete,
-}: MultipleSelectionQuestionBlockProps) {
-  const [{ title, imageUrl, options, correctOptions }, setState] =
-    useControlledState(initialState, onChange);
+}: AnyQuestionBlockProps<MultipleSelectionQuestion>) {
+  const { options, correctOptions } = question;
 
-  const setBase = (base: Question) => setState((q) => ({ ...q, ...base }));
+  const handleBaseChange = (base: Question) =>
+    onChange({ ...question, ...base });
 
-  const setOptions = (options: Record<string, string>) =>
-    setState((q) => ({ ...q, options }));
-
-  const setCorrectOptions = (correctOptions: string[]) =>
-    setState((q) => ({ ...q, correctOptions }));
+  const handleUpdate = (newProps: Partial<MultipleSelectionQuestion>) =>
+    onChange({ ...question, ...newProps });
 
   const handleCorrectOptionsChange = (optionId: string) => {
     const newCorrectOptions = correctOptions.includes(optionId)
       ? correctOptions.filter((id) => id !== optionId) // Uncheck
       : [...correctOptions, optionId]; // Check
-
-    setCorrectOptions(newCorrectOptions);
+    handleUpdate({ correctOptions: newCorrectOptions });
   };
 
   const handleAddOption = () => {
     const newId = uuidv4();
     const newOptions = { ...options, [newId]: "Nueva opción" };
-    setOptions(newOptions);
+    handleUpdate({ options: newOptions });
   };
 
   const handleRemoveOption = (id: string) => {
@@ -70,17 +52,17 @@ export function MultipleSelectionQuestionBlock({
     const newCorrectOptions = correctOptions.filter(
       (correctId) => correctId !== id,
     );
-
-    setCorrectOptions(newCorrectOptions);
+    handleUpdate({ options: newOptions, correctOptions: newCorrectOptions });
   };
 
-  const handleOptionTextChange = (id: string, text: string) =>
-    setOptions({ ...options, [id]: text });
+  const handleOptionTextChange = (id: string, text: string) => {
+    handleUpdate({ options: { ...options, [id]: text } });
+  };
 
   return (
     <QuestionBlock
-      initialState={{ title, imageUrl }}
-      onChange={setBase}
+      question={question}
+      onChange={handleBaseChange}
       onDelete={onDelete}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>

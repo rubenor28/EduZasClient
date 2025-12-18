@@ -1,38 +1,25 @@
-import type { OpenQuestion } from "@domain";
-import { QuestionBlock } from "./QuestionBlock";
-
-/**
- * Props para el componente {@link OpenQuestionBlock}.
- */
-type OpenQuestionBlockProps = {
-  /** El estado inicial completo de la pregunta abierta. */
-  initialState: OpenQuestion;
-  /** Callback que se invoca cuando cualquier propiedad de la pregunta cambia. */
-  onChange: (value: OpenQuestion) => void;
-  /** Callback que se invoca para eliminar la pregunta. */
-  onDelete: () => void;
-};
+import type { OpenQuestion, Question } from "@domain";
+import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
 
 /**
  * Componente para renderizar una pregunta de tipo "Pregunta Abierta".
  *
- * Utiliza el componente {@link QuestionBlock} para los campos base (título, imagen)
- * y le pasa los callbacks correspondientes. No tiene campos adicionales,
- * por lo que su `children` está vacío.
+ * Se suscribe al store de Zustand para obtener los datos de su pregunta
+ * y las acciones para modificarla y eliminarla.
  * @param props - Las propiedades del componente.
  */
 export function OpenQuestionBlock({
-  initialState: { type, title, imageUrl },
+  question,
   onChange,
   onDelete,
-}: OpenQuestionBlockProps) {
+}: AnyQuestionBlockProps<OpenQuestion>) {
+  const handleBaseChange = (base: Question) =>
+    onChange({ ...question, ...base });
+
   return (
     <QuestionBlock
-      initialState={{
-        title,
-        imageUrl,
-      }}
-      onChange={({ title, imageUrl }) => onChange({ type, title, imageUrl })}
+      question={question}
+      onChange={handleBaseChange}
       onDelete={onDelete}
     >
       <></>

@@ -11,20 +11,22 @@ import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { ReactNode } from "react";
 import type { Question } from "@domain";
-import { useControlledState } from "@presentation";
+
+export type AnyQuestionBlockProps<T extends Question> = {
+  /** El estado inicial de la pregunta base (título, URL de imagen). */
+  question: T;
+  /** Callback que se invoca cuando las propiedades de la pregunta base cambian. */
+  onChange: (q: T) => void;
+  /** Callback que se invoca para eliminar la pregunta. */
+  onDelete: () => void;
+};
 
 /**
  * Props para el componente {@link QuestionBlock}.
  */
-type QuestionBlockWrapperProps = {
-  /** El estado inicial de la pregunta base (título, URL de imagen). */
-  initialState: Question;
+type QuestionBlockProps = AnyQuestionBlockProps<Question> & {
   /** Los campos de entrada específicos del tipo de pregunta (p. ej., opciones de selección). */
   children: ReactNode;
-  /** Callback que se invoca cuando las propiedades de la pregunta base cambian. */
-  onChange: (q: Question) => void;
-  /** Callback que se invoca para eliminar la pregunta. */
-  onDelete: () => void;
 };
 
 /**
@@ -36,19 +38,14 @@ type QuestionBlockWrapperProps = {
  * @param props - Las propiedades del componente.
  */
 export function QuestionBlock({
-  initialState,
+  question,
   children,
   onChange,
   onDelete,
-}: QuestionBlockWrapperProps) {
-  const [state, setState] = useControlledState<Question>(
-    initialState,
-    onChange,
-  );
-
-  const setTitle = (title: string) => setState((prev) => ({ ...prev, title }));
-  const setImage = (imageUrl: string) =>
-    setState((prev) => ({ ...prev, imageUrl }));
+}: QuestionBlockProps) {
+  const { title, imageUrl } = question;
+  const setTitle = (title: string) => onChange({ ...question, title });
+  const setImage = (imageUrl: string) => onChange({ ...question, imageUrl });
 
   return (
     <Card sx={{ mb: 2, border: "1px solid #eee", overflow: "visible" }}>
@@ -64,7 +61,7 @@ export function QuestionBlock({
           </IconButton>
         }
         title={
-          state.imageUrl && (
+          imageUrl && (
             <Box
               sx={{
                 mb: 2,
@@ -75,7 +72,7 @@ export function QuestionBlock({
             >
               <CardMedia
                 component="img"
-                image={state.imageUrl}
+                image={imageUrl}
                 alt="No se encontró la imagen"
                 sx={{ maxHeight: 200, objectFit: "contain", width: "auto" }}
               />
@@ -89,14 +86,14 @@ export function QuestionBlock({
           <TextField
             sx={{ mt: 2 }}
             label="Título de la Pregunta"
-            value={state.title ?? ""}
+            value={title ?? ""}
             onChange={(e) => setTitle(e.target.value)}
             fullWidth
             variant="outlined"
           />
           <TextField
             label="URL de la Imagen (Opcional)"
-            value={state.imageUrl ?? ""}
+            value={imageUrl ?? ""}
             onChange={(e) => setImage(e.target.value)}
             fullWidth
             variant="outlined"

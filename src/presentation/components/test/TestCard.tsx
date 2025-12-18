@@ -89,74 +89,77 @@ export const TestCard = ({
         opacity: testData.active ? 1 : 0.6,
       }}
     >
-      <CardActionArea
-        onClick={() => !isLoading && onClick(testData.id)}
-        disabled={isLoading}
-        sx={{ flexGrow: 1 }}
-      >
-        <CardContent>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
-          >
-            <Typography
-              variant="h6"
-              component="div"
+      <Box sx={{ position: "relative", flexGrow: 1 }}>
+        <CardActionArea
+          onClick={() => !isLoading && onClick(testData.id)}
+          disabled={isLoading}
+          sx={{ height: "100%" }}
+        >
+          <CardContent>
+            <Box
               sx={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
               }}
             >
-              {testData.title}
-            </Typography>
-            {menuOptions.length > 0 && (
-              <IconButton
-                aria-label="settings"
-                onClick={handleMenuClick}
-                sx={{ mt: -1, mr: -1 }}
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                }}
               >
-                <MoreVertIcon />
-              </IconButton>
-            )}
-          </Box>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Modificado: {formattedDate}
-          </Typography>
-          {!testData.active && (
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ mt: 1, fontStyle: "italic" }}
-            >
-              Archivado
+                {testData.title}
+              </Typography>
+            </Box>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Modificado: {formattedDate}
             </Typography>
-          )}
-        </CardContent>
-      </CardActionArea>
+            {!testData.active && (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 1, fontStyle: "italic" }}
+              >
+                Archivado
+              </Typography>
+            )}
+          </CardContent>
+        </CardActionArea>
 
-      {isLoading && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
-          }}
-        >
-          <CircularProgress size={24} />
-        </Box>
-      )}
+        {menuOptions.length > 0 && ( 
+          <IconButton
+            aria-label="settings"
+            onClick={handleMenuClick}
+            sx={{ position: "absolute", top: 4, right: 4 }} 
+          >
+            <MoreVertIcon />
+          </IconButton>
+        )}
+
+        {isLoading && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+            }}
+          >
+            <CircularProgress size={24} />
+          </Box>
+        )}
+      </Box>
 
       <Menu anchorEl={anchorEl} open={open} onClose={() => handleMenuClose()}>
         {menuOptions.map((option) => (

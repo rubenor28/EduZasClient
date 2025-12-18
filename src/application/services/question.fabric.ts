@@ -1,22 +1,46 @@
-import { type AnyQuestion, QuestionTypes } from "@domain";
+import { type AnyQuestion, QuestionTypes, type Question } from "@domain";
 import { v4 as uuidv4 } from "uuid";
 
-const questionFabric: Record<QuestionTypes, () => AnyQuestion> = {
-  [QuestionTypes.Open]: () => ({
-    type: QuestionTypes.Open,
-    imageUrl: null,
-    title: "Nueva pregunta",
-  }),
+const defaultQuestion: Question = {
+  title: "Nueva pregunta",
+  imageUrl: null,
+};
+
+export const questionFabric: Record<QuestionTypes, () => AnyQuestion> = {
   [QuestionTypes.MultipleChoise]: () => {
     var id = uuidv4();
     return {
+      ...defaultQuestion,
       type: QuestionTypes.MultipleChoise,
-      title: "Nueva pregunta",
-      imageUrl: null,
-      options: { [id]: "Opcion 1" },
+      options: { [id]: "Opción 1" },
       correctOption: id,
     };
   },
+  [QuestionTypes.MultipleSelection]: () => {
+    var id = uuidv4();
+    return {
+      ...defaultQuestion,
+      type: QuestionTypes.MultipleSelection,
+      options: { [id]: "Opción 1" },
+      correctOptions: [id],
+    };
+  },
+  [QuestionTypes.Ordering]: () => ({
+    ...defaultQuestion,
+    type: QuestionTypes.Ordering,
+    sequence: ["Primer opción"],
+  }),
+  [QuestionTypes.Open]: () => ({
+    ...defaultQuestion,
+    type: QuestionTypes.Open,
+  }),
+  [QuestionTypes.ConceptRelation]: () => ({
+    ...defaultQuestion,
+    type: QuestionTypes.ConceptRelation,
+    concepts: {
+      [uuidv4()]: { conceptA: "A", conceptB: "B" },
+    },
+  }),
 };
 
 export const QuestionFabric = (type: QuestionTypes): AnyQuestion => {

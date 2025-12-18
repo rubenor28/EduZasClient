@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useSensors,
   useSensor,
@@ -11,11 +11,22 @@ import { sortableKeyboardCoordinates, arrayMove } from "@dnd-kit/sortable";
 export function useSortableList(initialIds: string[]) {
   const [orderedIds, setOrderedIds] = useState<string[]>(initialIds);
 
+  // Sincronizar estado si los IDs iniciales cambian
+  useEffect(() => {
+    setOrderedIds(initialIds);
+  }, [initialIds]);
+
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      // Evita que el arrastre se active en elementos interactivos
+      activationConstraint: {
+        distance: 5, // Requiere mover 5px para iniciar el arrastre
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
