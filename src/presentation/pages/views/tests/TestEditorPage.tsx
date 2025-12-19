@@ -12,7 +12,7 @@ import {
   TestProvider,
   useTest,
 } from "@presentation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
   Snackbar,
@@ -52,8 +52,6 @@ function TestEditorContainer() {
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
   });
-  const { id, active, color, title, content, professorId, timeLimitMinutes } =
-    test;
 
   const titleError = getFieldError("title", fieldErrors)?.message;
   const colorError = getFieldError("color", fieldErrors)?.message;
@@ -62,26 +60,22 @@ function TestEditorContainer() {
     fieldErrors,
   )?.message;
 
-  const handleSave = async () => {
+  const handleSave = async (isManual: boolean = false) => {
     try {
-      const payload: TestUpdate = {
-        id,
-        active,
-        color,
-        title,
-        content,
-        professorId,
-        timeLimitMinutes,
-      };
+      const payload: TestUpdate = { ...test };
 
       setSubmitting(true);
       await apiPut("/test/", payload);
 
-      setSnackbar({
-        open: true,
-        severity: "success",
-        message: "Test actualizado correctamente",
-      });
+      if (isManual) {
+        setSnackbar({
+          open: true,
+          severity: "success",
+          message: "Test actualizado correctamente",
+        });
+
+        console.log("Ok");
+      }
     } catch (e) {
       if (e instanceof InputError) {
         setFieldErrors(e.errors);
@@ -118,6 +112,16 @@ function TestEditorContainer() {
       setFieldErrors(errors);
     }
   };
+
+  // AUTOGUARDADO
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      handleSave();
+    }, 60_000); // Cada minuto
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <>
       <Box
@@ -141,7 +145,7 @@ function TestEditorContainer() {
             Volver
           </Button>
           <Button
-            onClick={handleSave}
+            onClick={() => handleSave(true)}
             variant="contained"
             disabled={isSubmitting}
           >
@@ -196,7 +200,7 @@ function TestEditorContainer() {
           </Typography>
         )}
       </Box>
-      <QuestionBlockEditor />
+
       {snackbar.open && (
         <Snackbar
           autoHideDuration={4000}
@@ -208,6 +212,8 @@ function TestEditorContainer() {
           </Alert>
         </Snackbar>
       )}
+
+      <QuestionBlockEditor />
     </>
   );
 }
