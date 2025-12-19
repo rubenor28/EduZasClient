@@ -4,6 +4,8 @@ import {
   NotFoundError,
   errorService,
   InternalServerError,
+  apiGet,
+  UnauthorizedError,
 } from "@application";
 import { AuthLayout } from "../layouts/AuthLayout";
 import { useState, useEffect } from "react";
@@ -44,6 +46,23 @@ export function Login() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        await apiGet("/auth/me", {
+          parseResponse: "json",
+        });
+
+        navigate("/");
+      } catch (e) {
+        if (e instanceof UnauthorizedError) return;
+        throw e;
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
     if (location.state?.registrationSuccess) {
       setSuccessMessage(location.state.message);
       // Limpiar el estado para que el mensaje no se muestre si el usuario navega de nuevo
@@ -71,7 +90,7 @@ export function Login() {
     setIsSubmitting(true);
     setFieldErrors([]);
     setFormError(null);
-    setSuccessMessage(null); // Clear success message on new submission
+    setSuccessMessage(null);
 
     try {
       const result = await apiPostInput<void>("/auth/login", {

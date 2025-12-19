@@ -26,9 +26,6 @@ import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
-import { OpenQuestionBlock } from "./components";
-import { questionFabric, QuestionFabric } from "@application";
-import { QuestionTypes, type OpenQuestion } from "@domain";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
