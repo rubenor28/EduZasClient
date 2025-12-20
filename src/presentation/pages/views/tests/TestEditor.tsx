@@ -17,6 +17,7 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
+import { TestClassAssociationManager } from "./TestClassAssociationManager";
 
 export type Params = {
   testId: string;
@@ -30,6 +31,7 @@ export function TestEditor() {
   const navigate = useNavigate();
   const { test, setTitle, setColor, setTimeLimit } = useTest();
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
@@ -117,7 +119,7 @@ export function TestEditor() {
         <Typography variant="h4">Editar evaluación</Typography>
         <Box>
           <Button
-            onClick={() => console.log("Asignar a clases")}
+            onClick={() => setModalOpen(true)}
             variant="outlined"
             sx={{ mr: 2 }}
           >
@@ -194,6 +196,13 @@ export function TestEditor() {
           </Alert>
         </Snackbar>
       )}
+
+      <TestClassAssociationManager
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => setModalOpen(false)}
+        open={modalOpen}
+        testId={test.id}
+      />
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>

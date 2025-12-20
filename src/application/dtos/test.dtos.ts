@@ -71,6 +71,18 @@ export type TestCriteria = Criteria & {
 };
 
 /**
+ * DTO para crear o actualizar la asociacion entre una clase y una evaluacion
+ */
+export type ClassTestDTO = {
+  /** ID de la clase */
+  classId: string;
+  /** ID del test */
+  testId: string;
+  /** Visibilidad de la evaluacion en la clase */
+  visible: boolean;
+};
+
+/**
  * DTO para representar el estado de asociación entre una evaluación y una clase.
  */
 export type ClassTestAssociation = {
