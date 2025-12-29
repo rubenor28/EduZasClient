@@ -7,12 +7,14 @@ import {
   Box,
   TextField,
 } from "@mui/material";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { ReactNode } from "react";
 import type { Question } from "@domain";
+import { getFieldError } from "@application";
+import { useTest } from "@presentation";
 
 export type AnyQuestionBlockProps<T extends Question> = {
+  id: string;
   /** El estado inicial de la pregunta base (título, URL de imagen). */
   question: T;
   /** Callback que se invoca cuando las propiedades de la pregunta base cambian. */
@@ -38,6 +40,7 @@ type QuestionBlockProps = AnyQuestionBlockProps<Question> & {
  * @param props - Las propiedades del componente.
  */
 export function QuestionBlock({
+  id,
   question,
   children,
   onChange,
@@ -46,6 +49,13 @@ export function QuestionBlock({
   const { title, imageUrl } = question;
   const setTitle = (title: string) => onChange({ ...question, title });
   const setImage = (imageUrl: string) => onChange({ ...question, imageUrl });
+
+  const {fieldErrors} = useTest();
+  const titleError = getFieldError(`content[${id}].title`,fieldErrors,)?.message;
+  const imageError = getFieldError(`content[${id}].imageUrl`, fieldErrors)?.message;
+
+  console.log(fieldErrors);
+  console.log(id);
 
   return (
     <Card sx={{ mb: 2, border: "1px solid #eee", overflow: "visible" }}>
@@ -85,6 +95,8 @@ export function QuestionBlock({
             onChange={(e) => setTitle(e.target.value)}
             fullWidth
             variant="outlined"
+            error={!!titleError}
+            helperText={titleError}
           />
           <TextField
             label="URL de la Imagen (Opcional)"
@@ -92,6 +104,8 @@ export function QuestionBlock({
             onChange={(e) => setImage(e.target.value)}
             fullWidth
             variant="outlined"
+            error={!!imageError}
+            helperText={imageError}
           />
           {children}
         </Box>

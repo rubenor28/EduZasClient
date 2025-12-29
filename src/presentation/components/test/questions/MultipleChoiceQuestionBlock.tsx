@@ -5,12 +5,14 @@ import {
   FormControlLabel,
   Button,
   TextField,
+  Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
 import type { MultipleChoiseQuestion, Question } from "@domain";
-import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
+import { QuestionBlock, useTest, type AnyQuestionBlockProps } from "@presentation";
+import { getFieldError } from "@application";
 
 /**
  * Componente para renderizar una pregunta de tipo "Opción Múltiple".
@@ -20,11 +22,16 @@ import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
  * @param props - Las propiedades del componente.
  */
 export function MultipleChoiceQuestionBlock({
+  id,
   question,
   onChange,
   onDelete,
 }: AnyQuestionBlockProps<MultipleChoiseQuestion>) {
   const { options, correctOption, type } = question;
+
+  const {fieldErrors} = useTest();
+  const optionsError = getFieldError(`content[${id}].options`, fieldErrors)?.message;
+  const correctOptionError = getFieldError(`content[${id}].correctOptionError`, fieldErrors)?.message;
 
   const handleBaseChange = (base: Question) =>
     onChange({ ...question, ...base });
@@ -61,37 +68,47 @@ export function MultipleChoiceQuestionBlock({
 
   return (
     <QuestionBlock
+      id={id}
       question={question}
       onChange={handleBaseChange}
       onDelete={onDelete}
     >
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
+        {optionsError && <Alert severity="error">{`Error en opciones: ${optionsError}`}</Alert>}
         {Object.entries(options).map(([id, text]) => (
-          <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <FormControlLabel
-              control={
-                <Radio
-                  checked={correctOption === id}
-                  onChange={() => handleUpdate({ correctOption: id })}
-                  name={`correct-option-${type}`}
-                />
-              }
-              label=""
-            />
-            <TextField
-              value={text}
-              onChange={(e) => handleOptionTextChange(id, e.target.value)}
-              fullWidth
-              variant="standard"
-            />
-            <IconButton
-              aria-label="delete-option"
-              onClick={() => handleRemoveOption(id)}
-              disabled={Object.keys(options).length <= 1}
+          <>
+            {id === correctOption && correctOptionError && (
+              <Alert key={id} severity="error">{`Error en opción correcta: ${correctOptionError}`}</Alert>
+            )}
+            <Box
+              key={id}
+              sx={{ display: "flex", alignItems: "center", gap: 1 }}
             >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
+              <FormControlLabel
+                control={
+                  <Radio
+                    checked={correctOption === id}
+                    onChange={() => handleUpdate({ correctOption: id })}
+                    name={`correct-option-${type}`}
+                  />
+                }
+                label=""
+              />
+              <TextField
+                value={text}
+                onChange={(e) => handleOptionTextChange(id, e.target.value)}
+                fullWidth
+                variant="standard"
+              />
+              <IconButton
+                aria-label="delete-option"
+                onClick={() => handleRemoveOption(id)}
+                disabled={Object.keys(options).length <= 1}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          </>
         ))}
       </Box>
       <Button

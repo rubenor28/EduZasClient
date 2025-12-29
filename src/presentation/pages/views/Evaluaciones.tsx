@@ -62,20 +62,21 @@ export const Evaluaciones = () => {
   const handleCreate = async () => {
     setIsCreating(true);
     try {
+      const id = uuidv4();
       const defaultQuestion: OpenQuestion = {
         type: QuestionTypes.Open,
         title: "Nueva pregunta",
-        imageUrl: null,
       };
 
       const payload: NewTest = {
         title: "Nueva Evaluación",
         color: "#1976d2",
         content: {
-          [uuidv4()]: defaultQuestion,
+          [id]: defaultQuestion,
         },
         professorId: user.id,
       };
+
       const newTest = await apiPost<TestSummary>("/test", payload);
       navigate(`/professor/tests/${newTest.id}`);
     } catch (e) {

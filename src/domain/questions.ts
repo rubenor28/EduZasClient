@@ -3,7 +3,7 @@
  */
 export type Question = {
   title: string;
-  imageUrl: string | null;
+  imageUrl?: string;
 };
 
 export enum QuestionTypes {
@@ -48,7 +48,7 @@ export type OrderingQuestion = Question & {
 };
 
 /**
- * Define un par de conceptos para ser relacionados.
+ * Define el par de conceptos relacionados.
  */
 export type ConceptPair = {
   conceptA: string;
@@ -60,7 +60,7 @@ export type ConceptPair = {
  */
 export type ConceptRelationQuestion = Question & {
   readonly type: QuestionTypes.ConceptRelation;
-  concepts: Record<string, ConceptPair>;
+  concepts: ConceptPair[];
 };
 
 /**

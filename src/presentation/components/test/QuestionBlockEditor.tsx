@@ -49,6 +49,7 @@ export function QuestionBlockEditor() {
         orderedIds.map((id) => (
           <QuestionRenderer
             key={id}
+            id={id}
             question={test.content[id]}
             onChange={(q) => onChange(id, q)}
             onDelete={() => onDelete(id)}

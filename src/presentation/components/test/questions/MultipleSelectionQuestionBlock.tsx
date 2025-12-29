@@ -20,6 +20,7 @@ import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
  * @param props - Las propiedades del componente.
  */
 export function MultipleSelectionQuestionBlock({
+  id,
   question,
   onChange,
   onDelete,
@@ -61,6 +62,7 @@ export function MultipleSelectionQuestionBlock({
 
   return (
     <QuestionBlock
+      id={id}
       question={question}
       onChange={handleBaseChange}
       onDelete={onDelete}

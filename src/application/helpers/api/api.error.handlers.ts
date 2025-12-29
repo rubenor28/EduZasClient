@@ -29,7 +29,6 @@ export const apiErrorHandlers: Record<number, ErrorHandler> = {
   },
   409: async (res) => {
     const response = (await res.json());
-    console.log(response);
     return new Conflict(response.message);
   },
 };

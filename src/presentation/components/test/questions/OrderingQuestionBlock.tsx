@@ -14,6 +14,7 @@ import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
  * @param props - Las propiedades del componente.
  */
 export function OrderingQuestionBlock({
+  id,
   question,
   onChange,
   onDelete,
@@ -60,6 +61,7 @@ export function OrderingQuestionBlock({
 
   return (
     <QuestionBlock
+      id={id}
       question={question}
       onChange={handleBaseChange}
       onDelete={onDelete}

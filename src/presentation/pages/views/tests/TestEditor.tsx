@@ -2,7 +2,6 @@ import {
   apiPut,
   getFieldError,
   InputError,
-  type FieldErrorDTO,
   type TestUpdate,
 } from "@application";
 import { ColorSelector, QuestionBlockEditor, useTest } from "@presentation";
@@ -32,11 +31,11 @@ export function TestEditor() {
   const { test, setTitle, setColor, setTimeLimit } = useTest();
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
   });
 
+  const {fieldErrors, setFieldErrors} = useTest();
   const titleError = getFieldError("title", fieldErrors)?.message;
   const colorError = getFieldError("color", fieldErrors)?.message;
   const timeLimitError = getFieldError(
@@ -46,6 +45,7 @@ export function TestEditor() {
 
   const handleSave = async (isManual: boolean = false) => {
     try {
+      setFieldErrors([]);
       const payload: TestUpdate = { ...test };
 
       setSubmitting(true);
@@ -57,8 +57,6 @@ export function TestEditor() {
           severity: "success",
           message: "Test actualizado correctamente",
         });
-
-        console.log("Ok");
       }
     } catch (e) {
       if (e instanceof InputError) {

@@ -9,6 +9,7 @@ import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
  * @param props - Las propiedades del componente.
  */
 export function OpenQuestionBlock({
+  id,
   question,
   onChange,
   onDelete,
@@ -18,6 +19,7 @@ export function OpenQuestionBlock({
 
   return (
     <QuestionBlock
+      id={id}
       question={question}
       onChange={handleBaseChange}
       onDelete={onDelete}

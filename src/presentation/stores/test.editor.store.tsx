@@ -1,4 +1,4 @@
-import { apiGet } from "@application";
+import { apiGet, type FieldErrorDTO } from "@application";
 import { type Test, type TestContent } from "@domain";
 import { Box, CircularProgress } from "@mui/material";
 import { NotFound } from "@presentation";
@@ -7,6 +7,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 // Definir el Estado y las Acciones del Store
 export interface TestContextType {
   test: Test;
+  fieldErrors: FieldErrorDTO[];
   orderedIds: string[];
   setTest: (test: Test) => void;
   setTitle: (title: string) => void;
@@ -14,6 +15,7 @@ export interface TestContextType {
   setTimeLimit: (minutes: number | undefined) => void;
   setContent: (content: TestContent) => void;
   setOrderedIds: (ids: string[]) => void;
+  setFieldErrors: (fieldErrors: FieldErrorDTO[]) => void;
 }
 
 const TestContext = createContext<TestContextType | null>(null);
@@ -27,6 +29,7 @@ export const TestProvider = ({ testId, children }: TestProviderProps) => {
   const [test, setTest] = useState<Test | null>(null);
   const [orderedIds, setOrderedIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
 
   useEffect(() => {
     try {
@@ -76,6 +79,7 @@ export const TestProvider = ({ testId, children }: TestProviderProps) => {
       <TestContext.Provider
         value={{
           test,
+          fieldErrors,
           orderedIds,
           setOrderedIds,
           setTest,
@@ -83,6 +87,7 @@ export const TestProvider = ({ testId, children }: TestProviderProps) => {
           setColor,
           setContent,
           setTimeLimit,
+          setFieldErrors
         }}
       >
         {children}

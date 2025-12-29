@@ -8,6 +8,7 @@ import { ConceptRelationQuestionBlock } from "./ConceptRelationQuestionBlock";
 import type { AnyQuestionBlockProps } from "./QuestionBlock";
 
 export type QuestionRendererProps = {
+  id: string;
   question: AnyQuestion;
   onChange: (question: AnyQuestion) => void;
   onDelete: () => void;
@@ -24,6 +25,7 @@ const QUESTION_COMPONENTS: Partial<Record<QuestionTypes, QuestionComponent>> = {
 };
 
 export function QuestionRenderer({
+  id,
   question,
   onChange,
   onDelete,
@@ -38,6 +40,7 @@ export function QuestionRenderer({
 
   return (
     <ComponentToRender
+      id={id}
       question={question}
       onChange={onChange}
       onDelete={onDelete}
