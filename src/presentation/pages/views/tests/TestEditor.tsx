@@ -35,9 +35,10 @@ export function TestEditor() {
     open: false,
   });
 
-  const {fieldErrors, setFieldErrors} = useTest();
+  const { fieldErrors, setFieldErrors } = useTest();
   const titleError = getFieldError("title", fieldErrors)?.message;
   const colorError = getFieldError("color", fieldErrors)?.message;
+  const contentError = getFieldError("content", fieldErrors)?.message;
   const timeLimitError = getFieldError(
     "timeLimitMinutes",
     fieldErrors,
@@ -61,13 +62,18 @@ export function TestEditor() {
     } catch (e) {
       if (e instanceof InputError) {
         setFieldErrors(e.errors);
+        setSnackbar({
+          open: true,
+          severity: "error",
+          message: "No se pudo guardar la evaluación. Verifique las preguntas.",
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          severity: "error",
+          message: "Ocurrió un error al actualizar el test",
+        });
       }
-
-      setSnackbar({
-        open: true,
-        severity: "error",
-        message: "Ocurrió un error al actualizar el test",
-      });
     } finally {
       setSubmitting(false);
     }
@@ -185,6 +191,7 @@ export function TestEditor() {
 
       {snackbar.open && (
         <Snackbar
+          open
           autoHideDuration={4000}
           onClose={() => setSnackbar({ open: false })}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
@@ -206,6 +213,7 @@ export function TestEditor() {
         <Typography variant="h5" gutterBottom>
           Preguntas
         </Typography>
+        {contentError && <Alert severity="error">{contentError}</Alert>}
         <QuestionBlockEditor />
       </Box>
     </>

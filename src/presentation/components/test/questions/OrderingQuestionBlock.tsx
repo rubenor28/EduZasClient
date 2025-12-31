@@ -1,10 +1,22 @@
-import { Box, IconButton, Button, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Button,
+  TextField,
+  Typography,
+  Alert,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import type { OrderingQuestion, Question } from "@domain";
-import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
+import {
+  QuestionBlock,
+  useTest,
+  type AnyQuestionBlockProps,
+} from "@presentation";
+import { getFieldError } from "@application";
 
 /**
  * Componente para renderizar una pregunta de tipo "Ordenar Secuencia".
@@ -20,6 +32,9 @@ export function OrderingQuestionBlock({
   onDelete,
 }: AnyQuestionBlockProps<OrderingQuestion>) {
   const { sequence } = question;
+
+  const { fieldErrors } = useTest();
+  const sequenceError = getFieldError(`content[${id}].sequence`, fieldErrors)?.message;
 
   const handleBaseChange = (base: Question) =>
     onChange({ ...question, ...base });
@@ -70,6 +85,7 @@ export function OrderingQuestionBlock({
         Secuencia a ordenar
       </Typography>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
+        {sequenceError && <Alert severity="error">{sequenceError}</Alert>}
         {sequence.map((text, index) => (
           <Box
             key={index}

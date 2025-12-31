@@ -31,7 +31,7 @@ export function MultipleChoiceQuestionBlock({
 
   const {fieldErrors} = useTest();
   const optionsError = getFieldError(`content[${id}].options`, fieldErrors)?.message;
-  const correctOptionError = getFieldError(`content[${id}].correctOptionError`, fieldErrors)?.message;
+  const correctOptionError = getFieldError(`content[${id}].correctOption`, fieldErrors)?.message;
 
   const handleBaseChange = (base: Question) =>
     onChange({ ...question, ...base });

@@ -5,12 +5,18 @@ import {
   FormControlLabel,
   Button,
   TextField,
+  Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
 import type { MultipleSelectionQuestion, Question } from "@domain";
-import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
+import {
+  QuestionBlock,
+  useTest,
+  type AnyQuestionBlockProps,
+} from "@presentation";
+import { getFieldError } from "@application";
 
 /**
  * Componente para renderizar una pregunta de tipo "Selección Múltiple".
@@ -26,6 +32,10 @@ export function MultipleSelectionQuestionBlock({
   onDelete,
 }: AnyQuestionBlockProps<MultipleSelectionQuestion>) {
   const { options, correctOptions } = question;
+
+  const { fieldErrors } = useTest();
+  const optionsError = getFieldError(`content[${id}].options`, fieldErrors)?.message;
+  const correctOptionsError = getFieldError(`content[${id}].correctOptions`, fieldErrors)?.message;
 
   const handleBaseChange = (base: Question) =>
     onChange({ ...question, ...base });
@@ -67,6 +77,14 @@ export function MultipleSelectionQuestionBlock({
       onChange={handleBaseChange}
       onDelete={onDelete}
     >
+      {optionsError && (
+        <Alert severity="error">{`Error en opciones: ${optionsError}`}</Alert>
+      )}
+
+      {correctOptionsError && (
+        <Alert severity="error">{`Error en opciones correctas: ${correctOptionsError}`}</Alert>
+      )}
+
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
         {Object.entries(options).map(([id, text]) => (
           <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
