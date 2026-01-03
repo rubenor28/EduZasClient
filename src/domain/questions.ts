@@ -4,6 +4,7 @@
 export type Question = {
   title: string;
   imageUrl?: string;
+  readonly type: QuestionTypes;
 };
 
 export enum QuestionTypes {

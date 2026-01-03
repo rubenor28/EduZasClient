@@ -54,9 +54,6 @@ export function QuestionBlock({
   const titleError = getFieldError(`content[${id}].title`,fieldErrors,)?.message;
   const imageError = getFieldError(`content[${id}].imageUrl`, fieldErrors)?.message;
 
-  console.log(fieldErrors);
-  console.log(id);
-
   return (
     <Card sx={{ mb: 2, border: "1px solid #eee", overflow: "visible" }}>
       <CardHeader

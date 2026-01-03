@@ -104,6 +104,7 @@ export function TestEditor() {
   // AUTOGUARDADO
   useEffect(() => {
     const intervalId = setInterval(() => {
+      console.log(test);
       handleSave();
     }, 60_000); // Cada minuto
 
