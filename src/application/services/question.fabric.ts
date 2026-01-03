@@ -47,8 +47,5 @@ export const QuestionFabric = (type: QuestionTypes): AnyQuestion => {
   const constructor =
     questionFabric[type] ?? questionFabric[QuestionTypes.Open];
 
-  const q = constructor();
-  console.log("Constructor de pregunta");
-  console.log(q)
-  return q;
+  return constructor();
 };
