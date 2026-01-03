@@ -50,11 +50,6 @@ export function TestEditor() {
         setFieldErrors([]);
         const payload: TestUpdate = { ...test };
 
-        if (!isManual) {
-          console.log("Guardado automatico");
-          console.log(test);
-        }
-
         setSubmitting(true);
         await apiPut("/test/", payload);
 
