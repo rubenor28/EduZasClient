@@ -10,7 +10,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import type { OrderingQuestion, Question } from "@domain";
+import type { OrderingQuestion } from "@domain";
 import {
   QuestionBlock,
   useTest,
@@ -34,13 +34,13 @@ export function OrderingQuestionBlock({
   const { sequence } = question;
 
   const { fieldErrors } = useTest();
-  const sequenceError = getFieldError(`content[${id}].sequence`, fieldErrors)?.message;
-
-  const handleBaseChange = (base: Question) =>
-    onChange({ ...question, ...base });
+  const sequenceError = getFieldError(
+    `content[${id}].sequence`,
+    fieldErrors,
+  )?.message;
 
   const handleUpdate = (newProps: Partial<OrderingQuestion>) =>
-    onChange({ ...question, ...newProps });
+    onChange((prev) => ({ ...prev, ...newProps }));
 
   const handleMoveItem = (fromIndex: number, toIndex: number) => {
     if (
@@ -78,7 +78,7 @@ export function OrderingQuestionBlock({
     <QuestionBlock
       id={id}
       question={question}
-      onChange={handleBaseChange}
+      onChange={onChange}
       onDelete={onDelete}
     >
       <Typography variant="subtitle1" sx={{ mb: 1, mt: 1 }}>

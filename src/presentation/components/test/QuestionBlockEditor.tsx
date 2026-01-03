@@ -17,13 +17,15 @@ export function QuestionBlockEditor() {
   const { test, orderedIds, setContent } = useTest();
 
   const onChange = (id: string, question: AnyQuestion) => {
-    setContent({ ...test.content, [id]: question });
+    setContent((prevContent) => ({ ...prevContent, [id]: question }));
   };
 
   const onDelete = (id: string) => {
-    const content = { ...test.content };
-    delete content[id];
-    setContent(content);
+    setContent((prevContent) => {
+      const newContent = { ...prevContent };
+      delete newContent[id];
+      return newContent;
+    });
   };
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -39,7 +41,7 @@ export function QuestionBlockEditor() {
   const handleAddQuestion = (type: QuestionTypes) => {
     const id = uuidv4();
     const question = QuestionFabric(type);
-    setContent({ ...test.content, [id]: question });
+    setContent((prevContent) => ({ ...prevContent, [id]: question }));
     handleCloseMenu();
   };
 

@@ -13,7 +13,9 @@ export interface TestContextType {
   setTitle: (title: string) => void;
   setColor: (color: string) => void;
   setTimeLimit: (minutes: number | undefined) => void;
-  setContent: (content: TestContent) => void;
+  setContent: (
+    content: TestContent | ((prevContent: TestContent) => TestContent),
+  ) => void;
   setOrderedIds: (ids: string[]) => void;
   setFieldErrors: (fieldErrors: FieldErrorDTO[]) => void;
 }
@@ -66,9 +68,18 @@ export const TestProvider = ({ testId, children }: TestProviderProps) => {
   const setColor = (color: string) =>
     setTest((prev) => (prev ? { ...prev, color } : null));
 
-  const setContent = (content: TestContent) => {
-    setTest((prev) => (prev ? { ...prev, content } : null));
-    setOrderedIds(Object.keys(content));
+  const setContent = (
+    content: TestContent | ((prevContent: TestContent) => TestContent),
+  ) => {
+    setTest((prev) => {
+      if (!prev) return null;
+
+      const newContent =
+        typeof content === "function" ? content(prev.content) : content;
+
+      setOrderedIds(Object.keys(newContent));
+      return { ...prev, content: newContent };
+    });
   };
 
   const setTimeLimit = (timeLimitMinutes?: number) =>

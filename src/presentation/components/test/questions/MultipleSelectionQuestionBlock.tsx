@@ -10,7 +10,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
-import type { MultipleSelectionQuestion, Question } from "@domain";
+import type { MultipleSelectionQuestion } from "@domain";
 import {
   QuestionBlock,
   useTest,
@@ -34,14 +34,17 @@ export function MultipleSelectionQuestionBlock({
   const { options, correctOptions } = question;
 
   const { fieldErrors } = useTest();
-  const optionsError = getFieldError(`content[${id}].options`, fieldErrors)?.message;
-  const correctOptionsError = getFieldError(`content[${id}].correctOptions`, fieldErrors)?.message;
-
-  const handleBaseChange = (base: Question) =>
-    onChange({ ...question, ...base });
+  const optionsError = getFieldError(
+    `content[${id}].options`,
+    fieldErrors,
+  )?.message;
+  const correctOptionsError = getFieldError(
+    `content[${id}].correctOptions`,
+    fieldErrors,
+  )?.message;
 
   const handleUpdate = (newProps: Partial<MultipleSelectionQuestion>) =>
-    onChange({ ...question, ...newProps });
+    onChange((prev) => ({ ...prev, ...newProps }));
 
   const handleCorrectOptionsChange = (optionId: string) => {
     const newCorrectOptions = correctOptions.includes(optionId)
@@ -74,7 +77,7 @@ export function MultipleSelectionQuestionBlock({
     <QuestionBlock
       id={id}
       question={question}
-      onChange={handleBaseChange}
+      onChange={onChange}
       onDelete={onDelete}
     >
       {optionsError && (
@@ -82,7 +85,9 @@ export function MultipleSelectionQuestionBlock({
       )}
 
       {correctOptionsError && (
-        <Alert severity="error">{`Error en opciones correctas: ${correctOptionsError}`}</Alert>
+        <Alert
+          severity="error"
+        >{`Error en opciones correctas: ${correctOptionsError}`}</Alert>
       )}
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
@@ -122,3 +127,4 @@ export function MultipleSelectionQuestionBlock({
     </QuestionBlock>
   );
 }
+

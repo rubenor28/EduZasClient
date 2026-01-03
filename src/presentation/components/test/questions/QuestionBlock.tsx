@@ -18,7 +18,7 @@ export type AnyQuestionBlockProps<T extends Question> = {
   /** El estado inicial de la pregunta base (título, URL de imagen). */
   question: T;
   /** Callback que se invoca cuando las propiedades de la pregunta base cambian. */
-  onChange: (q: T) => void;
+  onChange: (updater: (q: T) => T) => void;
   /** Callback que se invoca para eliminar la pregunta. */
   onDelete: () => void;
 };
@@ -26,7 +26,7 @@ export type AnyQuestionBlockProps<T extends Question> = {
 /**
  * Props para el componente {@link QuestionBlock}.
  */
-type QuestionBlockProps = AnyQuestionBlockProps<Question> & {
+type QuestionBlockProps<T extends Question> = AnyQuestionBlockProps<T> & {
   /** Los campos de entrada específicos del tipo de pregunta (p. ej., opciones de selección). */
   children: ReactNode;
 };
@@ -39,20 +39,28 @@ type QuestionBlockProps = AnyQuestionBlockProps<Question> & {
  * de los campos específicos del tipo de pregunta a sus `children`.
  * @param props - Las propiedades del componente.
  */
-export function QuestionBlock({
+export function QuestionBlock<T extends Question>({
   id,
   question,
   children,
   onChange,
   onDelete,
-}: QuestionBlockProps) {
+}: QuestionBlockProps<T>) {
   const { title, imageUrl } = question;
-  const setTitle = (title: string) => onChange({ ...question, title });
-  const setImage = (imageUrl: string) => onChange({ ...question, imageUrl });
+  const setTitle = (title: string) =>
+    onChange((prev) => ({ ...prev, title }));
+  const setImage = (imageUrl: string) =>
+    onChange((prev) => ({ ...prev, imageUrl }));
 
-  const {fieldErrors} = useTest();
-  const titleError = getFieldError(`content[${id}].title`,fieldErrors,)?.message;
-  const imageError = getFieldError(`content[${id}].imageUrl`, fieldErrors)?.message;
+  const { fieldErrors } = useTest();
+  const titleError = getFieldError(
+    `content[${id}].title`,
+    fieldErrors,
+  )?.message;
+  const imageError = getFieldError(
+    `content[${id}].imageUrl`,
+    fieldErrors,
+  )?.message;
 
   return (
     <Card sx={{ mb: 2, border: "1px solid #eee", overflow: "visible" }}>

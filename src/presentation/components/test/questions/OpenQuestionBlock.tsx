@@ -1,4 +1,4 @@
-import type { OpenQuestion, Question } from "@domain";
+import type { OpenQuestion } from "@domain";
 import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
 
 /**
@@ -14,14 +14,11 @@ export function OpenQuestionBlock({
   onChange,
   onDelete,
 }: AnyQuestionBlockProps<OpenQuestion>) {
-  const handleBaseChange = (base: Question) =>
-    onChange({ ...question, ...base });
-
   return (
     <QuestionBlock
       id={id}
       question={question}
-      onChange={handleBaseChange}
+      onChange={onChange}
       onDelete={onDelete}
     >
       <></>

@@ -42,7 +42,7 @@ export function QuestionRenderer({
     <ComponentToRender
       id={id}
       question={question}
-      onChange={onChange}
+      onChange={(updater) => onChange(updater(question))}
       onDelete={onDelete}
     />
   );

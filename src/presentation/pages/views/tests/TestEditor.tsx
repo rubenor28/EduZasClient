@@ -5,7 +5,7 @@ import {
   type TestUpdate,
 } from "@application";
 import { ColorSelector, QuestionBlockEditor, useTest } from "@presentation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Snackbar,
@@ -44,40 +44,49 @@ export function TestEditor() {
     fieldErrors,
   )?.message;
 
-  const handleSave = async (isManual: boolean = false) => {
-    try {
-      setFieldErrors([]);
-      const payload: TestUpdate = { ...test };
+  const handleSave = useCallback(
+    async (isManual: boolean = false) => {
+      try {
+        setFieldErrors([]);
+        const payload: TestUpdate = { ...test };
 
-      setSubmitting(true);
-      await apiPut("/test/", payload);
+        if (!isManual) {
+          console.log("Guardado automatico");
+          console.log(test);
+        }
 
-      if (isManual) {
-        setSnackbar({
-          open: true,
-          severity: "success",
-          message: "Test actualizado correctamente",
-        });
+        setSubmitting(true);
+        await apiPut("/test/", payload);
+
+        if (isManual) {
+          setSnackbar({
+            open: true,
+            severity: "success",
+            message: "Test actualizado correctamente",
+          });
+        }
+      } catch (e) {
+        if (e instanceof InputError) {
+          setFieldErrors(e.errors);
+          setSnackbar({
+            open: true,
+            severity: "error",
+            message:
+              "No se pudo guardar la evaluación. Verifique las preguntas.",
+          });
+        } else {
+          setSnackbar({
+            open: true,
+            severity: "error",
+            message: "Ocurrió un error al actualizar el test",
+          });
+        }
+      } finally {
+        setSubmitting(false);
       }
-    } catch (e) {
-      if (e instanceof InputError) {
-        setFieldErrors(e.errors);
-        setSnackbar({
-          open: true,
-          severity: "error",
-          message: "No se pudo guardar la evaluación. Verifique las preguntas.",
-        });
-      } else {
-        setSnackbar({
-          open: true,
-          severity: "error",
-          message: "Ocurrió un error al actualizar el test",
-        });
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    },
+    [test, setFieldErrors],
+  );
 
   const handleTimeLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -105,10 +114,10 @@ export function TestEditor() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       handleSave();
-    }, 60_000); // Cada minuto
+    }, 10_000); // Cada minuto
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [handleSave]);
 
   return (
     <>

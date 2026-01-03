@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import type { ConceptRelationQuestion, Question, ConceptPair } from "@domain";
+import type { ConceptRelationQuestion, ConceptPair } from "@domain";
 import { QuestionBlock, useTest, type AnyQuestionBlockProps } from "@presentation";
 import { useState } from "react";
 import { getFieldError } from "@application";
@@ -41,11 +41,8 @@ export function ConceptRelationQuestionBlock({
   const handleInputChange = (value: string, field: string) =>
     setInput((prev) => ({ ...prev, [field]: value }));
 
-  const handleBaseChange = (base: Question) =>
-    onChange({ ...question, ...base });
-
   const handleUpdate = (newProps: Partial<ConceptRelationQuestion>) =>
-    onChange({ ...question, ...newProps });
+    onChange((prev) => ({ ...prev, ...newProps }));
 
   const handleAddPair = () => {
     const trimmedA = input.conceptA.trim();
@@ -99,7 +96,7 @@ export function ConceptRelationQuestionBlock({
     <QuestionBlock
       id={id}
       question={question}
-      onChange={handleBaseChange}
+      onChange={onChange}
       onDelete={onDelete}
     >
       <Typography variant="subtitle1" sx={{ mb: 1, mt: 1 }}>
