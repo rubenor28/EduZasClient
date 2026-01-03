@@ -109,7 +109,7 @@ export function TestEditor() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       handleSave();
-    }, 10_000); // Cada minuto
+    }, 60_000); // Cada minuto
 
     return () => clearInterval(intervalId);
   }, [handleSave]);
