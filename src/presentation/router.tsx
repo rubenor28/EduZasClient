@@ -14,6 +14,7 @@ import {
   ManageClassesView,
   ManageResourcesView,
   TestEditorPage,
+  AnswerEditorPage,
 } from "./pages/views";
 import {
   AuthErrorAs500Boundary,
@@ -138,7 +139,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: "classes/test/:classId/:resourceId",
-                element: <NotFound />,
+                element: <AnswerEditorPage />,
               },
             ],
           },

@@ -8,3 +8,4 @@ export * from "./pagination";
 export * from "./resources";
 export * from "./test";
 export * from "./common";
+export * from "./answers";

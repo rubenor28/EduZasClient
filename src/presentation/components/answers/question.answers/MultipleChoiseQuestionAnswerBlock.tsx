@@ -6,45 +6,34 @@ import {
   QuestionAnswerBlock,
   type AnyQuestionAnswerBlockProps,
 } from "./QuestionAnswerBlock";
-import { useState } from "react";
-import { Box, FormControlLabel, Radio, TextField } from "@mui/material";
+import { Box, FormControlLabel, Radio, Typography } from "@mui/material";
 
 type BlockProps = AnyQuestionAnswerBlockProps<
   MultipleChoiseQuestionAnswer,
   PublicMultipleChoiseQuestion
 >;
 
-type SelectedOption = {
-  id: string;
-  index: number;
-};
-
-export function MultipleChoiseQuestionAnswerBlock({ question }: BlockProps) {
-  const [selectedOption, setSelectedOption] = useState<SelectedOption>();
+export function MultipleChoiseQuestionAnswerBlock({
+  question,
+  answer,
+}: BlockProps) {
+  const handleOptionChange = (id: string) => {};
 
   return (
     <QuestionAnswerBlock question={question}>
-      {question.options.map((option, index) => (
-        <Box
-          key={question.id}
-          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-        >
+      {question.options.map(({ id, text }) => (
+        <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <FormControlLabel
             control={
               <Radio
-                checked={selectedOption && selectedOption.index === index}
-                onChange={() => setSelectedOption({ index, id: option.id })}
-                name={`correct-option`}
+                checked={answer.selectedOption === id}
+                onChange={() => handleOptionChange(id)}
+                name={`question-${question.id}`}
               />
             }
             label=""
           />
-          <TextField
-            disabled
-            value={option.text}
-            fullWidth
-            variant="standard"
-          />
+          <Typography variant="h6"> {text}</Typography>
         </Box>
       ))}
     </QuestionAnswerBlock>

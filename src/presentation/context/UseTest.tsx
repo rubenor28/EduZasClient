@@ -35,12 +35,12 @@ export const TestProvider = ({ testId, children }: TestProviderProps) => {
 
   useEffect(() => {
     try {
-      const fetchUser = async () => {
+      const fetchTest = async () => {
         const test = await apiGet<Test>(`/tests/${testId}`);
         setTest(test);
         setOrderedIds(Object.keys(test.content));
       };
-      fetchUser();
+      fetchTest();
     } catch (e) {
     } finally {
       setIsLoading(false);
