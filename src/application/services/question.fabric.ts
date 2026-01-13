@@ -1,9 +1,11 @@
-import { type AnyQuestion, QuestionTypes, type Question } from "@domain";
+import { QuestionTypes, type Question } from "@domain";
 import { v4 as uuidv4 } from "uuid";
 
-const defaultQuestion: Omit<Question, "id"> = { title: "Nueva pregunta" };
+const defaultQuestion: Omit<Question, "id" | "type"> = {
+  title: "Nueva pregunta",
+};
 
-export const questionFabric: Record<QuestionTypes, () => AnyQuestion> = {
+export const questionFabric: Record<QuestionTypes, () => Question> = {
   [QuestionTypes.MultipleChoise]: () => {
     const id = uuidv4();
     return {
@@ -43,9 +45,10 @@ export const questionFabric: Record<QuestionTypes, () => AnyQuestion> = {
   }),
 };
 
-export const QuestionFabric = (type: QuestionTypes): AnyQuestion => {
-  const constructor =
-    questionFabric[type] ?? questionFabric[QuestionTypes.Open];
+export const QuestionFabric = (type: QuestionTypes): Question => {
+  const question = questionFabric[type]();
 
-  return constructor();
+  if (question === undefined) throw new Error(`Question ${type} not supported`);
+
+  return question;
 };

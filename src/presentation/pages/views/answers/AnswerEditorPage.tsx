@@ -1,5 +1,4 @@
-import { NotFound } from "presentation/components";
-import { AnswerProvider } from "presentation/context/UseAnswer";
+import { AnswerProvider, NotFound, useUser } from "@presentation";
 import { useParams } from "react-router";
 
 type Params = {
@@ -9,6 +8,7 @@ type Params = {
 };
 
 export function AnswerEditorPage() {
+  const { user } = useUser();
   const { classId, testId, answerId } = useParams<Params>();
 
   if (!classId || !testId || !answerId) return <NotFound />;
@@ -17,7 +17,7 @@ export function AnswerEditorPage() {
     <AnswerProvider
       testId={testId}
       classId={classId}
-      answerId={answerId}
-    ></AnswerProvider>
+      userId={user.id}
+    ><></></AnswerProvider>
   );
 }

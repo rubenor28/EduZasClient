@@ -1,10 +1,10 @@
-import type { AnyQuestion } from "./questions";
+import type { Question } from "./questions";
 
 /**
  * Representa el contenido de una evaluación, mapeando un ID único (GUID)
  * a una estructura de pregunta de cualquier tipo.
  */
-export type TestContent = Record<string, AnyQuestion>;
+export type TestContent = Record<string, Question>;
 
 /**
  * Representa una entidad de Evaluación (Test).

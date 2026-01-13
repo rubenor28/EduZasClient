@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import type { ConceptRelationQuestion, ConceptPair } from "@domain";
-import { QuestionBlock, useTest, type AnyQuestionBlockProps } from "@presentation";
+import type { ConceptPair, QuestionTypes, QuestionVariant } from "@domain";
+import { QuestionBlock, useTest, type QuestionBlockProps } from "@presentation";
 import { useState } from "react";
 import { getFieldError } from "@application";
 
@@ -18,6 +18,8 @@ const defaultInput: ConceptPair = {
   conceptA: "",
   conceptB: "",
 };
+
+type ConceptRelationQuestion = QuestionVariant<QuestionTypes.ConceptRelation>;
 
 /**
  * Componente para renderizar una pregunta de tipo "Relacionar Conceptos".
@@ -31,12 +33,15 @@ export function ConceptRelationQuestionBlock({
   question,
   onChange,
   onDelete,
-}: AnyQuestionBlockProps<ConceptRelationQuestion>) {
+}: QuestionBlockProps<QuestionTypes.ConceptRelation>) {
   const { concepts } = question;
   const [input, setInput] = useState<ConceptPair>(defaultInput);
 
-  const {fieldErrors} = useTest();
-  const conceptsError = getFieldError(`content[${id}].concepts`, fieldErrors)?.message;
+  const { fieldErrors } = useTest();
+  const conceptsError = getFieldError(
+    `content[${id}].concepts`,
+    fieldErrors,
+  )?.message;
 
   const handleInputChange = (value: string, field: string) =>
     setInput((prev) => ({ ...prev, [field]: value }));
@@ -60,6 +65,7 @@ export function ConceptRelationQuestionBlock({
       ...concepts,
       { conceptA: trimmedA, conceptB: trimmedB },
     ];
+
     handleUpdate({ concepts: newConcepts });
     setInput(defaultInput);
   };

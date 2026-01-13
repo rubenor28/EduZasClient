@@ -1,17 +1,11 @@
-import type {
-  MultipleSelectionQuestionAnswer,
-  PublicMultipleSelectionQuestion,
-} from "@domain";
+import type { QuestionTypes } from "@domain";
 import {
   QuestionAnswerBlock,
-  type AnyQuestionAnswerBlockProps,
+  type QuestionAnswerBlockProps,
 } from "./QuestionAnswerBlock";
 import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
 
-type BlockProps = AnyQuestionAnswerBlockProps<
-  MultipleSelectionQuestionAnswer,
-  PublicMultipleSelectionQuestion
->;
+type BlockProps = QuestionAnswerBlockProps<QuestionTypes.MultipleSelection>;
 
 export function MultipleSelectionQuestionAnswerBlock({
   question,
@@ -24,7 +18,7 @@ export function MultipleSelectionQuestionAnswerBlock({
     const newSelectedOptions = selectedOptions.has(optionId)
       ? answer.selectedOptions.filter((id) => id !== optionId) // Uncheck
       : [...answer.selectedOptions, optionId]; // Check
-    onChange((_) => ({ selectedOptions: newSelectedOptions }));
+    onChange((prev) => ({ ...prev, selectedOptions: newSelectedOptions }));
   };
 
   return (

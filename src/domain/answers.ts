@@ -1,6 +1,6 @@
-import type { AnyQuestionAnswer } from "./question.answers";
+import type { QuestionAnswer } from "./question.answers";
 
-export type AnswerContent = Record<string, AnyQuestionAnswer>;
+export type AnswerContent = Record<string, QuestionAnswer>;
 
 export type AnswerMetadata = {
   manualMarkAsCorrect: string[];

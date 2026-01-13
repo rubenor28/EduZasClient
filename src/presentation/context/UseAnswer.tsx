@@ -1,17 +1,26 @@
-import { apiGet, apiPost, type FieldErrorDTO } from "@application";
-import type { PublicTest, AnyQuestionAnswer } from "@domain";
+import {
+  apiGet,
+  apiPost,
+  NotFoundError,
+  type FieldErrorDTO,
+} from "@application";
+import type {
+  PublicTest,
+  QuestionAnswer,
+  Answer,
+  AnswerContent,
+} from "@domain";
 import { Box, CircularProgress } from "@mui/material";
-import type { Answer, AnswerContent } from "domain/answers";
-import { NotFound } from "presentation/components";
+import { NotFound } from "@presentation";
 import { createContext, useContext, useEffect, useState } from "react";
 
-type AnswerContentUpdater =
+export type AnswerContentUpdater =
   | AnswerContent
   | ((prev: AnswerContent) => AnswerContent);
 
-type AnswerQuestionUpdater =
-  | AnyQuestionAnswer
-  | ((prev: AnyQuestionAnswer) => AnyQuestionAnswer);
+export type AnswerQuestionUpdater =
+  | QuestionAnswer
+  | ((prev: QuestionAnswer) => QuestionAnswer);
 
 export type AnswerConcextType = {
   test: PublicTest;
@@ -28,14 +37,14 @@ const AnswerContext = createContext<AnswerConcextType | null>(null);
 type AnswerProviderProps = {
   classId: string;
   testId: string;
-  answerId: string;
+  userId: number;
   children: React.ReactNode;
 };
 
 export const AnswerProvider = ({
   classId,
   testId,
-  answerId,
+  userId,
   children,
 }: AnswerProviderProps) => {
   const [answer, setAnswer] = useState<Answer | null>(null);
@@ -68,31 +77,32 @@ export const AnswerProvider = ({
   };
 
   useEffect(() => {
-    const error = false;
+    setLoading(true);
 
-    try {
-      const fetchAnswer = async () => {
-        const answer = await apiGet<Answer>(`/answer/${answerId}`);
+    const fetchOrCreateAnswer = async () => {
+      try {
+        const answer = await apiGet<Answer>(
+          `/answers/${userId}/${classId}/${testId}`,
+        );
+
         setAnswer(answer);
-      };
-    } catch (e) {
-      if(e instanceof NotFound)
-        const answer = await apiPost<Answer>()
-    }
+      } catch (e) {
+        if (e instanceof NotFoundError) {
+          const newAnswer = await apiPost<Answer>("/answers", {
+            userId,
+            testId,
+            classId,
+          });
 
-    try {
-      const fetchTest = async () => {
-        const answer = await apiGet<PublicTest>(`tests/${testId}/${classId}`);
-        setTest(answer);
-      };
+          setAnswer(newAnswer);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      Promise.all([fetchAnswer(), fetchTest()]);
-    } catch (e) {
-    } finally {
-      setLoading(false);
-    }
-  }, [answerId]);
-
+    fetchOrCreateAnswer();
+  }, [userId, classId, testId]);
   if (isLoading)
     return (
       <Box

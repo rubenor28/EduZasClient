@@ -1,4 +1,8 @@
-import type { QuestionAnswer, PublicQuestion } from "@domain";
+import type {
+  QuestionTypes,
+  PublicQuestionVariant,
+  QuestionAnswerVariant,
+} from "@domain";
 import {
   Box,
   Card,
@@ -9,30 +13,27 @@ import {
 } from "@mui/material";
 import type { ReactNode } from "react";
 
-type AnswerUpdater<A extends QuestionAnswer> = ((
-  updater: (prev: A) => A,
-) => void);
+type AnswerUpdater<T extends QuestionTypes> = (
+  updater: (prev: QuestionAnswerVariant<T>) => QuestionAnswerVariant<T>,
+) => void;
 
-export type AnyQuestionAnswerBlockProps<
-  A extends QuestionAnswer,
-  Q extends PublicQuestion,
-> = {
-  question: Q;
-  answer: A;
-  onChange: AnswerUpdater<A>;
+export type QuestionAnswerBlockProps<T extends QuestionTypes> = {
+  question: PublicQuestionVariant<T>;
+  answer: QuestionAnswerVariant<T>;
+  onChange: AnswerUpdater<T>;
 };
 
-type QuestionAnswerBlockProps<
-  A extends QuestionAnswer,
-  Q extends PublicQuestion,
-> = Omit<AnyQuestionAnswerBlockProps<A, Q>, "id" | "answer" | "onChange"> & {
+type GenericQuestionAnswerBlockProps = Omit<
+  QuestionAnswerBlockProps<any>,
+  "answer" | "onChange"
+> & {
   children: ReactNode;
 };
 
-export function QuestionAnswerBlock<
-  A extends QuestionAnswer,
-  Q extends PublicQuestion,
->({ question, children }: QuestionAnswerBlockProps<A, Q>) {
+export function QuestionAnswerBlock({
+  question,
+  children,
+}: GenericQuestionAnswerBlockProps) {
   const { imageUrl, title } = question;
 
   return (

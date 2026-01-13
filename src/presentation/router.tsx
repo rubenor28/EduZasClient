@@ -27,6 +27,7 @@ import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
+import { AnswerEditor } from "./pages/views/answers/AnswerEditor";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -59,7 +60,10 @@ export const router = createBrowserRouter([
             <Outlet />
           </AuthErrorAs500Boundary>
         ),
-        children: [{ path: "login", element: <Login /> }],
+        children: [
+          { path: "login", element: <Login /> },
+          { path: "answer", element: <AnswerEditor /> },
+        ],
       },
       /**
        * Rutas Protegidas: Requieren que el usuario haya iniciado sesión.

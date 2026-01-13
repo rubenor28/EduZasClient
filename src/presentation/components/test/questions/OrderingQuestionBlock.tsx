@@ -10,13 +10,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import type { OrderingQuestion } from "@domain";
-import {
-  QuestionBlock,
-  useTest,
-  type AnyQuestionBlockProps,
-} from "@presentation";
+import { QuestionBlock, useTest, type QuestionBlockProps } from "@presentation";
 import { getFieldError } from "@application";
+import type { QuestionTypes, QuestionVariant } from "@domain";
+
+type OrderingQuestion = QuestionVariant<QuestionTypes.Ordering>;
 
 /**
  * Componente para renderizar una pregunta de tipo "Ordenar Secuencia".
@@ -30,7 +28,7 @@ export function OrderingQuestionBlock({
   question,
   onChange,
   onDelete,
-}: AnyQuestionBlockProps<OrderingQuestion>) {
+}: QuestionBlockProps<QuestionTypes.Ordering>) {
   const { sequence } = question;
 
   const { fieldErrors } = useTest();

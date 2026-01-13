@@ -1,5 +1,5 @@
-import type { OpenQuestion } from "@domain";
-import { QuestionBlock, type AnyQuestionBlockProps } from "@presentation";
+import type { QuestionTypes } from "@domain";
+import { QuestionBlock, type QuestionBlockProps } from "@presentation";
 
 /**
  * Componente para renderizar una pregunta de tipo "Pregunta Abierta".
@@ -13,7 +13,7 @@ export function OpenQuestionBlock({
   question,
   onChange,
   onDelete,
-}: AnyQuestionBlockProps<OpenQuestion>) {
+}: QuestionBlockProps<QuestionTypes.Open>) {
   return (
     <QuestionBlock
       id={id}

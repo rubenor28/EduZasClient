@@ -1,17 +1,11 @@
-import type {
-  PublicMultipleChoiseQuestion,
-  MultipleChoiseQuestionAnswer,
-} from "@domain";
+import type { QuestionTypes } from "@domain";
 import {
   QuestionAnswerBlock,
-  type AnyQuestionAnswerBlockProps,
+  type QuestionAnswerBlockProps,
 } from "./QuestionAnswerBlock";
 import { Box, FormControlLabel, Radio, Typography } from "@mui/material";
 
-type BlockProps = AnyQuestionAnswerBlockProps<
-  MultipleChoiseQuestionAnswer,
-  PublicMultipleChoiseQuestion
->;
+type BlockProps = QuestionAnswerBlockProps<QuestionTypes.MultipleChoise>;
 
 export function MultipleChoiseQuestionAnswerBlock({
   question,
@@ -19,7 +13,7 @@ export function MultipleChoiseQuestionAnswerBlock({
   onChange,
 }: BlockProps) {
   const updateAnswer = (id: string) => {
-    onChange((_) => ({ selectedOption: id }));
+    onChange((prev) => ({ ...prev, selectedOption: id }));
   };
 
   return (

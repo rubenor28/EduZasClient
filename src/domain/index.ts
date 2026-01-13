@@ -8,3 +8,4 @@ export * from "./questions";
 export * from "./question.answers";
 export * from "./public.questions";
 export * from "./public.test";
+export * from "./answers";

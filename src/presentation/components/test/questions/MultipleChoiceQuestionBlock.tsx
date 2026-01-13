@@ -10,13 +10,11 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
-import type { MultipleChoiseQuestion } from "@domain";
-import {
-  QuestionBlock,
-  useTest,
-  type AnyQuestionBlockProps,
-} from "@presentation";
+import { QuestionBlock, useTest, type QuestionBlockProps } from "@presentation";
 import { getFieldError } from "@application";
+import type { QuestionTypes, QuestionVariant } from "@domain";
+
+type MultipleChoiseQuestion = QuestionVariant<QuestionTypes.MultipleChoise>;
 
 /**
  * Componente para renderizar una pregunta de tipo "Opción Múltiple".
@@ -30,7 +28,7 @@ export function MultipleChoiceQuestionBlock({
   question,
   onChange,
   onDelete,
-}: AnyQuestionBlockProps<MultipleChoiseQuestion>) {
+}: QuestionBlockProps<QuestionTypes.MultipleChoise>) {
   const { options, correctOption, type } = question;
 
   const { fieldErrors } = useTest();

@@ -1,7 +1,7 @@
 import { Box, Button, Menu, MenuItem } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import { QuestionTypes, type AnyQuestion } from "@domain";
+import { QuestionTypes, type Question } from "@domain";
 import { useTest } from "@presentation";
 import { QuestionRenderer } from "./questions/QuestionRenderer";
 import { QuestionFabric } from "@application";
@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 export function QuestionBlockEditor() {
   const { test, orderedIds, setContent } = useTest();
 
-  const onChange = (id: string, question: AnyQuestion) => {
+  const onChange = (id: string, question: Question) => {
     setContent((prevContent) => ({ ...prevContent, [id]: question }));
   };
 

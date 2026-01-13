@@ -1,22 +1,22 @@
-import { QuestionTypes, type AnyQuestion } from "@domain";
+import { QuestionTypes, type QuestionVariant } from "@domain";
 import { OpenQuestionBlock } from "./OpenQuestionBlock";
 import { MultipleChoiceQuestionBlock } from "./MultipleChoiceQuestionBlock";
 import { InternalServerError } from "@application";
 import { MultipleSelectionQuestionBlock } from "./MultipleSelectionQuestionBlock";
 import { OrderingQuestionBlock } from "./OrderingQuestionBlock";
 import { ConceptRelationQuestionBlock } from "./ConceptRelationQuestionBlock";
-import type { AnyQuestionBlockProps } from "./QuestionBlock";
+import type { QuestionBlockProps } from "./QuestionBlock";
 
 export type QuestionRendererProps = {
   id: string;
-  question: AnyQuestion;
-  onChange: (question: AnyQuestion) => void;
+  question: QuestionVariant<any>;
+  onChange: (question: QuestionVariant<any>) => void;
   onDelete: () => void;
 };
 
-type QuestionComponent = React.ComponentType<AnyQuestionBlockProps<any>>;
+type QuestionComponent = React.ComponentType<QuestionBlockProps<any>>;
 
-const QUESTION_COMPONENTS: Partial<Record<QuestionTypes, QuestionComponent>> = {
+const QUESTION_COMPONENTS: Record<QuestionTypes, QuestionComponent> = {
   [QuestionTypes.Open]: OpenQuestionBlock,
   [QuestionTypes.MultipleChoise]: MultipleChoiceQuestionBlock,
   [QuestionTypes.MultipleSelection]: MultipleSelectionQuestionBlock,

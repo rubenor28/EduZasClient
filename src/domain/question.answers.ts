@@ -1,61 +1,50 @@
-import type { AnyPublicQuestion } from "./public.questions";
+import type { PublicQuestion } from "./public.questions";
 import { type ConceptPair, QuestionTypes } from "./questions";
 
-export type QuestionAnswer = {};
+export type QuestionAnswer =
+  | { readonly type: QuestionTypes.Open; text: string }
+  | { readonly type: QuestionTypes.MultipleChoise; selectedOption: string }
+  | {
+      readonly type: QuestionTypes.MultipleSelection;
+      selectedOptions: string[];
+    }
+  | { readonly type: QuestionTypes.Ordering; sequence: string[] }
+  | {
+      readonly type: QuestionTypes.ConceptRelation;
+      answeredPairs: ConceptPair[];
+    };
 
-export type OpenQuestionAnswer = QuestionAnswer & {
-  text: string;
-};
+export type QuestionAnswerVariant<T extends QuestionTypes> = Extract<
+  QuestionAnswer,
+  { type: T }
+>;
 
-export type MultipleChoiseQuestionAnswer = QuestionAnswer & {
-  selectedOption: string;
-};
+export function defaultQuestionAnswer(
+  question: PublicQuestion,
+): QuestionAnswer {
+  const { type } = question;
 
-export type MultipleSelectionQuestionAnswer = QuestionAnswer & {
-  selectedOptions: string[];
-};
+  if (type === QuestionTypes.MultipleChoise)
+    return { type, selectedOption: question.options[0].id };
 
-export type OrderingQuestionAnswer = QuestionAnswer & {
-  sequence: string[];
-};
+  if (type === QuestionTypes.MultipleSelection)
+    return { type, selectedOptions: [] };
 
-export type ConceptRelationQuestionAnswer = QuestionAnswer & {
-  answeredPairs: ConceptPair[];
-};
+  if (type === QuestionTypes.Ordering)
+    return { type, sequence: { ...question.items } };
 
-export type AnyQuestionAnswer =
-  | OpenQuestionAnswer
-  | MultipleChoiseQuestionAnswer
-  | MultipleSelectionQuestionAnswer
-  | OrderingQuestionAnswer
-  | ConceptRelationQuestionAnswer;
+  if (type === QuestionTypes.Open) return { type, text: "" };
 
-export function defaultQuestionAnswerFabric(
-  question: AnyPublicQuestion,
-): AnyQuestionAnswer {
-  switch (question.type) {
-    case QuestionTypes.MultipleChoise:
-      return { selectedOption: question.options[0].id };
+  if (type === QuestionTypes.ConceptRelation) {
+    let pairs: ConceptPair[] = [];
 
-    case QuestionTypes.MultipleSelection:
-      return { selectedOptions: [] };
-
-    case QuestionTypes.Ordering:
-      return { sequence: { ...question.items } };
-
-    case QuestionTypes.Open:
-      return { text: "" };
-
-    case QuestionTypes.ConceptRelation:
-      let pairs: ConceptPair[] = [];
-
-      for (let i = 0; i < question.columnA.length; i++) {
-        pairs.push({
-          conceptA: question.columnA[i],
-          conceptB: question.columnB[i],
-        });
-      }
-
-      return { answeredPairs: pairs };
+    for (let i = 0; i < question.columnA.length; i++) {
+      pairs.push({
+        conceptA: question.columnA[i],
+        conceptB: question.columnB[i],
+      });
+    }
   }
+
+  throw Error(`QuestionAnswer ${type} not suported`);
 }

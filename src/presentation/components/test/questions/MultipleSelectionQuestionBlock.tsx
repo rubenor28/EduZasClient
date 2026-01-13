@@ -10,13 +10,12 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { v4 as uuidv4 } from "uuid";
-import type { MultipleSelectionQuestion } from "@domain";
-import {
-  QuestionBlock,
-  useTest,
-  type AnyQuestionBlockProps,
-} from "@presentation";
+import { QuestionBlock, useTest, type QuestionBlockProps } from "@presentation";
 import { getFieldError } from "@application";
+import type { QuestionTypes, QuestionVariant } from "@domain";
+
+type MultipleSelectionQuestion =
+  QuestionVariant<QuestionTypes.MultipleSelection>;
 
 /**
  * Componente para renderizar una pregunta de tipo "Selección Múltiple".
@@ -30,7 +29,7 @@ export function MultipleSelectionQuestionBlock({
   question,
   onChange,
   onDelete,
-}: AnyQuestionBlockProps<MultipleSelectionQuestion>) {
+}: QuestionBlockProps<QuestionTypes.MultipleSelection>) {
   const { options, correctOptions } = question;
 
   const { fieldErrors } = useTest();
@@ -85,9 +84,7 @@ export function MultipleSelectionQuestionBlock({
       )}
 
       {correctOptionsError && (
-        <Alert
-          severity="error"
-        >{`Error en opciones correctas: ${correctOptionsError}`}</Alert>
+        <Alert severity="error">{`Error en opciones correctas: ${correctOptionsError}`}</Alert>
       )}
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
@@ -127,4 +124,3 @@ export function MultipleSelectionQuestionBlock({
     </QuestionBlock>
   );
 }
-

@@ -9,54 +9,47 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { ReactNode } from "react";
-import type { Question } from "@domain";
+import type { Question, QuestionTypes } from "@domain";
 import { getFieldError } from "@application";
 import { useTest } from "@presentation";
 
-export type AnyQuestionBlockProps<T extends Question> = {
+type QVariant<T extends QuestionTypes> = Extract<Question, { type: T }>;
+
+export type QuestionBlockProps<T extends QuestionTypes> = {
   id: string;
   /** El estado inicial de la pregunta base (título, URL de imagen). */
-  question: T;
+  question: QVariant<T>;
   /** Callback que se invoca cuando las propiedades de la pregunta base cambian. */
-  onChange: (updater: (q: T) => T) => void;
+  onChange: (updater: (q: QVariant<T>) => QVariant<T>) => void;
   /** Callback que se invoca para eliminar la pregunta. */
   onDelete: () => void;
 };
 
-/**
- * Props para el componente {@link QuestionBlock}.
- */
-type QuestionBlockProps<T extends Question> = AnyQuestionBlockProps<T> & {
-  /** Los campos de entrada específicos del tipo de pregunta (p. ej., opciones de selección). */
+type BaseQuestionBlockProps<T extends QuestionTypes> = QuestionBlockProps<T> & {
   children: ReactNode;
 };
 
-/**
- * Componente base para la edición de cualquier tipo de pregunta.
- *
- * Proporciona los campos comunes para editar el título y la URL de la imagen,
- * así como los controles para arrastrar y eliminar. Delega la renderización
- * de los campos específicos del tipo de pregunta a sus `children`.
- * @param props - Las propiedades del componente.
- */
-export function QuestionBlock<T extends Question>({
+export function QuestionBlock<T extends QuestionTypes>({
   id,
   question,
   children,
   onChange,
   onDelete,
-}: QuestionBlockProps<T>) {
+}: BaseQuestionBlockProps<T>) {
   const { title, imageUrl } = question;
-  const setTitle = (title: string) =>
-    onChange((prev) => ({ ...prev, title }));
-  const setImage = (imageUrl: string) =>
-    onChange((prev) => ({ ...prev, imageUrl }));
+
+  const setTitle = (title: string) => onChange((prev) => ({ ...prev, title }));
+
+  const setImage = (url: string) =>
+    onChange((prev) => ({ ...prev, imageUrl: url === "" ? undefined : url }));
 
   const { fieldErrors } = useTest();
+
   const titleError = getFieldError(
     `content[${id}].title`,
     fieldErrors,
   )?.message;
+
   const imageError = getFieldError(
     `content[${id}].imageUrl`,
     fieldErrors,

@@ -11,7 +11,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { QuestionTypes, type OpenQuestion, type Test } from "@domain";
+import { QuestionTypes, type QuestionVariant, type Test } from "@domain";
 import {
   type TestUpdate,
   apiDelete,
@@ -63,7 +63,7 @@ export const Evaluaciones = () => {
     setIsCreating(true);
     try {
       const id = uuidv4();
-      const defaultQuestion: OpenQuestion = {
+      const defaultQuestion: QuestionVariant<QuestionTypes.Open> = {
         type: QuestionTypes.Open,
         title: "Nueva pregunta",
       };
