@@ -16,8 +16,11 @@ type BlockProps = AnyQuestionAnswerBlockProps<
 export function MultipleChoiseQuestionAnswerBlock({
   question,
   answer,
+  onChange,
 }: BlockProps) {
-  const handleOptionChange = (id: string) => {};
+  const updateAnswer = (id: string) => {
+    onChange((_) => ({ selectedOption: id }));
+  };
 
   return (
     <QuestionAnswerBlock question={question}>
@@ -27,7 +30,7 @@ export function MultipleChoiseQuestionAnswerBlock({
             control={
               <Radio
                 checked={answer.selectedOption === id}
-                onChange={() => handleOptionChange(id)}
+                onChange={() => updateAnswer(id)}
                 name={`question-${question.id}`}
               />
             }

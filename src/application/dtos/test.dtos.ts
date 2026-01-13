@@ -78,8 +78,6 @@ export type ClassTestDTO = {
   classId: string;
   /** ID del test */
   testId: string;
-  /** Visibilidad de la evaluacion en la clase */
-  visible: boolean;
 };
 
 /**
@@ -92,8 +90,6 @@ export type ClassTestAssociation = {
   className: string;
   /** Indica si la evaluación está asociada a la clase. */
   isAssociated: boolean;
-  /** Indica si la evaluación es visible para los estudiantes. */
-  isVisible: boolean;
 };
 
 /**

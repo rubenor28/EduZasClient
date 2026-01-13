@@ -9,18 +9,23 @@ import {
 } from "@mui/material";
 import type { ReactNode } from "react";
 
+type AnswerUpdater<A extends QuestionAnswer> = ((
+  updater: (prev: A) => A,
+) => void);
+
 export type AnyQuestionAnswerBlockProps<
   A extends QuestionAnswer,
   Q extends PublicQuestion,
 > = {
   question: Q;
   answer: A;
+  onChange: AnswerUpdater<A>;
 };
 
 type QuestionAnswerBlockProps<
   A extends QuestionAnswer,
   Q extends PublicQuestion,
-> = Omit<AnyQuestionAnswerBlockProps<A, Q>, "id" | "answer"> & {
+> = Omit<AnyQuestionAnswerBlockProps<A, Q>, "id" | "answer" | "onChange"> & {
   children: ReactNode;
 };
 

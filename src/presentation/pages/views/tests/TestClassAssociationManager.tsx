@@ -7,11 +7,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  Switch,
   CircularProgress,
   Alert,
   Box,
-  FormControlLabel,
   Divider,
 } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
@@ -20,7 +18,7 @@ import type {
   ClassTestAssociationCriteria,
   ClassTestDTO,
 } from "@application";
-import { apiPost, apiDelete, apiPut } from "@application";
+import { apiPost, apiDelete } from "@application";
 import { useUser, usePaginatedSearch, PaginationControls } from "@presentation";
 
 /**
@@ -28,22 +26,19 @@ import { useUser, usePaginatedSearch, PaginationControls } from "@presentation";
  */
 type Changes = {
   /** Nuevas asociaciones a crear. */
-  toAdd: Map<string, { visible: boolean }>;
+  toAdd: Set<string>;
   /** Asociaciones a eliminar. */
   toRemove: Set<string>;
-  /** Asociaciones existentes a actualizar (ej. cambiar visibilidad). */
-  toUpdate: Map<string, { visible: boolean }>;
 };
 
 const initialChanges: Changes = {
-  toAdd: new Map(),
+  toAdd: new Set(),
   toRemove: new Set(),
-  toUpdate: new Map(),
 };
 
 /**
  * Modal para gestionar la asignación de una evaluación a múltiples clases.
- * Permite asociar, desasociar y cambiar la visibilidad de la evaluación en las clases
+ * Permite asociar y desasociar la evaluación en las clases
  * del profesor, enviando los cambios en un solo lote al guardar.
  */
 export const TestClassAssociationManager = ({
@@ -126,9 +121,8 @@ export const TestClassAssociationManager = ({
 
     setChanges((prev) => {
       const newChanges = {
-        toAdd: new Map(prev.toAdd),
+        toAdd: new Set(prev.toAdd),
         toRemove: new Set(prev.toRemove),
-        toUpdate: new Map(prev.toUpdate),
       };
 
       // Se está ASOCIANDO una clase
@@ -139,8 +133,7 @@ export const TestClassAssociationManager = ({
         }
         // Si NO estaba asociada originalmente, la añadimos a 'toAdd'.
         else if (!wasOriginallyAssociated) {
-          // La visibilidad por defecto al agregar es 'false' (oculto).
-          newChanges.toAdd.set(classId, { visible: false });
+          newChanges.toAdd.add(classId);
         }
       }
       // Se está DESASOCIANDO una clase
@@ -150,61 +143,8 @@ export const TestClassAssociationManager = ({
           newChanges.toAdd.delete(classId);
         }
         // Si estaba asociada originalmente, la añadimos a 'toRemove'.
-        // También la quitamos de 'toUpdate' si se había modificado su visibilidad.
         else if (wasOriginallyAssociated) {
           newChanges.toRemove.add(classId);
-          if (newChanges.toUpdate.has(classId)) {
-            newChanges.toUpdate.delete(classId);
-          }
-        }
-      }
-      return newChanges;
-    });
-  };
-
-  const handleVisibilityToggle = (
-    classId: string,
-    currentIsVisible: boolean,
-  ) => {
-    const newIsVisible = !currentIsVisible;
-
-    // Actualiza el estado local para la UI
-    setLocalAssociations((prev) => {
-      const newMap = new Map(prev);
-      const current = newMap.get(classId)!;
-      newMap.set(classId, { ...current, isVisible: newIsVisible });
-      return newMap;
-    });
-
-    setChanges((prev) => {
-      const newChanges = {
-        toAdd: new Map(prev.toAdd),
-        toRemove: new Set(prev.toRemove),
-        toUpdate: new Map(prev.toUpdate),
-      };
-
-      const wasOriginallyAssociated = initialState.get(classId)?.isAssociated;
-      const originalVisibility = initialState.get(classId)?.isVisible;
-
-      // Caso 1: La asociación está pendiente de CREAR (`toAdd`).
-      // Simplemente actualizamos su estado de visibilidad en `toAdd`.
-      if (newChanges.toAdd.has(classId)) {
-        newChanges.toAdd.set(classId, { visible: newIsVisible });
-        return newChanges;
-      }
-
-      // Caso 2: La asociación YA EXISTÍA.
-      if (wasOriginallyAssociated) {
-        // Si la nueva visibilidad es la misma que la original, es una reversión.
-        // La quitamos de la lista `toUpdate`.
-        if (newIsVisible === originalVisibility) {
-          if (newChanges.toUpdate.has(classId)) {
-            newChanges.toUpdate.delete(classId);
-          }
-        }
-        // Si la visibilidad es diferente a la original, la añadimos a `toUpdate`.
-        else {
-          newChanges.toUpdate.set(classId, { visible: newIsVisible });
         }
       }
       return newChanges;
@@ -223,23 +163,11 @@ export const TestClassAssociationManager = ({
       const promises: Promise<unknown>[] = [];
 
       // Añadir nuevas asociaciones
-      changes.toAdd.forEach((value, classId) => {
+      changes.toAdd.forEach((classId) => {
         promises.push(
           apiPost<void>("/tests/classes", {
             testId,
             classId,
-            visible: value.visible,
-          } as ClassTestDTO),
-        );
-      });
-
-      // Actualizar asociaciones existentes
-      changes.toUpdate.forEach((value, classId) => {
-        promises.push(
-          apiPut<void>("/tests/classes", {
-            testId,
-            classId,
-            visible: value.visible,
           } as ClassTestDTO),
         );
       });
@@ -262,9 +190,7 @@ export const TestClassAssociationManager = ({
   };
 
   const hasChanges =
-    changes.toAdd.size > 0 ||
-    changes.toRemove.size > 0 ||
-    changes.toUpdate.size > 0;
+    changes.toAdd.size > 0 || changes.toRemove.size > 0;
 
   const currentViewAssociations = useMemo(() => {
     return (
@@ -307,26 +233,6 @@ export const TestClassAssociationManager = ({
                     sx={{ flexGrow: 1 }}
                   />
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {assoc.isAssociated && (
-                      <FormControlLabel
-                        sx={{ mr: 0, color: "text.secondary" }}
-                        control={
-                          <Switch
-                            checked={assoc.isVisible}
-                            onChange={() =>
-                              handleVisibilityToggle(
-                                assoc.classId,
-                                assoc.isVisible,
-                              )
-                            }
-                            disabled={isSubmitting}
-                            size="small"
-                          />
-                        }
-                        label="Visible"
-                        labelPlacement="start"
-                      />
-                    )}
                     <Button
                       variant="outlined"
                       size="small"
