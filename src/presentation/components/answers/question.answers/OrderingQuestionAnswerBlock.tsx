@@ -7,15 +7,14 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Box, Paper, Typography } from "@mui/material";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import {
   QuestionAnswerBlock,
   type QuestionAnswerBlockProps,
 } from "./QuestionAnswerBlock";
-import type { QuestionTypes, QuestionAnswerVariant } from "@domain";
+import type { QuestionTypes } from "@domain";
 
 type BlockProps = QuestionAnswerBlockProps<QuestionTypes.Ordering>;
-
-type Answer = QuestionAnswerVariant<QuestionTypes.Ordering>;
 
 function SortableItem({ id }: { id: string }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -32,8 +31,9 @@ function SortableItem({ id }: { id: string }) {
       style={style}
       {...attributes}
       {...listeners}
-      sx={{ p: 2, mb: 1 }}
+      sx={{ p: 2, mb: 1, display: "flex", alignItems: "center", gap: 1 }}
     >
+      <DragIndicatorIcon sx={{ cursor: "grab" }} />
       <Typography>{id}</Typography>
     </Paper>
   );
@@ -44,7 +44,7 @@ export function OrderingQuestionAnswerBlock({
   answer,
   onChange,
 }: BlockProps) {
-  const { sequence } = answer as Answer;
+  const { sequence } = answer;
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -79,4 +79,3 @@ export function OrderingQuestionAnswerBlock({
     </QuestionAnswerBlock>
   );
 }
-

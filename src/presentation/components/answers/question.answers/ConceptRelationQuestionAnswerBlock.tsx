@@ -1,8 +1,4 @@
-import type {
-  QuestionTypes,
-  QuestionAnswerVariant,
-  ConceptPair,
-} from "@domain";
+import type { QuestionTypes, ConceptPair } from "@domain";
 import {
   QuestionAnswerBlock,
   type QuestionAnswerBlockProps,
@@ -17,14 +13,13 @@ import {
 } from "@mui/material";
 
 type BlockProps = QuestionAnswerBlockProps<QuestionTypes.ConceptRelation>;
-type Answer = QuestionAnswerVariant<QuestionTypes.ConceptRelation>;
 
 export function ConceptRelationQuestionAnswerBlock({
   question,
   answer,
   onChange,
 }: BlockProps) {
-  const { answeredPairs } = answer as Answer;
+  const { answeredPairs } = answer;
   const { columnA, columnB } = question;
 
   const handleRelationChange = (conceptA: string, conceptB: string) => {
@@ -65,7 +60,7 @@ export function ConceptRelationQuestionAnswerBlock({
                   <Select
                     value={selectedB}
                     onChange={(e) =>
-                      handleRelationChange(conceptA, e.target.value as string)
+                      handleRelationChange(conceptA, e.target.value)
                     }
                   >
                     <MenuItem value="">
