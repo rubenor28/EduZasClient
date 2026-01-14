@@ -9,18 +9,16 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import type { ReactNode } from "react";
-import type { Question, QuestionTypes } from "@domain";
+import type { QuestionTypes, QuestionVariant } from "@domain";
 import { getFieldError } from "@application";
 import { useTest } from "@presentation";
-
-type QVariant<T extends QuestionTypes> = Extract<Question, { type: T }>;
 
 export type QuestionBlockProps<T extends QuestionTypes> = {
   id: string;
   /** El estado inicial de la pregunta base (título, URL de imagen). */
-  question: QVariant<T>;
+  question: QuestionVariant<T>;
   /** Callback que se invoca cuando las propiedades de la pregunta base cambian. */
-  onChange: (updater: (q: QVariant<T>) => QVariant<T>) => void;
+  onChange: (updater: (q: QuestionVariant<T>) => QuestionVariant<T>) => void;
   /** Callback que se invoca para eliminar la pregunta. */
   onDelete: () => void;
 };

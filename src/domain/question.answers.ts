@@ -1,4 +1,4 @@
-import type { PublicQuestion } from "./public.questions";
+import type { PublicQuestion, PublicQuestionVariant } from "./public.questions";
 import { type ConceptPair, QuestionTypes } from "./questions";
 
 export type QuestionAnswer =
@@ -19,8 +19,15 @@ export type QuestionAnswerVariant<T extends QuestionTypes> = Extract<
   { type: T }
 >;
 
+export function defaultQuestionAnswer(question: PublicQuestion): QuestionAnswer;
+export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.Open>): QuestionAnswerVariant<QuestionTypes.Open>;
+export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.Ordering>): QuestionAnswerVariant<QuestionTypes.Ordering>;
+export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.MultipleChoise>): QuestionAnswerVariant<QuestionTypes.MultipleChoise>;
+export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.ConceptRelation>): QuestionAnswerVariant<QuestionTypes.ConceptRelation>;
+export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.MultipleSelection>): QuestionAnswerVariant<QuestionTypes.MultipleSelection>;
+
 export function defaultQuestionAnswer(
-  question: PublicQuestion,
+  question: PublicQuestionVariant<QuestionTypes>,
 ): QuestionAnswer {
   const { type } = question;
 
@@ -36,14 +43,16 @@ export function defaultQuestionAnswer(
   if (type === QuestionTypes.Open) return { type, text: "" };
 
   if (type === QuestionTypes.ConceptRelation) {
-    let pairs: ConceptPair[] = [];
+    let answeredPairs: ConceptPair[] = [];
 
     for (let i = 0; i < question.columnA.length; i++) {
-      pairs.push({
+      answeredPairs.push({
         conceptA: question.columnA[i],
         conceptB: question.columnB[i],
       });
     }
+
+    return { type, answeredPairs };
   }
 
   throw Error(`QuestionAnswer ${type} not suported`);

@@ -9,7 +9,7 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
-  TextField,
+  Typography,
 } from "@mui/material";
 import type { ReactNode } from "react";
 
@@ -62,14 +62,7 @@ export function QuestionAnswerBlock({
       />
       <CardContent>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField
-            disabled
-            sx={{ mt: 2 }}
-            label="Título de la Pregunta"
-            value={title ?? ""}
-            fullWidth
-            variant="outlined"
-          />
+          <Typography variant="h5">{title}</Typography>
           {children}
         </Box>
       </CardContent>

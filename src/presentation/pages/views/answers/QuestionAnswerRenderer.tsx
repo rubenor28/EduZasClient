@@ -4,51 +4,80 @@ import {
   MultipleSelectionQuestionAnswerBlock,
   OpenQuestionAnswerBlock,
   OrderingQuestionAnswerBlock,
-  type QuestionAnswerBlockProps,
 } from "@presentation";
+
 import {
   QuestionTypes,
-  type PublicQuestionVariant,
-  type QuestionAnswerVariant,
+  type PublicQuestion,
+  type QuestionAnswer,
 } from "@domain";
-import { InternalServerError } from "@application";
-import type { FunctionComponent } from "react";
 
 export type QuestionAnswerRendererProps = {
-  question: PublicQuestionVariant<any>;
-  answer: QuestionAnswerVariant<any>;
-  onChange: (answer: QuestionAnswerVariant<any>) => void;
-};
-
-const ANSWER_COMPONENTS: Record<
-  QuestionTypes,
-  FunctionComponent<QuestionAnswerBlockProps<any>>
-> = {
-  [QuestionTypes.Open]: OpenQuestionAnswerBlock,
-  [QuestionTypes.MultipleChoise]: MultipleChoiseQuestionAnswerBlock,
-  [QuestionTypes.MultipleSelection]: MultipleSelectionQuestionAnswerBlock,
-  [QuestionTypes.Ordering]: OrderingQuestionAnswerBlock,
-  [QuestionTypes.ConceptRelation]: ConceptRelationQuestionAnswerBlock,
+  question: PublicQuestion;
+  answer: QuestionAnswer;
+  onChange: (answer: QuestionAnswer) => void;
 };
 
 export function QuestionAnswerRenderer({
-  question,
-  answer,
+  question: q,
+  answer: a,
   onChange,
 }: QuestionAnswerRendererProps) {
-  const ComponentToRender = ANSWER_COMPONENTS[question.type];
-
-  if (!ComponentToRender) {
-    throw new InternalServerError(
-      `Tipo de pregunta no soportada: ${question.type}`,
+  if (q.type === QuestionTypes.Open && a.type === QuestionTypes.Open)
+    return (
+      <OpenQuestionAnswerBlock
+        question={q}
+        answer={a}
+        onChange={(updater) => onChange(updater(a))}
+      />
     );
-  }
 
-  return (
-    <ComponentToRender
-      question={question}
-      answer={answer}
-      onChange={(updater) => onChange(updater(answer))}
-    />
+  if (
+    q.type === QuestionTypes.MultipleSelection &&
+    a.type === QuestionTypes.MultipleSelection
+  )
+    return (
+      <MultipleSelectionQuestionAnswerBlock
+        question={q}
+        answer={a}
+        onChange={(updater) => onChange(updater(a))}
+      />
+    );
+
+  if (
+    q.type === QuestionTypes.ConceptRelation &&
+    a.type === QuestionTypes.ConceptRelation
+  )
+    return (
+      <ConceptRelationQuestionAnswerBlock
+        answer={a}
+        question={q}
+        onChange={(updater) => onChange(updater(a))}
+      />
+    );
+
+  if (
+    a.type === QuestionTypes.MultipleChoise &&
+    q.type === QuestionTypes.MultipleChoise
+  )
+    return (
+      <MultipleChoiseQuestionAnswerBlock
+        answer={a}
+        question={q}
+        onChange={(updater) => onChange(updater(a))}
+      />
+    );
+
+  if (a.type === QuestionTypes.Ordering && q.type === QuestionTypes.Ordering)
+    return (
+      <OrderingQuestionAnswerBlock
+        answer={a}
+        question={q}
+        onChange={(updater) => onChange(updater(a))}
+      />
+    );
+
+  throw Error(
+    `Not supported question type ${q.type} and answer type ${a.type}`,
   );
 }
