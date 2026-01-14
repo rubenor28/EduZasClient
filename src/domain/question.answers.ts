@@ -38,21 +38,12 @@ export function defaultQuestionAnswer(
     return { type, selectedOptions: [] };
 
   if (type === QuestionTypes.Ordering)
-    return { type, sequence: { ...question.items } };
+    return { type, sequence: [...question.items] };
 
   if (type === QuestionTypes.Open) return { type, text: "" };
 
   if (type === QuestionTypes.ConceptRelation) {
-    let answeredPairs: ConceptPair[] = [];
-
-    for (let i = 0; i < question.columnA.length; i++) {
-      answeredPairs.push({
-        conceptA: question.columnA[i],
-        conceptB: question.columnB[i],
-      });
-    }
-
-    return { type, answeredPairs };
+    return { type, answeredPairs: [] };
   }
 
   throw Error(`QuestionAnswer ${type} not suported`);

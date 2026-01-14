@@ -1,18 +1,96 @@
-import type { QuestionTypes } from "@domain";
+import type {
+  QuestionTypes,
+  QuestionAnswerVariant,
+  ConceptPair,
+} from "@domain";
 import {
   QuestionAnswerBlock,
   type QuestionAnswerBlockProps,
 } from "./QuestionAnswerBlock";
-import { Typography } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 
 type BlockProps = QuestionAnswerBlockProps<QuestionTypes.ConceptRelation>;
+type Answer = QuestionAnswerVariant<QuestionTypes.ConceptRelation>;
 
-export function ConceptRelationQuestionAnswerBlock({ question }: BlockProps) {
+export function ConceptRelationQuestionAnswerBlock({
+  question,
+  answer,
+  onChange,
+}: BlockProps) {
+  const { answeredPairs } = answer as Answer;
+  const { columnA, columnB } = question;
+
+  const handleRelationChange = (conceptA: string, conceptB: string) => {
+    const existingPairIndex = answeredPairs.findIndex(
+      (p) => p.conceptA === conceptA,
+    );
+    const newAnsweredPairs: ConceptPair[] = [...answeredPairs];
+
+    if (existingPairIndex !== -1) {
+      newAnsweredPairs[existingPairIndex] = { conceptA, conceptB };
+    } else {
+      newAnsweredPairs.push({ conceptA, conceptB });
+    }
+
+    onChange((prev) => ({ ...prev, answeredPairs: newAnsweredPairs }));
+  };
+
+  const getSelectedBConcepts = () => {
+    return answeredPairs.map((p) => p.conceptB);
+  };
+
   return (
     <QuestionAnswerBlock question={question}>
-      <Typography>
-        Concept relation question answer UI not implemented yet.
-      </Typography>
+      <Grid container spacing={2} alignItems="center">
+        {columnA.map((conceptA) => {
+          const selectedB =
+            answeredPairs.find((p) => p.conceptA === conceptA)?.conceptB || "";
+          const selectedBConcepts = getSelectedBConcepts();
+
+          return (
+            <Grid item xs={12} container key={conceptA} spacing={2}>
+              <Grid item xs={6}>
+                <Typography>{conceptA}</Typography>
+              </Grid>
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <InputLabel>Relacionar con</InputLabel>
+                  <Select
+                    value={selectedB}
+                    onChange={(e) =>
+                      handleRelationChange(conceptA, e.target.value as string)
+                    }
+                  >
+                    <MenuItem value="">
+                      <em>Ninguno</em>
+                    </MenuItem>
+                    {columnB.map((conceptB) => (
+                      <MenuItem
+                        key={conceptB}
+                        value={conceptB}
+                        disabled={
+                          selectedB !== conceptB &&
+                          selectedBConcepts.includes(conceptB)
+                        }
+                      >
+                        {conceptB}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          );
+        })}
+      </Grid>
     </QuestionAnswerBlock>
   );
 }
+
