@@ -27,7 +27,7 @@ import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
-import { AnswerEditor } from "./pages/views/answers/AnswerEditor";
+import { AnswerEditorTest } from "./pages/views/answers/AnswerEditorTest";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -62,7 +62,7 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: "login", element: <Login /> },
-          { path: "answer", element: <AnswerEditor /> },
+          { path: "answer", element: <AnswerEditorTest /> },
         ],
       },
       /**
@@ -142,7 +142,7 @@ export const router = createBrowserRouter([
                 element: <ResourcePreviewPage />,
               },
               {
-                path: "classes/test/:classId/:resourceId",
+                path: "classes/test/:classId/:testId",
                 element: <AnswerEditorPage />,
               },
             ],

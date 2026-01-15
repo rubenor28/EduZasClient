@@ -30,6 +30,8 @@ export type AnswerConcextType = {
   setAnswerQuestion: (id: string, answer: AnswerQuestionUpdater) => void;
   fieldErrors: FieldErrorDTO[];
   setFieldErrors: (fieldErrors: FieldErrorDTO[]) => void;
+  isLoading: boolean;
+  setLoading: (loading: boolean) => void;
 };
 
 const AnswerContext = createContext<AnswerConcextType | null>(null);
@@ -96,6 +98,11 @@ export const AnswerProvider = ({
 
           setAnswer(newAnswer);
         }
+      }
+
+      try {
+        const test = await apiGet<PublicTest>(`/tests/${testId}/${classId}`);
+        setTest(test);
       } finally {
         setLoading(false);
       }
@@ -128,6 +135,8 @@ export const AnswerProvider = ({
           setAnswerQuestion,
           fieldErrors,
           setFieldErrors,
+          isLoading,
+          setLoading,
         }}
       >
         {children}

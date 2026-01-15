@@ -6,6 +6,6 @@ export type PublicTest = {
   title: string;
   color: string;
   content: PublicQuestion[];
-  timeLimitMinutes: number;
+  deadline?: string;
   professorId: number;
 };
