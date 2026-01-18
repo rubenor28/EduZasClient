@@ -6,11 +6,6 @@ import {
   CircularProgress,
   Alert,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
@@ -39,9 +34,6 @@ export const ContactsView = () => {
   const { user: currentUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contactToEdit, setContactToEdit] = useState<Contact | null>(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState<Contact | null>(
-    null,
-  );
 
   const {
     criteria,
@@ -73,25 +65,17 @@ export const ContactsView = () => {
     setContactToEdit(null); // Asegurarse de limpiar el estado
   };
 
-  const handleDeleteRequest = (contact: Contact) => {
-    setShowDeleteConfirm(contact);
-  };
+  const handleDelete = async (contact: Contact) => {
+    const deleteConfirm = window.confirm(
+      `¿Estás seguro que quieres eliminar este contacto? Esta tarea no puede deshacerse`,
+    );
 
-  const handleDeleteCancel = () => {
-    setShowDeleteConfirm(null);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!showDeleteConfirm) return;
+    if (!deleteConfirm) return;
     try {
-      await apiDelete(
-        `/contacts/${currentUser.id}/${showDeleteConfirm.userId}`,
-      );
+      await apiDelete(`/contacts/${currentUser.id}/${contact.userId}`);
       refetch(); // Refrescar la lista de contactos
     } catch (err) {
       console.error("Failed to delete contact", err);
-    } finally {
-      setShowDeleteConfirm(null);
     }
   };
 
@@ -130,7 +114,7 @@ export const ContactsView = () => {
             <ContactCard
               contact={contact}
               onClick={() => handleOpenEdit(contact)}
-              onDelete={() => handleDeleteRequest(contact)}
+              onDelete={() => handleDelete(contact)}
             />
           </Grid>
         ))}
@@ -177,23 +161,6 @@ export const ContactsView = () => {
         onSuccess={handleSuccess}
         contactToEdit={contactToEdit}
       />
-
-      <Dialog open={!!showDeleteConfirm} onClose={handleDeleteCancel}>
-        <DialogTitle>Confirmar Eliminación</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            ¿Estás seguro de que quieres eliminar a{" "}
-            <strong>{showDeleteConfirm?.alias}</strong> de tus contactos? Esta
-            acción no se puede deshacer.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel}>Cancelar</Button>
-          <Button onClick={handleDeleteConfirm} color="error">
-            Eliminar
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Paper>
   );
 };

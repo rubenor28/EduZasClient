@@ -157,6 +157,14 @@ export const TestClassAssociationManager = ({
   };
 
   const handleSubmit = async () => {
+    if (
+      changes.toRemove.size !== 0 &&
+      !window.confirm(
+        "¿Estás seguro que quieres eliminar evaluaciones de las clases? Esto eliminará la respuestas asociadas y no puede deshacerse",
+      )
+    )
+      return;
+
     setIsSubmitting(true);
     setSubmitError(null);
     try {
@@ -189,8 +197,7 @@ export const TestClassAssociationManager = ({
     }
   };
 
-  const hasChanges =
-    changes.toAdd.size > 0 || changes.toRemove.size > 0;
+  const hasChanges = changes.toAdd.size > 0 || changes.toRemove.size > 0;
 
   const currentViewAssociations = useMemo(() => {
     return (

@@ -1,5 +1,6 @@
 import {
   apiPut,
+  Conflict,
   getFieldError,
   InputError,
   type TestUpdate,
@@ -17,6 +18,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { TestClassAssociationManager } from "./TestClassAssociationManager";
+import { AUTOMATED_FETCHS_ALLOWED } from "@domain";
 
 export type Params = {
   testId: string;
@@ -46,6 +48,8 @@ export function TestEditor() {
 
   const handleSave = useCallback(
     async (isManual: boolean = false) => {
+      if (!AUTOMATED_FETCHS_ALLOWED) return;
+
       try {
         setFieldErrors([]);
         const payload: TestUpdate = { ...test };
@@ -68,6 +72,12 @@ export function TestEditor() {
             severity: "error",
             message:
               "No se pudo guardar la evaluación. Verifique las preguntas.",
+          });
+        } else if (e instanceof Conflict) {
+          setSnackbar({
+            open: true,
+            severity: "error",
+            message: e.message,
           });
         } else {
           setSnackbar({

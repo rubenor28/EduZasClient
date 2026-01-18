@@ -179,6 +179,18 @@ export const Evaluaciones = () => {
     }
   };
 
+  const handleClone = async (testId: string) => {
+    const test = await apiGet<Test>(`/tests/${testId}`);
+
+    const testClone: NewTest = {
+      ...test,
+      title: `${test.title} copia`,
+    };
+
+    await apiPost<TestSummary>("/test", testClone);
+    refetch();
+  };
+
   const renderContent = () => {
     if (isLoading) return <CircularProgress />;
     if (error)
@@ -188,6 +200,7 @@ export const Evaluaciones = () => {
         <Typography sx={{ mt: 2 }}>No se encontraron evaluaciones.</Typography>
       );
     }
+
     return (
       <Grid container spacing={3} sx={{ mt: 1 }}>
         {data.results.map((testData) => {
@@ -200,6 +213,10 @@ export const Evaluaciones = () => {
                   callback: () => handleUnarchive(testData),
                 },
             { name: "Eliminar", callback: () => handleDelete(testData.id) },
+            {
+              name: "Crear una copia",
+              callback: () => handleClone(testData.id),
+            },
           ];
 
           return (

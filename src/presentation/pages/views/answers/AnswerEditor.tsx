@@ -1,8 +1,8 @@
-import { defaultQuestionAnswer } from "@domain";
+import { AUTOMATED_FETCHS_ALLOWED, defaultQuestionAnswer } from "@domain";
 import { SimpleTimer, useAnswer } from "@presentation";
 import { QuestionAnswerRenderer } from "./QuestionAnswerRenderer";
 import { useEffect, useState } from "react";
-import { apiPut, InputError } from "@application";
+import { apiPut, InputError, type AnswerUpdateStudent } from "@application";
 import { Alert, Snackbar, Box, Typography, Button } from "@mui/material"; // Added Box and Typography
 
 type Snackbar =
@@ -20,13 +20,31 @@ export function AnswerEditor() {
     setFieldErrors,
     isLoading,
     setLoading,
+    setContent,
   } = useAnswer();
 
+  useEffect(() => {
+    const newContent = { ...answer.content };
+    let changed = false;
+    test.content.forEach((q) => {
+      if (newContent[q.id] === undefined) {
+        newContent[q.id] = defaultQuestionAnswer(q);
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      setContent(newContent);
+    }
+  }, [test.content, answer.content, setContent]);
+
   const handleSave = async (manual: boolean) => {
+    if (!manual && !AUTOMATED_FETCHS_ALLOWED) return;
+
     try {
       setLoading(true);
-      console.log(answer);
-      await apiPut("/answers", JSON.stringify(answer));
+      var update: AnswerUpdateStudent = { ...answer };
+      await apiPut("/answers", update);
       if (manual)
         setSnackbar({
           open: true,
@@ -86,12 +104,8 @@ export function AnswerEditor() {
         {test.content.map((q) => {
           const { id } = q;
 
-          let questionAnswer = answer.content[id];
-
-          if (questionAnswer === undefined) {
-            questionAnswer = defaultQuestionAnswer(q);
-            setAnswerQuestion(id, questionAnswer);
-          }
+          const questionAnswer = answer.content[id];
+          if (questionAnswer === undefined) return null;
 
           return (
             <QuestionAnswerRenderer

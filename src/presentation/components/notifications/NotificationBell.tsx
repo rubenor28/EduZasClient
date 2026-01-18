@@ -9,6 +9,7 @@ import {
   InternalServerError,
 } from "@application";
 import { NotificationList } from "./NotificationList";
+import { AUTOMATED_FETCHS_ALLOWED } from "@domain";
 
 const POLLING_INTERVAL = 30000; // 30 segundos
 
@@ -26,6 +27,8 @@ export const NotificationBell = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const fetchUnreadStatus = async () => {
+    if (!AUTOMATED_FETCHS_ALLOWED) return;
+
     try {
       const unread = await apiGet<boolean>(
         `/notifications/unreaded/${user.id}`,
