@@ -126,7 +126,7 @@ export function AnswerEditor() {
           }}
         >
           <Typography variant="h4">{test.title}</Typography>
-          {test.deadline && <SimpleTimer endTime={new Date(test.deadline)} />}
+          {test.deadline && <SimpleTimer endTime={new Date(test.deadline)} onFinish={window.location.reload} />}
           <Button disabled={isLoading} onClick={() => handleSave(true)}>
             Guardar
           </Button>

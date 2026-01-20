@@ -27,8 +27,6 @@ import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
-import { AnswerEditorTest } from "./pages/views/answers/AnswerEditorTest";
-import { WaitingGradeProps } from "./pages/views/answers/WaitingGrade";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -63,7 +61,6 @@ export const router = createBrowserRouter([
         ),
         children: [
           { path: "login", element: <Login /> },
-          { path: "answer", element: <WaitingGradeProps /> },
         ],
       },
       /**
