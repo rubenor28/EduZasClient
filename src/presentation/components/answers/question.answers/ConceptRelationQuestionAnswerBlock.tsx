@@ -22,6 +22,16 @@ export function ConceptRelationQuestionAnswerBlock({
   const { answeredPairs } = answer;
   const { columnA, columnB } = question;
 
+  if (columnA.length !== columnB.length)
+    throw Error(
+      "La pregunta " +
+        question.id +
+        "de tipo" +
+        question.type +
+        "posee tamaños irregulares de pares: " +
+        `ColumnaA[${columnA.length}] ColumnaB[${columnB.length}]`,
+    );
+
   const handleRelationChange = (conceptA: string, conceptB: string) => {
     const existingPairIndex = answeredPairs.findIndex(
       (p) => p.conceptA === conceptA,
@@ -44,9 +54,9 @@ export function ConceptRelationQuestionAnswerBlock({
   return (
     <QuestionAnswerBlock question={question}>
       <Grid container spacing={2} alignItems="center">
-        {columnA.map((conceptA) => {
-          const selectedB =
-            answeredPairs.find((p) => p.conceptA === conceptA)?.conceptB || "";
+        {columnA.map((_, idx) => {
+          const conceptA = columnA[idx];
+          const conceptB = columnB[idx];
           const selectedBConcepts = getSelectedBConcepts();
 
           return (
@@ -58,7 +68,7 @@ export function ConceptRelationQuestionAnswerBlock({
                 <FormControl fullWidth>
                   <InputLabel>Relacionar con</InputLabel>
                   <Select
-                    value={selectedB}
+                    value={conceptB}
                     onChange={(e) =>
                       handleRelationChange(conceptA, e.target.value)
                     }
@@ -71,7 +81,7 @@ export function ConceptRelationQuestionAnswerBlock({
                         key={conceptB}
                         value={conceptB}
                         disabled={
-                          selectedB !== conceptB &&
+                          conceptB !== conceptB &&
                           selectedBConcepts.includes(conceptB)
                         }
                       >
@@ -88,4 +98,3 @@ export function ConceptRelationQuestionAnswerBlock({
     </QuestionAnswerBlock>
   );
 }
-

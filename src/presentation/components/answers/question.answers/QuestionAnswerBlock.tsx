@@ -4,6 +4,7 @@ import type {
   QuestionAnswerVariant,
 } from "@domain";
 import {
+  Alert,
   Box,
   Card,
   CardContent,
@@ -11,6 +12,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
+import { useAnswer } from "@presentation";
 import type { ReactNode } from "react";
 
 type AnswerUpdater<T extends QuestionTypes> = (
@@ -35,6 +37,12 @@ export function QuestionAnswerBlock({
   children,
 }: GenericQuestionAnswerBlockProps) {
   const { imageUrl, title } = question;
+  const { fieldErrors } = useAnswer();
+
+  const pattern = `content\\[${question.id}\\]`;
+  const regex = new RegExp(pattern);
+
+  const hasError = fieldErrors.find((item) => regex.test(item.field));
 
   return (
     <Card sx={{ mb: 2, border: "1px solid #eee", overflow: "visible" }}>
@@ -61,6 +69,9 @@ export function QuestionAnswerBlock({
         sx={{ backgroundColor: "#f9f9f9", py: 1 }}
       />
       <CardContent>
+        {hasError !== undefined && (
+          <Alert severity="error">Se encontró un error, favor de revisar</Alert>
+        )}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Typography variant="h5">{title}</Typography>
           {children}

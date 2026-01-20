@@ -3,7 +3,14 @@ import {
   QuestionAnswerBlock,
   type QuestionAnswerBlockProps,
 } from "./QuestionAnswerBlock";
-import { Box, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+} from "@mui/material";
+import { getFieldError } from "@application";
 
 type BlockProps = QuestionAnswerBlockProps<QuestionTypes.MultipleSelection>;
 
@@ -23,20 +30,27 @@ export function MultipleSelectionQuestionAnswerBlock({
 
   return (
     <QuestionAnswerBlock question={question}>
-      {question.options.map(({ id, text }) => (
-        <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={selectedOptions.has(id)}
-                onChange={() => handleSelectedOptionsChange(id)}
-              />
-            }
-            label=""
-          />
-          <Typography variant="h6">{text}</Typography>
-        </Box>
-      ))}
+      {question.options.map(({ id, text }, idx) => {
+        const error = getFieldError(
+          `content[${question.id}].selectedOptions[${idx}]`,
+        );
+
+        return (
+          <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {error && <Alert severity="error">{error.message}</Alert>}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={selectedOptions.has(id)}
+                  onChange={() => handleSelectedOptionsChange(id)}
+                />
+              }
+              label=""
+            />
+            <Typography variant="h6">{text}</Typography>
+          </Box>
+        );
+      })}
     </QuestionAnswerBlock>
   );
 }

@@ -22,9 +22,14 @@ export type AnswerQuestionUpdater =
   | QuestionAnswer
   | ((prev: QuestionAnswer) => QuestionAnswer);
 
+export type AnswerUpdater = Answer | ((prev: Answer) => Answer);
+
 export type AnswerConcextType = {
   test: PublicTest;
   answer: Answer;
+  answeredQuestions: Set<string>;
+  setAnswer: React.Dispatch<React.SetStateAction<Answer | null>>;
+  setAnsweredQuestions: (answerId: string) => void;
   setTest: (test: PublicTest) => void;
   setContent: (answer: AnswerContentUpdater) => void;
   setAnswerQuestion: (id: string, answer: AnswerQuestionUpdater) => void;
@@ -53,6 +58,15 @@ export const AnswerProvider = ({
   const [test, setTest] = useState<PublicTest | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
+  const [answeredQuestions, setAnswered] = useState<Set<string>>(new Set());
+
+  const setAnsweredQuestions = (answerId: string) => {
+    setAnswered((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(answerId);
+      return newSet;
+    });
+  };
 
   const setContent = (content: AnswerContentUpdater) => {
     setAnswer((prev) => {
@@ -130,6 +144,7 @@ export const AnswerProvider = ({
         value={{
           answer,
           test,
+          setAnswer,
           setContent,
           setTest,
           setAnswerQuestion,
@@ -137,6 +152,8 @@ export const AnswerProvider = ({
           setFieldErrors,
           isLoading,
           setLoading,
+          answeredQuestions,
+          setAnsweredQuestions,
         }}
       >
         {children}

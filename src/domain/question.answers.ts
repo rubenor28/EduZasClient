@@ -2,8 +2,11 @@ import type { PublicQuestion, PublicQuestionVariant } from "./public.questions";
 import { type ConceptPair, QuestionTypes } from "./questions";
 
 export type QuestionAnswer =
-  | { readonly type: QuestionTypes.Open; text: string }
-  | { readonly type: QuestionTypes.MultipleChoise; selectedOption: string }
+  | { readonly type: QuestionTypes.Open; text: string | null }
+  | {
+      readonly type: QuestionTypes.MultipleChoise;
+      selectedOption: string | null;
+    }
   | {
       readonly type: QuestionTypes.MultipleSelection;
       selectedOptions: string[];
@@ -20,11 +23,21 @@ export type QuestionAnswerVariant<T extends QuestionTypes> = Extract<
 >;
 
 export function defaultQuestionAnswer(question: PublicQuestion): QuestionAnswer;
-export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.Open>): QuestionAnswerVariant<QuestionTypes.Open>;
-export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.Ordering>): QuestionAnswerVariant<QuestionTypes.Ordering>;
-export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.MultipleChoise>): QuestionAnswerVariant<QuestionTypes.MultipleChoise>;
-export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.ConceptRelation>): QuestionAnswerVariant<QuestionTypes.ConceptRelation>;
-export function defaultQuestionAnswer(question: PublicQuestionVariant<QuestionTypes.MultipleSelection>): QuestionAnswerVariant<QuestionTypes.MultipleSelection>;
+export function defaultQuestionAnswer(
+  question: PublicQuestionVariant<QuestionTypes.Open>,
+): QuestionAnswerVariant<QuestionTypes.Open>;
+export function defaultQuestionAnswer(
+  question: PublicQuestionVariant<QuestionTypes.Ordering>,
+): QuestionAnswerVariant<QuestionTypes.Ordering>;
+export function defaultQuestionAnswer(
+  question: PublicQuestionVariant<QuestionTypes.MultipleChoise>,
+): QuestionAnswerVariant<QuestionTypes.MultipleChoise>;
+export function defaultQuestionAnswer(
+  question: PublicQuestionVariant<QuestionTypes.ConceptRelation>,
+): QuestionAnswerVariant<QuestionTypes.ConceptRelation>;
+export function defaultQuestionAnswer(
+  question: PublicQuestionVariant<QuestionTypes.MultipleSelection>,
+): QuestionAnswerVariant<QuestionTypes.MultipleSelection>;
 
 export function defaultQuestionAnswer(
   question: PublicQuestionVariant<QuestionTypes>,
@@ -40,7 +53,7 @@ export function defaultQuestionAnswer(
   if (type === QuestionTypes.Ordering)
     return { type, sequence: [...question.items] };
 
-  if (type === QuestionTypes.Open) return { type, text: "" };
+  if (type === QuestionTypes.Open) return { type, text: null };
 
   if (type === QuestionTypes.ConceptRelation) {
     return { type, answeredPairs: [] };

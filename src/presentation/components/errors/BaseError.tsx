@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 /**
  * Props para el componente BaseError.
@@ -35,10 +35,10 @@ export default function BaseError({
   description,
   onRetry = true,
   showHome = true,
-  children
+  children,
 }: BaseErrorProps) {
   const handleRetry = () => {
-    if (typeof onRetry === 'function') {
+    if (typeof onRetry === "function") {
       onRetry();
     } else {
       window.location.reload();
@@ -79,17 +79,18 @@ export default function BaseError({
 
           {/* Contenido adicional */}
           {children && (
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              {children}
-            </div>
+            <div className="mt-8 pt-6 border-t border-gray-200">{children}</div>
           )}
         </div>
 
         {/* Enlace de soporte */}
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-500">
-            ¿Necesitas ayuda?{' '}
-            <a href="mailto:soporte@eduzas.com" className="text-blue-600 hover:underline">
+            ¿Necesitas ayuda?{" "}
+            <a
+              href="mailto:soporte@eduzas.com"
+              className="text-blue-600 hover:underline"
+            >
               Contactar soporte
             </a>
           </p>

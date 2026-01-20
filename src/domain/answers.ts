@@ -10,6 +10,8 @@ export type Answer = {
   userId: number;
   testId: string;
   classId: string;
+  tryFinished: boolean;
+  graded: boolean;
   content: AnswerContent;
   metadata: AnswerMetadata;
 };
