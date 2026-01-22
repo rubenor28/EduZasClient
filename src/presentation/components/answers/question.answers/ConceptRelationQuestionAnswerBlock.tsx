@@ -1,4 +1,4 @@
-import type { QuestionTypes, ConceptPair } from "@domain";
+import type { QuestionTypes } from "@domain";
 import {
   QuestionAnswerBlock,
   type QuestionAnswerBlockProps,
@@ -33,31 +33,35 @@ export function ConceptRelationQuestionAnswerBlock({
     );
 
   const handleRelationChange = (conceptA: string, conceptB: string) => {
-    const existingPairIndex = answeredPairs.findIndex(
-      (p) => p.conceptA === conceptA,
-    );
-    const newAnsweredPairs: ConceptPair[] = [...answeredPairs];
+    let newAnsweredPairs = [...answeredPairs];
 
-    if (existingPairIndex !== -1) {
-      newAnsweredPairs[existingPairIndex] = { conceptA, conceptB };
+    if (conceptB === "") {
+      newAnsweredPairs = newAnsweredPairs.filter(
+        (p) => p.conceptA !== conceptA,
+      );
     } else {
-      newAnsweredPairs.push({ conceptA, conceptB });
+      const existingPairIndex = newAnsweredPairs.findIndex(
+        (p) => p.conceptA === conceptA,
+      );
+
+      if (existingPairIndex !== -1) {
+        newAnsweredPairs[existingPairIndex] = { conceptA, conceptB };
+      } else {
+        newAnsweredPairs.push({ conceptA, conceptB });
+      }
     }
 
     onChange((prev) => ({ ...prev, answeredPairs: newAnsweredPairs }));
   };
 
-  const getSelectedBConcepts = () => {
-    return answeredPairs.map((p) => p.conceptB);
-  };
+  const selectedBConcepts = answeredPairs.map((p) => p.conceptB);
 
   return (
     <QuestionAnswerBlock question={question}>
       <Grid container spacing={2} alignItems="center">
-        {columnA.map((_, idx) => {
-          const conceptA = columnA[idx];
-          const conceptB = columnB[idx];
-          const selectedBConcepts = getSelectedBConcepts();
+        {columnA.map((conceptA) => {
+          const currentSelection =
+            answeredPairs.find((p) => p.conceptA === conceptA)?.conceptB || "";
 
           return (
             <Grid item xs={12} container key={conceptA} spacing={2}>
@@ -68,7 +72,7 @@ export function ConceptRelationQuestionAnswerBlock({
                 <FormControl fullWidth>
                   <InputLabel>Relacionar con</InputLabel>
                   <Select
-                    value={conceptB}
+                    value={currentSelection}
                     onChange={(e) =>
                       handleRelationChange(conceptA, e.target.value)
                     }
@@ -76,16 +80,16 @@ export function ConceptRelationQuestionAnswerBlock({
                     <MenuItem value="">
                       <em>Ninguno</em>
                     </MenuItem>
-                    {columnB.map((conceptB) => (
+                    {columnB.map((conceptBItem) => (
                       <MenuItem
-                        key={conceptB}
-                        value={conceptB}
+                        key={conceptBItem}
+                        value={conceptBItem}
                         disabled={
-                          conceptB !== conceptB &&
-                          selectedBConcepts.includes(conceptB)
+                          selectedBConcepts.includes(conceptBItem) &&
+                          conceptBItem !== currentSelection
                         }
                       >
-                        {conceptB}
+                        {conceptBItem}
                       </MenuItem>
                     ))}
                   </Select>

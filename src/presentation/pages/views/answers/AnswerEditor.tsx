@@ -51,8 +51,10 @@ export function AnswerEditor() {
       !window.confirm(
         "¿Seguro que quieres finalizar tu exámen? Esta acción no puede deshacerse",
       )
-    ) return;
-      setLoading(true);
+    )
+      return;
+
+    setLoading(true);
     const { userId, classId, testId } = answer;
     await apiPut(`/answers/${userId}/${classId}/${testId}/try`, {});
     setAnswer((prev) =>
@@ -126,7 +128,12 @@ export function AnswerEditor() {
           }}
         >
           <Typography variant="h4">{test.title}</Typography>
-          {test.deadline && <SimpleTimer endTime={new Date(test.deadline)} onFinish={window.location.reload} />}
+          {test.deadline && (
+            <SimpleTimer
+              endTime={new Date(test.deadline)}
+              onFinish={window.location.reload}
+            />
+          )}
           <Button disabled={isLoading} onClick={() => handleSave(true)}>
             Guardar
           </Button>
