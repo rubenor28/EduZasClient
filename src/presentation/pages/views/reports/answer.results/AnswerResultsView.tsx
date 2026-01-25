@@ -18,9 +18,8 @@ import {
   OpenGradeDetails,
   OrderingGradeDetails,
 } from "./grades";
-import { ScorePieChart } from "./ScorePieChart";
 import { useEffect, useState } from "react";
-import { NotFound } from "@presentation";
+import { NotFound, ScorePieChart } from "@presentation";
 import { apiGet, errorService } from "@application";
 
 export function GradeDetails({ grade }: { grade: Grade }) {
@@ -67,9 +66,7 @@ export function AnswerResultsView(answerId: AnswerId) {
     fetchResult();
   }, [answerId]);
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   if (loading) return <CircularProgress />;
 
@@ -114,7 +111,7 @@ export function AnswerResultsView(answerId: AnswerId) {
             md={4}
             sx={{ display: "flex", justifyContent: "center" }}
           >
-            <ScorePieChart score={result.score} approved={result.approved} />
+            <ScorePieChart value={result.score} label="Score" />
           </Grid>
           <Grid item xs={12} md={8}>
             <Typography variant="h5">Resumen</Typography>

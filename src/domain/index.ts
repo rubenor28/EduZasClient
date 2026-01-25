@@ -9,4 +9,4 @@ export * from "./question.answers";
 export * from "./public.questions";
 export * from "./public.test";
 export * from "./answers";
-export * from "./grades.ts";
+export * from "./reports";

@@ -20,13 +20,13 @@ import {
   AuthErrorAs500Boundary,
   PublicErrorPage,
   ProtectedErrorPage,
-  NotFound,
 } from "./components/errors";
 import { SystemGuard } from "./components/auth/SystemGuard";
 import { DashboardLayout } from "./layouts";
 import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
+import { ClassTestReportView } from "./pages/views/reports/class.test.report";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -119,8 +119,8 @@ export const router = createBrowserRouter([
                 element: <ResourcePreviewPage />,
               },
               {
-                path: "classes/test/:classId/:resourceId",
-                element: <NotFound />,
+                path: "classes/test/:classId/:testId",
+                element: <ClassTestReportView />,
               },
             ],
           },

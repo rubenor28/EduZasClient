@@ -71,6 +71,7 @@ export function AnswerEditor() {
       errorService.notify(e);
     } finally {
       setLoading(false);
+      window.location.reload();
     }
   }, [answer, setLoading]);
 
