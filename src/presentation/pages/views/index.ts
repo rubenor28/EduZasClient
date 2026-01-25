@@ -11,3 +11,4 @@ export * from "./admin/ManageResourcesView";
 export * from "./Evaluaciones";
 export * from "./tests";
 export * from "./answers/AnswerEditorPage";
+export * from "./reports";

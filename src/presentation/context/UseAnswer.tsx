@@ -1,6 +1,7 @@
 import {
   apiGet,
   apiPost,
+  errorService,
   NotFoundError,
   type FieldErrorDTO,
 } from "@application";
@@ -9,6 +10,7 @@ import type {
   QuestionAnswer,
   Answer,
   AnswerContent,
+  AnswerGradeStatus,
 } from "@domain";
 import { Box, CircularProgress } from "@mui/material";
 import { NotFound } from "@presentation";
@@ -27,6 +29,7 @@ export type AnswerUpdater = Answer | ((prev: Answer) => Answer);
 export type AnswerConcextType = {
   test: PublicTest;
   answer: Answer;
+  answerState: AnswerGradeStatus;
   answeredQuestions: Set<string>;
   setAnswer: React.Dispatch<React.SetStateAction<Answer | null>>;
   setAnsweredQuestions: (answerId: string) => void;
@@ -41,12 +44,6 @@ export type AnswerConcextType = {
 
 const AnswerContext = createContext<AnswerConcextType | null>(null);
 
-export enum AnswerState {
-  IDLE,
-  WAITING_GRADE,
-  GRADED,
-}
-
 type AnswerProviderProps = {
   classId: string;
   testId: string;
@@ -60,12 +57,14 @@ export const AnswerProvider = ({
   userId,
   children,
 }: AnswerProviderProps) => {
-  const [answerState, setAnswerState] = useState(AnswerState.IDLE);
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [test, setTest] = useState<PublicTest | null>(null);
   const [isLoading, setLoading] = useState(true);
   const [fieldErrors, setFieldErrors] = useState<FieldErrorDTO[]>([]);
   const [answeredQuestions, setAnswered] = useState<Set<string>>(new Set());
+  const [answerState, setAnswerState] = useState<AnswerGradeStatus>({
+    status: "idle",
+  });
 
   const setAnsweredQuestions = (answerId: string) => {
     setAnswered((prev) => {
@@ -108,22 +107,32 @@ export const AnswerProvider = ({
           `/answers/${userId}/${classId}/${testId}`,
         );
 
-        setAnswer(answer);
-      } catch (e) {
-        if (e instanceof NotFoundError) {
-          const newAnswer = await apiPost<Answer>("/answers", {
-            userId,
-            testId,
-            classId,
-          });
+        const state = await apiGet<AnswerGradeStatus>(
+          `/answers/${userId}/${classId}/${testId}/status`,
+        );
 
-          setAnswer(newAnswer);
+        setAnswer(answer);
+        setAnswerState(state);
+      } catch (e) {
+        if (e instanceof NotFoundError === false) {
+          errorService.notify(e);
+          return;
         }
+
+        const newAnswer = await apiPost<Answer>("/answers", {
+          userId,
+          testId,
+          classId,
+        });
+
+        setAnswer(newAnswer);
       }
 
       try {
         const test = await apiGet<PublicTest>(`/tests/${testId}/${classId}`);
         setTest(test);
+      } catch (e) {
+        errorService.notify(e);
       } finally {
         setLoading(false);
       }
@@ -150,6 +159,7 @@ export const AnswerProvider = ({
       <AnswerContext.Provider
         value={{
           answer,
+          answerState,
           test,
           setAnswer,
           setContent,

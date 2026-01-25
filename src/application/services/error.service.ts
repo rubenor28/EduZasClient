@@ -1,4 +1,4 @@
-import { AppError } from "@application";
+import { AppError, InternalServerError } from "@application";
 
 type Subscriber = (error: AppError | null) => void;
 
@@ -30,8 +30,8 @@ class ErrorService {
    * Notifica a todos los suscriptores sobre un nuevo error.
    * @param error El error que ha ocurrido.
    */
-  public notify(error: AppError): void {
-    this.error = error;
+  public notify(error: unknown): void {
+    this.error = error instanceof AppError ? error : new InternalServerError();
     this.subscribers.forEach((callback) => callback(this.error));
   }
 

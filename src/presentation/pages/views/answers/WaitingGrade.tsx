@@ -1,9 +1,4 @@
-interface WaitingGradeProps {
-  title: string;
-  description: string;
-}
-
-export function WaitingGradeProps() {
+export function WaitingGrade() {
   const handleRetry = () => window.location.reload();
 
   return (

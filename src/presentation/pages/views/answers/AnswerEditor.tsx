@@ -1,10 +1,16 @@
 import { AUTOMATED_FETCHS_ALLOWED, defaultQuestionAnswer } from "@domain";
-import { SimpleTimer, useAnswer } from "@presentation";
+import { SimpleTimer, useAnswer, useUser } from "@presentation";
 import { QuestionAnswerRenderer } from "./QuestionAnswerRenderer";
 import { useEffect, useState, useCallback } from "react";
-import { apiPut, InputError, type AnswerUpdateStudent } from "@application";
+import {
+  apiPut,
+  errorService,
+  InputError,
+  type AnswerUpdateStudent,
+} from "@application";
 import { Alert, Snackbar, Box, Typography, Button } from "@mui/material";
-import { WaitingGradeProps } from "./WaitingGrade";
+import { WaitingGrade } from "./WaitingGrade";
+import { AnswerResultsView } from "../reports";
 
 type SnackbarState =
   | { open: false }
@@ -15,8 +21,11 @@ export function AnswerEditor() {
     open: false,
   });
 
+  const { user } = useUser();
+
   const {
     answer,
+    answerState,
     test,
     setAnswer,
     setAnswerQuestion,
@@ -25,11 +34,6 @@ export function AnswerEditor() {
     setLoading,
     setContent,
   } = useAnswer();
-
-  if (answer.tryFinished && !answer.graded) return <WaitingGradeProps />;
-  else if (answer.tryFinished && answer.graded)
-    return <h1>Reporte calificaicones</h1>;
-  else if (answer.tryFinished && !answer.graded) throw Error("Estado inválido");
 
   useEffect(() => {
     const newContent = { ...answer.content };
@@ -58,10 +62,16 @@ export function AnswerEditor() {
 
     setLoading(true);
     const { userId, classId, testId } = answer;
-    await apiPut(`/answers/${userId}/${classId}/${testId}/try`, {});
-    setAnswer((prev) =>
-      prev !== null ? { ...prev, tryFinished: true } : null,
-    );
+    try {
+      await apiPut(`/answers/${userId}/${classId}/${testId}/try`, {});
+      setAnswer((prev) =>
+        prev !== null ? { ...prev, tryFinished: true } : null,
+      );
+    } catch (e) {
+      errorService.notify(e);
+    } finally {
+      setLoading(false);
+    }
   }, [answer, setLoading]);
 
   const handleSave = useCallback(
@@ -115,6 +125,14 @@ export function AnswerEditor() {
   const handleCloseSnackbar = () => {
     setSnackbarState({ open: false });
   };
+
+  if (answerState.status === "waiting-grade") return <WaitingGrade />;
+
+  const { classId, testId } = answer;
+  if (answerState.status === "graded")
+    return (
+      <AnswerResultsView testId={testId} classId={classId} userId={user.id} />
+    );
 
   return (
     <>
