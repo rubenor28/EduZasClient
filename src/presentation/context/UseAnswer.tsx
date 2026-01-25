@@ -41,6 +41,12 @@ export type AnswerConcextType = {
 
 const AnswerContext = createContext<AnswerConcextType | null>(null);
 
+export enum AnswerState {
+  IDLE,
+  WAITING_GRADE,
+  GRADED,
+}
+
 type AnswerProviderProps = {
   classId: string;
   testId: string;
@@ -54,6 +60,7 @@ export const AnswerProvider = ({
   userId,
   children,
 }: AnswerProviderProps) => {
+  const [answerState, setAnswerState] = useState(AnswerState.IDLE);
   const [answer, setAnswer] = useState<Answer | null>(null);
   const [test, setTest] = useState<PublicTest | null>(null);
   const [isLoading, setLoading] = useState(true);

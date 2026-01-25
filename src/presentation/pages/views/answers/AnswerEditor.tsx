@@ -54,6 +54,8 @@ export function AnswerEditor() {
     )
       return;
 
+    await handleSave(false);
+
     setLoading(true);
     const { userId, classId, testId } = answer;
     await apiPut(`/answers/${userId}/${classId}/${testId}/try`, {});

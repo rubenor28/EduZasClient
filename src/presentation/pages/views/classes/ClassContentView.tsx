@@ -8,6 +8,7 @@ import {
   ListItemButton,
   Chip,
   Divider,
+  Button,
 } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -19,6 +20,7 @@ import {
   parseContentType,
 } from "@application";
 import { useUser } from "@presentation";
+import { API_BASE_URL } from "@domain";
 
 interface ClassContentResponse {
   results: ClassContentDTO[];
@@ -135,9 +137,30 @@ export const ClassContentView = () => {
         <Typography variant="h3" gutterBottom>
           Contenido de la Clase
         </Typography>
+
         <Typography variant="h5" color="textSecondary">
           Código de invitación a la clase: {classId}
         </Typography>
+        {!isStudent && (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 2,
+              mt: 2,
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              href={`${API_BASE_URL}/reports/test/${classId}/spreadsheet`}
+              component="a"
+              sx={{ mt: 1 }}
+            >
+              Generar sábana de calificaciones
+            </Button>
+          </Box>
+        )}
       </Box>
 
       {contents.length === 0 ? (
@@ -167,25 +190,25 @@ export const ClassContentView = () => {
                 >
                   <Typography variant="h4">{content.title}</Typography>
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "right",
-                    width: "100%",
-                  }}
-                >
-                  <Chip
-                    label={getContentTypeLabel(content.type)}
-                    color={getContentTypeColor(content.type)}
-                    size="small"
-                  />
-                  {!isStudent && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "right",
+                      width: "100%",
+                    }}
+                  >
                     <Chip
-                      label={content.hiden ? "Oculto" : "Visible"}
-                      color={content.hiden ? "primary" : "secondary"}
+                      label={getContentTypeLabel(content.type)}
+                      color={getContentTypeColor(content.type)}
                       size="small"
                     />
-                  )}
+                    {!isStudent && (
+                      <Chip
+                        label={content.hiden ? "Oculto" : "Visible"}
+                        color={content.hiden ? "primary" : "secondary"}
+                        size="small"
+                      />
+                    )}
                   </Box>
                 </Box>
                 <Typography variant="body1" color="textSecondary">
