@@ -35,6 +35,9 @@ export function ResourcePreviewPage() {
     fetchResource();
 
     const sendTelemetry = () => {
+      // Solo envia telemetria si es alumno
+      if (user.id !== 0) return;
+
       if (viewStartTime.current) {
         const payload = {
           userId: user.id,
@@ -68,7 +71,7 @@ export function ResourcePreviewPage() {
   if (page.state === "idle")
     return (
       <>
-        {user.role === 2 && (
+        {user.role >= 1 && (
           <Box
             sx={{
               position: "sticky",
