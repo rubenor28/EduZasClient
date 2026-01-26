@@ -59,7 +59,7 @@ export function MultipleChoiceGradeDetails({
       <Chip
         sx={{ mt: 1 }}
         icon={isCorrect ? <Check /> : <Clear />}
-        label={isCorrect ? `Correct (+${grade.points} points)` : `Incorrect`}
+        label={isCorrect ? `Correcto (+${grade.points} points)` : `Incorrecto`}
         color={isCorrect ? "success" : "error"}
         variant="outlined"
       />

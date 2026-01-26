@@ -13,23 +13,18 @@ export function OpenGradeDetails({
         {grade.title}
       </Typography>
       <Typography variant="body1" paragraph>
-        Your answer: {grade.answer}
+        Respuesta: {grade.text}
       </Typography>
       {grade.manualGrade !== null && (
         <Chip
           label={
             grade.manualGrade
-              ? `Graded as correct (+${grade.points} points)`
-              : `Graded as incorrect`
+              ? `Calificada como correcta (+${grade.points} puntos)`
+              : `Calificada como incorrecta`
           }
           color={grade.manualGrade ? "success" : "error"}
           variant="outlined"
         />
-      )}
-      {grade.feedback && (
-        <Typography sx={{ mt: 1 }} variant="body2">
-          Feedback: {grade.feedback}
-        </Typography>
       )}
     </Paper>
   );

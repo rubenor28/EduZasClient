@@ -2,15 +2,15 @@ import { AUTOMATED_FETCHS_ALLOWED, defaultQuestionAnswer } from "@domain";
 import { SimpleTimer, useAnswer, useUser } from "@presentation";
 import { QuestionAnswerRenderer } from "./QuestionAnswerRenderer";
 import { useEffect, useState, useCallback } from "react";
+import { Alert, Snackbar, Box, Typography, Button } from "@mui/material";
+import { WaitingGrade } from "./WaitingGrade";
+import { AnswerResultsView } from "../reports";
 import {
   apiPut,
   errorService,
   InputError,
   type AnswerUpdateStudent,
 } from "@application";
-import { Alert, Snackbar, Box, Typography, Button } from "@mui/material";
-import { WaitingGrade } from "./WaitingGrade";
-import { AnswerResultsView } from "../reports";
 
 type SnackbarState =
   | { open: false }

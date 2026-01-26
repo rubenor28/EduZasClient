@@ -29,7 +29,7 @@ export function ConceptRelationGradeDetails({
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <Typography variant="subtitle1">Your Answer</Typography>
+          <Typography variant="subtitle1">Tu repuesta:</Typography>
           <List dense>
             {(grade.answeredPairs || []).map((pair, index) => {
               const isPairCorrect = correctPairsSet.has(
@@ -51,7 +51,7 @@ export function ConceptRelationGradeDetails({
           </List>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="subtitle1">Correct Pairs</Typography>
+          <Typography variant="subtitle1">Pares correctos</Typography>
           <List dense>
             {(grade.pairs || []).map((pair, index) => (
               <ListItem key={index}>
@@ -66,8 +66,8 @@ export function ConceptRelationGradeDetails({
         icon={isCorrect ? <Check /> : <Clear />}
         label={
           isCorrect
-            ? `Correct (+${grade.points} points)`
-            : `Partially correct (+${grade.points} points)`
+            ? `Correcto (+${grade.points} puntos)`
+            : `Parcialmente correcto (+${grade.points} puntos)`
         }
         color={isCorrect ? "success" : "warning"}
         variant="outlined"

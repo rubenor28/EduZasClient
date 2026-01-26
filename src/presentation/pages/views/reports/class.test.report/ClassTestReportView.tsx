@@ -15,11 +15,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import type { ClassTestReport } from "@domain";
+import type { ClassTestReport, IndividualGradeError } from "@domain";
 import { useEffect, useState } from "react";
 import { apiGet, errorService } from "@application";
 import { NotFound, ScorePieChart } from "@presentation";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import PrintIcon from "@mui/icons-material/Print";
 import StatCard from "./StatCard";
 
@@ -29,11 +29,17 @@ type Params = {
 };
 
 export function ClassTestReportView() {
-  const { classId, testId } = useParams<Params>();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const { classId, testId } = useParams<Params>();
   const [report, setReport] = useState<ClassTestReport | null>(null);
 
   const handlePrint = () => window.print();
+
+  const attendAction = (error: IndividualGradeError) =>
+    navigate(
+      `/professor/classes/report/test/${classId}/${testId}/${error.studentId}`,
+    );
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -98,6 +104,11 @@ export function ClassTestReportView() {
                     Estudiante: <strong>{error.studentName}</strong> - Razón:{" "}
                     {error.error}
                   </Typography>
+                  {error.error === "Calificación manual requerida" && (
+                    <Button onClick={() => attendAction(error)} color="warning">
+                      Atender
+                    </Button>
+                  )}
                 </li>
               ))}
             </ul>

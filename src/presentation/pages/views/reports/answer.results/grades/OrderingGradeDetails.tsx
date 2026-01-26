@@ -25,7 +25,7 @@ export function OrderingGradeDetails({
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <Typography variant="subtitle1">Your Answer</Typography>
+          <Typography variant="subtitle1">Tu Respuesta</Typography>
           <List dense>
             {(grade.answeredSequence || []).map((item, index) => (
               <ListItem key={index}>
@@ -42,7 +42,7 @@ export function OrderingGradeDetails({
           </List>
         </Grid>
         <Grid item xs={6}>
-          <Typography variant="subtitle1">Correct Order</Typography>
+          <Typography variant="subtitle1">Orden Correcto</Typography>
           <List dense>
             {(grade.sequence || []).map((item, index) => (
               <ListItem key={index}>
@@ -60,8 +60,8 @@ export function OrderingGradeDetails({
         icon={isCorrect ? <Check /> : <Clear />}
         label={
           isCorrect
-            ? `Correct (+${grade.points} points)`
-            : `Partially correct (+${grade.points} points)`
+            ? `Correcto (+${grade.points} puntos)`
+            : `Parcialmente correcto (+${grade.points} puntos)`
         }
         color={isCorrect ? "success" : "warning"}
         variant="outlined"

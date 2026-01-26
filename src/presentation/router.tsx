@@ -27,6 +27,7 @@ import { UserProvider } from "./context/UserContext";
 import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
 import { ClassTestReportView } from "./pages/views/reports/class.test.report";
+import { ProfessorGradingView } from "./pages/views/reports/answer.results/ProfessorGradingView";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -59,9 +60,7 @@ export const router = createBrowserRouter([
             <Outlet />
           </AuthErrorAs500Boundary>
         ),
-        children: [
-          { path: "login", element: <Login /> },
-        ],
+        children: [{ path: "login", element: <Login /> }],
       },
       /**
        * Rutas Protegidas: Requieren que el usuario haya iniciado sesión.
@@ -121,6 +120,10 @@ export const router = createBrowserRouter([
               {
                 path: "classes/test/:classId/:testId",
                 element: <ClassTestReportView />,
+              },
+              {
+                path: "classes/report/test/:classId/:testId/:userId",
+                element: <ProfessorGradingView />,
               },
             ],
           },

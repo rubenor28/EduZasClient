@@ -111,14 +111,14 @@ export function AnswerResultsView(answerId: AnswerId) {
             md={4}
             sx={{ display: "flex", justifyContent: "center" }}
           >
-            <ScorePieChart value={result.score} label="Score" />
+            <ScorePieChart value={result.score} label="Puntaje" />
           </Grid>
           <Grid item xs={12} md={8}>
             <Typography variant="h5">Resumen</Typography>
             <Typography>
               Aciertos: {result.points}/{result.totalPoints}
             </Typography>
-            <Typography>Score: {result.score.toFixed(2)}%</Typography>
+            <Typography>Calificación: {result.score.toFixed(2)}%</Typography>
             <Typography color={result.approved ? "success.main" : "error.main"}>
               Estado: {result.approved ? "Aprobado" : "No aprobado"}
             </Typography>
