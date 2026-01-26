@@ -35,7 +35,6 @@ export type Grade = BaseGrade &
       }
     | {
         readonly type: QuestionTypes.Open;
-        readonly manualGrade: boolean;
         readonly text: string | null;
       }
     | {
