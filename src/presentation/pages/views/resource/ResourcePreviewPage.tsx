@@ -1,6 +1,6 @@
-import { apiGet, NotFoundError, type Resource } from "@application";
+import { apiGet, apiPost, NotFoundError, type Resource } from "@application";
 import { CircularProgress } from "@mui/material";
-import { ResourcePreview } from "@presentation";
+import { ResourcePreview, useUser } from "@presentation";
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router";
 
@@ -15,13 +15,14 @@ export function ResourcePreviewPage() {
   const { resourceId, classId } = useParams<Params>();
   const [page, setPage] = useState<Page>({ state: "loading" });
   const viewStartTime = useRef<Date | null>(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!resourceId || !classId) throw new NotFoundError();
 
     const fetchResource = async () => {
       const resource = await apiGet<Resource>(
-        `/resources/${resourceId}/${classId}/`
+        `/resources/${resourceId}/${classId}/`,
       );
       setPage({
         state: "idle",
@@ -35,21 +36,26 @@ export function ResourcePreviewPage() {
     const sendTelemetry = () => {
       if (viewStartTime.current) {
         const payload = {
+          userId: user.id,
+          classId,
+          resourceId,
           startTimeUTC: viewStartTime.current.toISOString(),
           endTimeUTC: new Date().toISOString(),
         };
 
-        navigator.sendBeacon(
-          `/api/telemetry/${resourceId}`,
-          JSON.stringify(payload)
-        );
+        apiPost("/reports/resource/session", payload, {
+          keepalive: true,
+          parseResponse: "void",
+        });
 
         viewStartTime.current = null;
       }
     };
 
+    // Listener para cierre de pestaña/navegador
     window.addEventListener("beforeunload", sendTelemetry);
 
+    // Cleanup para navegación interna (React Router)
     return () => {
       sendTelemetry();
       window.removeEventListener("beforeunload", sendTelemetry);

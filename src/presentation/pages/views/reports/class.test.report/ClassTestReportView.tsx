@@ -15,7 +15,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import type { ClassTestReport, IndividualGradeError } from "@domain";
+import type { ClassTestReport } from "@domain";
 import { useEffect, useState } from "react";
 import { apiGet, errorService } from "@application";
 import { NotFound, ScorePieChart } from "@presentation";
@@ -36,9 +36,9 @@ export function ClassTestReportView() {
 
   const handlePrint = () => window.print();
 
-  const attendAction = (error: IndividualGradeError) =>
+  const attendAction = (studentId: number) =>
     navigate(
-      `/professor/classes/report/test/${classId}/${testId}/${error.studentId}`,
+      `/professor/classes/report/test/${classId}/${testId}/${studentId}`,
     );
 
   useEffect(() => {
@@ -105,7 +105,10 @@ export function ClassTestReportView() {
                     {error.error}
                   </Typography>
                   {error.error === "Calificación manual requerida" && (
-                    <Button onClick={() => attendAction(error)} color="warning">
+                    <Button
+                      onClick={() => attendAction(error.studentId)}
+                      color="warning"
+                    >
                       Atender
                     </Button>
                   )}
@@ -178,6 +181,9 @@ export function ClassTestReportView() {
                       />
                     </Tooltip>
                   </Box>
+                  <Button onClick={() => attendAction(student.studentId)}>
+                    Ver respuesta
+                  </Button>
                 </ListItem>
               ))}
           </List>

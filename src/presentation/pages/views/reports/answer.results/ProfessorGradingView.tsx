@@ -24,7 +24,7 @@ import {
 } from "./grades";
 import { NotFound, ScorePieChart } from "@presentation";
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiGet, apiPut, errorService } from "@application";
 
 import PrintIcon from "@mui/icons-material/Print";
@@ -98,7 +98,25 @@ export function ProfessorGradingView() {
 
   const handlePrint = () => window.print();
 
-  const handleSave = async () => {
+  const fetchResult = useCallback(async () => {
+    try {
+      setLoading(true);
+      const result = await apiGet<AnswerGradeDetail>(
+        `/reports/answer/${userId}/${classId}/${testId}/detail`,
+      );
+      setResult(result);
+      result.gradeDetails.forEach((g) => {
+        if (g.manualGrade !== null)
+          onManualGradeChange(g.questionId, g.manualGrade);
+      });
+    } catch (e) {
+      errorService.notify(e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleSave = useCallback(async () => {
     try {
       setLoading(true);
       await apiPut(`/answers/professor`, {
@@ -109,32 +127,16 @@ export function ProfessorGradingView() {
           manualGrade: manualGrades,
         },
       });
+
+      fetchResult();
     } catch (e) {
       errorService.notify(e);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const fetchResult = async () => {
-      try {
-        setLoading(true);
-        const result = await apiGet<AnswerGradeDetail>(
-          `/reports/answer/${userId}/${classId}/${testId}/detail`,
-        );
-        setResult(result);
-        result.gradeDetails.forEach((g) => {
-          if (g.manualGrade !== null)
-            onManualGradeChange(g.questionId, g.manualGrade);
-        });
-      } catch (e) {
-        errorService.notify(e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchResult();
   }, [classId, userId, testId]);
 
