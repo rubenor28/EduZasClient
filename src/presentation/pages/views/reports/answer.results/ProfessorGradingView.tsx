@@ -105,7 +105,11 @@ export function ProfessorGradingView() {
         `/reports/answer/${userId}/${classId}/${testId}/detail`,
       );
       setResult(result);
+      console.log("GRADE DETAILS");
+      console.log(result.gradeDetails);
       result.gradeDetails.forEach((g) => {
+        console.log("G");
+        console.log(g);
         if (g.manualGrade !== null)
           onManualGradeChange(g.questionId, g.manualGrade);
       });
@@ -114,9 +118,11 @@ export function ProfessorGradingView() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [classId, testId, userId]);
 
-  const handleSave = useCallback(async () => {
+  console.log(manualGrades);
+
+  const handleSave = async () => {
     try {
       setLoading(true);
       await apiPut(`/answers/professor`, {
@@ -134,8 +140,7 @@ export function ProfessorGradingView() {
     } finally {
       setLoading(false);
     }
-  }, []);
-
+  };
   useEffect(() => {
     fetchResult();
   }, [classId, userId, testId]);
