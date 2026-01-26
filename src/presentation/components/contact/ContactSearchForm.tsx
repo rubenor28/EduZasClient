@@ -38,6 +38,7 @@ export const ContactSearchForm = ({
       page: 1,
       alias: createStringQuery(alias),
       tags: tag ? [tag] : undefined,
+      email: createStringQuery(email),
     }));
   };
 
