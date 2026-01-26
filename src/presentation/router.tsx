@@ -28,6 +28,7 @@ import { ResourcePreviewPage } from "./pages/views/resource";
 import { UserProfileView } from "./pages/views/users/UserProfileView";
 import { ClassTestReportView } from "./pages/views/reports/class.test.report";
 import { ProfessorGradingView } from "./pages/views/reports/answer.results/ProfessorGradingView";
+import { ResourceReportView } from "./pages/views/reports/ResourceReportView";
 
 /**
  * Configuración principal del enrutador de la aplicación (React Router).
@@ -124,6 +125,10 @@ export const router = createBrowserRouter([
               {
                 path: "classes/report/test/:classId/:testId/:userId",
                 element: <ProfessorGradingView />,
+              },
+              {
+                path: "classes/resource/report/:classId/:resourceId",
+                element: <ResourceReportView />,
               },
             ],
           },

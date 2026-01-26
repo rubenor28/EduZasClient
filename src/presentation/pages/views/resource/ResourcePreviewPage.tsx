@@ -1,8 +1,8 @@
 import { apiGet, apiPost, NotFoundError, type Resource } from "@application";
-import { CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { ResourcePreview, useUser } from "@presentation";
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 type Params = {
   resourceId: string;
@@ -16,6 +16,7 @@ export function ResourcePreviewPage() {
   const [page, setPage] = useState<Page>({ state: "loading" });
   const viewStartTime = useRef<Date | null>(null);
   const { user } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!resourceId || !classId) throw new NotFoundError();
@@ -65,5 +66,34 @@ export function ResourcePreviewPage() {
   if (page.state === "loading") return <CircularProgress />;
 
   if (page.state === "idle")
-    return <ResourcePreview resource={page.resource} />;
+    return (
+      <>
+        {user.role === 2 && (
+          <Box
+            sx={{
+              position: "sticky",
+              gap: 2,
+              top: 0,
+              zIndex: 1,
+              bgcolor: "background.paper",
+              p: 2,
+              boxShadow: 1,
+            }}
+          >
+            <Button
+              sx={{ mr: 2 }}
+              variant="contained"
+              onClick={() =>
+                navigate(
+                  `/professor/classes/resource/report/${classId}/${resourceId}`,
+                )
+              }
+            >
+              Reporte de uso
+            </Button>
+          </Box>
+        )}
+        <ResourcePreview resource={page.resource} />
+      </>
+    );
 }

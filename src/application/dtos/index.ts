@@ -8,3 +8,4 @@ export * from "./class-content.dtos.ts";
 export * from "./notifications.dtos.ts";
 export * from "./tags.dtos.ts";
 export * from "./answers.dtos.ts";
+export * from "./resource.reports.ts"

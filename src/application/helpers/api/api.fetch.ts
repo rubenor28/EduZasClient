@@ -140,7 +140,7 @@ async function baseFetch<T>(
       data = undefined;
       break;
     default:
-      data = res.status === 204 ? ({} as T) : await res.json();
+      data = res.status === 204 ? undefined : await res.json();
       break;
   }
 
