@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
@@ -129,12 +130,34 @@ export function ResourceReportView() {
     useState<keyof StudentActivityDetail>("totalMinutesSpent");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
   const [loading, setLoading] = useState(true);
+  const [nameFilter, setNameFilter] = useState("");
+  const [minViewCountFilter, setMinViewCountFilter] = useState("");
+  const [minMinutesSpentFilter, setMinMinutesSpentFilter] = useState("");
 
-  const sortedStudents = useMemo(() => {
+  const filteredStudents = useMemo(() => {
     if (!report?.students) {
       return [];
     }
-    return [...report.students].sort((a, b) => {
+    return report.students.filter((student) => {
+      const nameMatch = student.fullName
+        .toLowerCase()
+        .includes(nameFilter.toLowerCase());
+      const minViewCount =
+        minViewCountFilter === "" ? 0 : Number(minViewCountFilter);
+      const viewCountMatch = student.viewCount >= minViewCount;
+      const minMinutesSpent =
+        minMinutesSpentFilter === "" ? 0 : Number(minMinutesSpentFilter);
+      const minutesSpentMatch = student.totalMinutesSpent >= minMinutesSpent;
+
+      return nameMatch && viewCountMatch && minutesSpentMatch;
+    });
+  }, [report, nameFilter, minViewCountFilter, minMinutesSpentFilter]);
+
+  const sortedStudents = useMemo(() => {
+    if (!filteredStudents) {
+      return [];
+    }
+    return [...filteredStudents].sort((a, b) => {
       let comparison = 0;
       if (a[orderBy] < b[orderBy]) {
         comparison = -1;
@@ -144,7 +167,7 @@ export function ResourceReportView() {
       }
       return order === "desc" ? -comparison : comparison;
     });
-  }, [report, order, orderBy]);
+  }, [filteredStudents, order, orderBy]);
 
   useEffect(() => {
     const fetchResource = async () => {
@@ -238,6 +261,46 @@ export function ResourceReportView() {
       <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
         Detalle por Estudiante
       </Typography>
+
+      <Card sx={{ mb: 2 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Filtros
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Nombre del Estudiante"
+                variant="outlined"
+                fullWidth
+                value={nameFilter}
+                onChange={(e) => setNameFilter(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Vistas Mínimas"
+                variant="outlined"
+                type="number"
+                fullWidth
+                value={minViewCountFilter}
+                onChange={(e) => setMinViewCountFilter(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                label="Minutos Mínimos Vistos"
+                variant="outlined"
+                type="number"
+                fullWidth
+                value={minMinutesSpentFilter}
+                onChange={(e) => setMinMinutesSpentFilter(e.target.value)}
+              />
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
