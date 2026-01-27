@@ -4,8 +4,13 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import type { AnswerGradeDetail, AnswerId, Grade } from "@domain";
@@ -47,6 +52,8 @@ export function AnswerResultsView(answerId: AnswerId) {
   const { classId, userId, testId } = answerId;
   const [result, setResult] = useState<AnswerGradeDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [titleFilter, setTitleFilter] = useState("");
+  const [correctnessFilter, setCorrectnessFilter] = useState("all");
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -71,6 +78,23 @@ export function AnswerResultsView(answerId: AnswerId) {
   if (loading) return <CircularProgress />;
 
   if (result === null) return <NotFound />;
+
+  const filteredGradeDetails = result.gradeDetails
+    .filter((grade) =>
+      (grade.title || "").toLowerCase().includes(titleFilter.toLowerCase()),
+    )
+    .filter((grade) => {
+      if (correctnessFilter === "all") return true;
+
+      const isCorrect =
+        grade.manualGrade !== null
+          ? grade.manualGrade
+          : grade.points === grade.totalPoints;
+
+      if (correctnessFilter === "correct") return isCorrect;
+      if (correctnessFilter === "incorrect") return !isCorrect;
+      return true;
+    });
 
   return (
     <Card>
@@ -126,8 +150,33 @@ export function AnswerResultsView(answerId: AnswerId) {
         </Grid>
 
         <Box sx={{ mt: 4 }}>
-          {result.gradeDetails.map((grade, index) => (
-            <Box key={index} mb={2}>
+          <Grid container spacing={2} sx={{ mb: 2 }} alignItems="center">
+            <Grid item xs={12} sm={8}>
+              <TextField
+                label="Filtrar por título de pregunta"
+                variant="outlined"
+                fullWidth
+                value={titleFilter}
+                onChange={(e) => setTitleFilter(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth>
+                <InputLabel>Filtro</InputLabel>
+                <Select
+                  value={correctnessFilter}
+                  label="Filtro"
+                  onChange={(e) => setCorrectnessFilter(e.target.value)}
+                >
+                  <MenuItem value="all">Todas</MenuItem>
+                  <MenuItem value="correct">Correctas</MenuItem>
+                  <MenuItem value="incorrect">Incorrectas</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
+          {filteredGradeDetails.map((grade) => (
+            <Box key={grade.questionId} mb={2}>
               <GradeDetails grade={grade} />
             </Box>
           ))}
