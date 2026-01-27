@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardContent,
   CircularProgress,
@@ -28,6 +29,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import HourglassTopIcon from "@mui/icons-material/HourglassTop";
 import { useParams } from "react-router";
+import PrintIcon from "@mui/icons-material/Print";
 
 function StatCard({
   title,
@@ -206,6 +208,15 @@ export function ResourceReportView() {
       <Typography variant="subtitle1" color="text.secondary" gutterBottom>
         Clase: {report.classId}
       </Typography>
+
+        <Button
+          sx={{ mr: 2 }}
+          variant="contained"
+          startIcon={<PrintIcon />}
+          onClick={() => window.print()}
+        >
+          Descargar
+        </Button>
 
       <Grid container spacing={3} sx={{ mt: 2, mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
