@@ -279,7 +279,7 @@ export function ResourceReportView() {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Vistas Mínimas"
+                label="Vistas Mínimas (<=)"
                 variant="outlined"
                 type="number"
                 fullWidth
@@ -289,7 +289,7 @@ export function ResourceReportView() {
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Minutos Mínimos Vistos"
+                label="Minutos Mínimos Vistos (<=)"
                 variant="outlined"
                 type="number"
                 fullWidth
