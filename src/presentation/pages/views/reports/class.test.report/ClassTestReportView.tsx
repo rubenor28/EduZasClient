@@ -6,12 +6,17 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  FormControl,
   Grid,
+  InputLabel,
   LinearProgress,
   List,
   ListItem,
   ListItemText,
+  MenuItem,
   Paper,
+  Select,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -33,6 +38,9 @@ export function ClassTestReportView() {
   const [loading, setLoading] = useState(true);
   const { classId, testId } = useParams<Params>();
   const [report, setReport] = useState<ClassTestReport | null>(null);
+  const [nameFilter, setNameFilter] = useState("");
+  const [gradeFilter, setGradeFilter] = useState<number | "">("");
+  const [gradeOperator, setGradeOperator] = useState(">=");
 
   const handlePrint = () => window.print();
 
@@ -62,6 +70,24 @@ export function ClassTestReportView() {
   if (loading) return <CircularProgress />;
 
   if (report === null) return <NotFound />;
+
+  const filteredResults = report.results
+    .filter((student) =>
+      student.studentName.toLowerCase().includes(nameFilter.toLowerCase()),
+    )
+    .filter((student) => {
+      if (gradeFilter === "") return true;
+      switch (gradeOperator) {
+        case ">=":
+          return student.grade >= gradeFilter;
+        case "<=":
+          return student.grade <= gradeFilter;
+        case "==":
+          return student.grade == gradeFilter;
+        default:
+          return true;
+      }
+    });
 
   return (
     <Card>
@@ -152,9 +178,53 @@ export function ClassTestReportView() {
         <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
           Resultados individuales ({report.totalStudents} alumnos)
         </Typography>
+        <Grid container spacing={2} sx={{ mb: 2 }} alignItems="center">
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Filtrar por nombre"
+              variant="outlined"
+              fullWidth
+              value={nameFilter}
+              onChange={(e) => setNameFilter(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Grid container spacing={2}>
+              <Grid item xs={5}>
+                <FormControl fullWidth>
+                  <InputLabel>Condición</InputLabel>
+                  <Select
+                    value={gradeOperator}
+                    label="Condición"
+                    onChange={(e) => setGradeOperator(e.target.value)}
+                  >
+                    <MenuItem value=">=">&gt;=</MenuItem>
+                    <MenuItem value="<=">&lt;=</MenuItem>
+                    <MenuItem value="==">=</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={7}>
+                <TextField
+                  label="Calificación"
+                  variant="outlined"
+                  type="number"
+                  fullWidth
+                  value={gradeFilter}
+                  onChange={(e) =>
+                    setGradeFilter(
+                      e.target.value === "" ? "" : parseFloat(e.target.value),
+                    )
+                  }
+                  inputProps={{ step: "0.01" }}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
         <Paper variant="outlined">
           <List>
-            {report.results
+            {filteredResults
               .sort((a, b) => b.grade - a.grade)
               .map((student) => (
                 <ListItem key={student.studentId} divider>
