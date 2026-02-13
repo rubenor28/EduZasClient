@@ -1,11 +1,11 @@
 import {
-  Box,
-  IconButton,
-  Checkbox,
-  FormControlLabel,
-  Button,
-  TextField,
-  Alert,
+    Box,
+    IconButton,
+    Checkbox,
+    FormControlLabel,
+    Button,
+    TextField,
+    Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,7 +15,7 @@ import { getFieldError } from "@application";
 import type { QuestionTypes, QuestionVariant } from "@domain";
 
 type MultipleSelectionQuestion =
-  QuestionVariant<QuestionTypes.MultipleSelection>;
+    QuestionVariant<QuestionTypes.MultipleSelection>;
 
 /**
  * Componente para renderizar una pregunta de tipo "Selección Múltiple".
@@ -25,102 +25,112 @@ type MultipleSelectionQuestion =
  * @param props - Las propiedades del componente.
  */
 export function MultipleSelectionQuestionBlock({
-  id,
-  question,
-  onChange,
-  onDelete,
+    id,
+    question,
+    onChange,
+    onDelete,
 }: QuestionBlockProps<QuestionTypes.MultipleSelection>) {
-  const { options, correctOptions } = question;
+    const { options, correctOptions } = question;
 
-  const { fieldErrors } = useTest();
-  const optionsError = getFieldError(
-    `content[${id}].options`,
-    fieldErrors,
-  )?.message;
-  const correctOptionsError = getFieldError(
-    `content[${id}].correctOptions`,
-    fieldErrors,
-  )?.message;
+    const { fieldErrors } = useTest();
+    const optionsError = getFieldError(
+        `content[${id}].options`,
+        fieldErrors,
+    )?.message;
 
-  const handleUpdate = (newProps: Partial<MultipleSelectionQuestion>) =>
-    onChange((prev) => ({ ...prev, ...newProps }));
+    const correctOptionsError = getFieldError(
+        `content[${id}].correctOptions`,
+        fieldErrors,
+    )?.message;
 
-  const handleCorrectOptionsChange = (optionId: string) => {
-    const newCorrectOptions = correctOptions.includes(optionId)
-      ? correctOptions.filter((id) => id !== optionId) // Uncheck
-      : [...correctOptions, optionId]; // Check
-    handleUpdate({ correctOptions: newCorrectOptions });
-  };
+    const handleUpdate = (newProps: Partial<MultipleSelectionQuestion>) =>
+        onChange((prev) => ({ ...prev, ...newProps }));
 
-  const handleAddOption = () => {
-    const newId = uuidv4();
-    const newOptions = { ...options, [newId]: "Nueva opción" };
-    handleUpdate({ options: newOptions });
-  };
+    const handleCorrectOptionsChange = (optionId: string) => {
+        const newCorrectOptions = correctOptions.includes(optionId)
+            ? correctOptions.filter((id) => id !== optionId) // Uncheck
+            : [...correctOptions, optionId]; // Check
+        handleUpdate({ correctOptions: newCorrectOptions });
+    };
 
-  const handleRemoveOption = (id: string) => {
-    const newOptions = { ...options };
-    delete newOptions[id];
+    const handleAddOption = () => {
+        const newId = uuidv4();
+        const newOptions = { ...options, [newId]: "Nueva opción" };
+        handleUpdate({ options: newOptions });
+    };
 
-    const newCorrectOptions = correctOptions.filter(
-      (correctId) => correctId !== id,
-    );
-    handleUpdate({ options: newOptions, correctOptions: newCorrectOptions });
-  };
+    const handleRemoveOption = (id: string) => {
+        const newOptions = { ...options };
+        delete newOptions[id];
 
-  const handleOptionTextChange = (id: string, text: string) => {
-    handleUpdate({ options: { ...options, [id]: text } });
-  };
+        const newCorrectOptions = correctOptions.filter(
+            (correctId) => correctId !== id,
+        );
+        handleUpdate({ options: newOptions, correctOptions: newCorrectOptions });
+    };
 
-  return (
-    <QuestionBlock
-      id={id}
-      question={question}
-      onChange={onChange}
-      onDelete={onDelete}
-    >
-      {optionsError && (
-        <Alert severity="error">{`Error en opciones: ${optionsError}`}</Alert>
-      )}
+    const handleOptionTextChange = (id: string, text: string) => {
+        handleUpdate({ options: { ...options, [id]: text } });
+    };
 
-      {correctOptionsError && (
-        <Alert severity="error">{`Error en opciones correctas: ${correctOptionsError}`}</Alert>
-      )}
+    return (
+        <QuestionBlock
+            id={id}
+            question={question}
+            onChange={onChange}
+            onDelete={onDelete}
+        >
+            {optionsError && (
+                <Alert severity="error">{`Error en opciones: ${optionsError}`}</Alert>
+            )}
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
-        {Object.entries(options).map(([id, text]) => (
-          <Box key={id} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={correctOptions.includes(id)}
-                  onChange={() => handleCorrectOptionsChange(id)}
-                />
-              }
-              label=""
-            />
-            <TextField
-              value={text}
-              onChange={(e) => handleOptionTextChange(id, e.target.value)}
-              fullWidth
-              variant="standard"
-            />
-            <IconButton
-              aria-label="delete-option"
-              onClick={() => handleRemoveOption(id)}
+            {correctOptionsError && (
+                <Alert severity="error">{`Error en opciones correctas: ${correctOptionsError}`}</Alert>
+            )}
+
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
+                {
+                    Object.entries(options).map(([optId, text]) => {
+                        const optionError = getFieldError(`content[${id}].options[${optId}]`, fieldErrors)?.message;
+
+                        return (
+                            <Box key={optId} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            checked={correctOptions.includes(optId)}
+                                            onChange={() => handleCorrectOptionsChange(optId)}
+                                        />
+                                    }
+                                    label=""
+                                />
+                                <TextField
+                                    value={text}
+                                    onChange={(e) => handleOptionTextChange(optId, e.target.value)}
+                                    fullWidth
+                                    variant="standard"
+                                    error={!!optionError}
+                                    helperText={optionError}
+                                />
+                                <IconButton
+                                    aria-label="delete-option"
+                                    onClick={() => handleRemoveOption(optId)}
+                                    disabled={Object.keys(options).length <= 1}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Box>
+                        )
+                    })
+                }
+            </Box>
+            <Button
+                startIcon={<AddIcon />}
+                onClick={handleAddOption}
+                sx={{ alignSelf: "flex-start", mt: 1 }}
             >
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        ))}
-      </Box>
-      <Button
-        startIcon={<AddIcon />}
-        onClick={handleAddOption}
-        sx={{ alignSelf: "flex-start", mt: 1 }}
-      >
-        Añadir Opción
-      </Button>
-    </QuestionBlock>
-  );
+                Añadir Opción
+            </Button>
+        </QuestionBlock>
+    );
 }

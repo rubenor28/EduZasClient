@@ -1,11 +1,11 @@
 import {
-  Box,
-  IconButton,
-  Button,
-  TextField,
-  Typography,
-  Grid,
-  Alert,
+    Box,
+    IconButton,
+    Button,
+    TextField,
+    Typography,
+    Grid,
+    Alert,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,8 +15,8 @@ import { useState } from "react";
 import { getFieldError } from "@application";
 
 const defaultInput: ConceptPair = {
-  conceptA: "",
-  conceptB: "",
+    conceptA: "",
+    conceptB: "",
 };
 
 type ConceptRelationQuestion = QuestionVariant<QuestionTypes.ConceptRelation>;
@@ -29,151 +29,160 @@ type ConceptRelationQuestion = QuestionVariant<QuestionTypes.ConceptRelation>;
  * @param props - Las propiedades del componente.
  */
 export function ConceptRelationQuestionBlock({
-  id,
-  question,
-  onChange,
-  onDelete,
+    id,
+    question,
+    onChange,
+    onDelete,
 }: QuestionBlockProps<QuestionTypes.ConceptRelation>) {
-  const { concepts } = question;
-  const [input, setInput] = useState<ConceptPair>(defaultInput);
+    const { concepts } = question;
+    const [input, setInput] = useState<ConceptPair>(defaultInput);
 
-  const { fieldErrors } = useTest();
-  const conceptsError = getFieldError(
-    `content[${id}].concepts`,
-    fieldErrors,
-  )?.message;
+    const { fieldErrors } = useTest();
+    const conceptsError = getFieldError(
+        `content[${id}].concepts`,
+        fieldErrors,
+    )?.message;
 
-  const handleInputChange = (value: string, field: string) =>
-    setInput((prev) => ({ ...prev, [field]: value }));
+    const handleInputChange = (value: string, field: string) =>
+        setInput((prev) => ({ ...prev, [field]: value }));
 
-  const handleUpdate = (newProps: Partial<ConceptRelationQuestion>) =>
-    onChange((prev) => ({ ...prev, ...newProps }));
+    const handleUpdate = (newProps: Partial<ConceptRelationQuestion>) =>
+        onChange((prev) => ({ ...prev, ...newProps }));
 
-  const handleAddPair = () => {
-    const trimmedA = input.conceptA.trim();
-    const trimmedB = input.conceptB.trim();
+    const handleAddPair = () => {
+        const trimmedA = input.conceptA.trim();
+        const trimmedB = input.conceptB.trim();
 
-    if (!trimmedA || !trimmedB) return;
+        if (!trimmedA || !trimmedB) return;
 
-    const isDuplicate = concepts.some(
-      (p) => p.conceptA === trimmedA && p.conceptB === trimmedB,
-    );
+        const isDuplicate = concepts.some(
+            (p) => p.conceptA === trimmedA && p.conceptB === trimmedB,
+        );
 
-    if (isDuplicate) return;
+        if (isDuplicate) return;
 
-    const newConcepts = [
-      ...concepts,
-      { conceptA: trimmedA, conceptB: trimmedB },
-    ];
+        const newConcepts = [
+            ...concepts,
+            { conceptA: trimmedA, conceptB: trimmedB },
+        ];
 
-    handleUpdate({ concepts: newConcepts });
-    setInput(defaultInput);
-  };
+        handleUpdate({ concepts: newConcepts });
+        setInput(defaultInput);
+    };
 
-  const handleRemovePair = (indexToRemove: number) => {
-    const newConcepts = concepts.filter((_, index) => index !== indexToRemove);
-    handleUpdate({ concepts: newConcepts });
-  };
+    const handleRemovePair = (indexToRemove: number) => {
+        const newConcepts = concepts.filter((_, index) => index !== indexToRemove);
+        handleUpdate({ concepts: newConcepts });
+    };
 
-  const handlePairChange = (
-    indexToUpdate: number,
-    field: keyof ConceptPair,
-    value: string,
-  ) => {
-    const newConcepts = concepts.map((c, i) =>
-      i === indexToUpdate ? { ...c, [field]: value } : c,
-    );
+    const handlePairChange = (
+        indexToUpdate: number,
+        field: keyof ConceptPair,
+        value: string,
+    ) => {
+        const newConcepts = concepts.map((c, i) =>
+            i === indexToUpdate ? { ...c, [field]: value } : c,
+        );
 
-    const updatedPair = newConcepts[indexToUpdate];
+        const updatedPair = newConcepts[indexToUpdate];
 
-    const isDuplicate = newConcepts.some(
-      (p, i) =>
-        i !== indexToUpdate &&
-        p.conceptA === updatedPair.conceptA &&
-        p.conceptB === updatedPair.conceptB,
-    );
+        const isDuplicate = newConcepts.some(
+            (p, i) =>
+                i !== indexToUpdate &&
+                p.conceptA === updatedPair.conceptA &&
+                p.conceptB === updatedPair.conceptB,
+        );
 
-    if (isDuplicate) return;
+        if (isDuplicate) return;
 
-    handleUpdate({ concepts: newConcepts });
-  };
+        handleUpdate({ concepts: newConcepts });
+    };
 
-  return (
-    <QuestionBlock
-      id={id}
-      question={question}
-      onChange={onChange}
-      onDelete={onDelete}
-    >
-      <Typography variant="subtitle1" sx={{ mb: 1, mt: 1 }}>
-        Pares de Conceptos
-      </Typography>
-      {conceptsError && <Alert severity="error">{conceptsError}</Alert>}
-      <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mt: 1 }}>
-        <TextField
-          label="Concepto A"
-          name="conceptA"
-          value={input.conceptA}
-          onChange={({ target }) =>
-            handleInputChange(target.value, target.name)
-          }
-          fullWidth
-          variant="standard"
-        />
-        <TextField
-          label="Concepto B"
-          name="conceptB"
-          value={input.conceptB}
-          onChange={({ target }) =>
-            handleInputChange(target.value, target.name)
-          }
-          fullWidth
-          variant="standard"
-        />
-        <Button
-          startIcon={<AddIcon />}
-          onClick={handleAddPair}
-          sx={{ alignSelf: "flex-end", mt: 2 }}
+    return (
+        <QuestionBlock
+            id={id}
+            question={question}
+            onChange={onChange}
+            onDelete={onDelete}
         >
-          Añadir
-        </Button>
-      </Box>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-        {concepts.map((pair, index) => (
-          <Grid container spacing={2} alignItems="center" key={index}>
-            <Grid item xs={5}>
-              <TextField
-                label="Concepto A"
-                value={pair.conceptA}
-                onChange={({ target }) =>
-                  handlePairChange(index, "conceptA", target.value)
-                }
-                fullWidth
-                variant="standard"
-              />
-            </Grid>
-            <Grid item xs={5}>
-              <TextField
-                label="Concepto B"
-                value={pair.conceptB}
-                onChange={({ target }) =>
-                  handlePairChange(index, "conceptB", target.value)
-                }
-                fullWidth
-                variant="standard"
-              />
-            </Grid>
-            <Grid item xs={2} sx={{ textAlign: "right" }}>
-              <IconButton
-                aria-label="delete-pair"
-                onClick={() => handleRemovePair(index)}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-        ))}
-      </Box>
-    </QuestionBlock>
-  );
+            <Typography variant="subtitle1" sx={{ mb: 1, mt: 1 }}>
+                Pares de Conceptos
+            </Typography>
+            {conceptsError && <Alert severity="error">{conceptsError}</Alert>}
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 2, mt: 1 }}>
+                <TextField
+                    label="Concepto A"
+                    name="conceptA"
+                    value={input.conceptA}
+                    onChange={({ target }) =>
+                        handleInputChange(target.value, target.name)
+                    }
+                    fullWidth
+                    variant="standard"
+                />
+                <TextField
+                    label="Concepto B"
+                    name="conceptB"
+                    value={input.conceptB}
+                    onChange={({ target }) =>
+                        handleInputChange(target.value, target.name)
+                    }
+                    fullWidth
+                    variant="standard"
+                />
+                <Button
+                    startIcon={<AddIcon />}
+                    onClick={handleAddPair}
+                    sx={{ alignSelf: "flex-end", mt: 2 }}
+                >
+                    Añadir
+                </Button>
+            </Box>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+                {concepts.map((pair, index) => {
+                    const conceptAError = getFieldError(`content[${id}].concepts[${index}].conceptA`, fieldErrors)?.message;
+                    const conceptBError = getFieldError(`content[${id}].concepts[${index}].conceptB`, fieldErrors)?.message;
+
+                    return (
+                        <Grid container spacing={2} alignItems="center" key={index}>
+                            <Grid item xs={5}>
+                                <TextField
+                                    label="Concepto A"
+                                    value={pair.conceptA}
+                                    onChange={({ target }) =>
+                                        handlePairChange(index, "conceptA", target.value)
+                                    }
+                                    fullWidth
+                                    variant="standard"
+                                    error={!!conceptAError}
+                                    helperText={conceptAError}
+                                />
+                            </Grid>
+                            <Grid item xs={5}>
+                                <TextField
+                                    label="Concepto B"
+                                    value={pair.conceptB}
+                                    onChange={({ target }) =>
+                                        handlePairChange(index, "conceptB", target.value)
+                                    }
+                                    fullWidth
+                                    variant="standard"
+                                    error={!!conceptBError}
+                                    helperText={conceptBError}
+                                />
+                            </Grid>
+                            <Grid item xs={2} sx={{ textAlign: "right" }}>
+                                <IconButton
+                                    aria-label="delete-pair"
+                                    onClick={() => handleRemovePair(index)}
+                                >
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+                    )
+                })}
+            </Box>
+        </QuestionBlock>
+    );
 }
