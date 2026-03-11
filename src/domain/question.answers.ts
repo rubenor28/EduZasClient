@@ -1,6 +1,9 @@
 import type { PublicQuestion, PublicQuestionVariant } from "./public.questions";
 import { type ConceptPair, QuestionTypes } from "./questions";
 
+/**
+ * Unión de todos los tipos de respuestas posibles para las preguntas.
+ */
 export type QuestionAnswer =
   | { readonly type: QuestionTypes.Open; text: string | null }
   | {
@@ -17,11 +20,19 @@ export type QuestionAnswer =
       answeredPairs: ConceptPair[];
     };
 
+/**
+ * Helper para extraer una variante específica de respuesta por su tipo.
+ */
 export type QuestionAnswerVariant<T extends QuestionTypes> = Extract<
   QuestionAnswer,
   { type: T }
 >;
 
+/**
+ * Genera un objeto de respuesta inicial por defecto para una pregunta dada.
+ * @param question La pregunta para la cual generar la respuesta por defecto.
+ * @returns Un objeto de tipo QuestionAnswer con valores iniciales.
+ */
 export function defaultQuestionAnswer(question: PublicQuestion): QuestionAnswer;
 export function defaultQuestionAnswer(
   question: PublicQuestionVariant<QuestionTypes.Open>,

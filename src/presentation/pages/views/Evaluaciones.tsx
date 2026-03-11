@@ -33,6 +33,16 @@ import {
 } from "@presentation";
 import { v4 as uuidv4 } from "uuid";
 
+/**
+ * Vista de gestión de evaluaciones para profesores.
+ * 
+ * Funcionalidades:
+ * 1. Listar evaluaciones creadas por el profesor (paginado).
+ * 2. Crear nuevas evaluaciones con una estructura inicial.
+ * 3. Clonar evaluaciones existentes.
+ * 4. Archivar, desarchivar y eliminar evaluaciones.
+ * 5. Navegar al editor detallado de cada evaluación.
+ */
 export const Evaluaciones = () => {
   const { user } = useUser();
   const navigate = useNavigate();

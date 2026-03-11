@@ -37,18 +37,21 @@ export interface FetchOptions extends RequestInit {
   parseResponse?: ParseResponse;
 }
 
-// Sobrecargas de baseFetch
 /**
  * Realiza una petición fetch a la API, gestionando de forma centralizada la URL base,
  * las credenciales, los errores y los modos de respuesta.
+ * 
+ * Esta función es la base de todas las llamadas a la API en el sistema. Soporta
+ * distintos modos de manejo de errores (lanzar excepciones o devolver un `Result`)
+ * y diferentes formas de procesar el cuerpo de la respuesta.
  *
  * @internal
  * Esta función no está pensada para ser usada directamente fuera de este módulo.
  * Utilizar las funciones exportadas `apiGet`, `apiPost`, etc. en su lugar.
  *
- * @param endpoint - La ruta del endpoint de la API (ej. `/users/1`).
- * @param options - Opciones de la petición `fetch`, extendidas con `parseResponse`.
- * @param mode - El modo de manejo de errores, que determina si se lanzan excepciones o se devuelve un `Result`.
+ * @param endpoint La ruta del endpoint de la API (ej. `/users/1`).
+ * @param options Opciones de la petición `fetch`, extendidas con `parseResponse`.
+ * @param mode El modo de manejo de errores que determina el formato del retorno.
  * @returns El cuerpo de la respuesta procesado según `parseResponse` y `mode`.
  */
 function baseFetch(

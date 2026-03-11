@@ -82,14 +82,33 @@ function ManualGradeControl({ value, onChange }: ManualGradeControlProps) {
   );
 }
 
+/**
+ * Mapa de calificaciones manuales (ID de pregunta -> estado de calificación).
+ */
 export type ManualGrades = Record<string, boolean | null>;
 
+/**
+ * Parámetros de ruta para la vista de calificación del profesor.
+ */
 type Params = {
+  /** ID de la clase. */
   classId: string;
+  /** ID de la evaluación. */
   testId: string;
+  /** ID del estudiante cuya respuesta se está calificando. */
   userId: string;
 };
 
+/**
+ * Vista de revisión y calificación para profesores.
+ * 
+ * Funcionalidades:
+ * 1. Visualizar las respuestas enviadas por un estudiante específico.
+ * 2. Asignar calificaciones manuales (Correcto/Incorrecto) a preguntas que lo requieran (ej. preguntas abiertas).
+ * 3. Ver el puntaje calculado en tiempo real.
+ * 4. Guardar los cambios de calificación en el backend.
+ * 5. Descargar o imprimir la revisión detallada.
+ */
 export function ProfessorGradingView() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);

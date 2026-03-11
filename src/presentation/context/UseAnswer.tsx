@@ -16,41 +16,82 @@ import { Box, CircularProgress } from "@mui/material";
 import { NotFound } from "@presentation";
 import { createContext, useContext, useEffect, useState } from "react";
 
+/**
+ * Tipo para funciones que actualizan el contenido completo de una respuesta.
+ */
 export type AnswerContentUpdater =
   | AnswerContent
   | ((prev: AnswerContent) => AnswerContent);
 
+/**
+ * Tipo para funciones que actualizan la respuesta a una pregunta específica.
+ */
 export type AnswerQuestionUpdater =
   | QuestionAnswer
   | ((prev: QuestionAnswer) => QuestionAnswer);
 
+/**
+ * Tipo para funciones o valores que actualizan la entidad de respuesta.
+ */
 export type AnswerUpdater = Answer | ((prev: Answer) => Answer);
 
+/**
+ * Interfaz que define el estado y las acciones disponibles en el contexto de respuesta.
+ */
 export type AnswerConcextType = {
+  /** La estructura pública de la evaluación que se está respondiendo. */
   test: PublicTest;
+  /** La entidad de respuesta que contiene el progreso del estudiante. */
   answer: Answer;
+  /** El estado actual de la calificación (ej. pendiente, calificado). */
   answerState: AnswerGradeStatus;
+  /** Conjunto de IDs de preguntas que ya han sido respondidas. */
   answeredQuestions: Set<string>;
+  /** Función para actualizar la entidad de respuesta completa. */
   setAnswer: React.Dispatch<React.SetStateAction<Answer | null>>;
+  /** Registra una pregunta como respondida. */
   setAnsweredQuestions: (answerId: string) => void;
+  /** Actualiza la información de la evaluación. */
   setTest: (test: PublicTest) => void;
+  /** Actualiza el contenido de todas las respuestas. */
   setContent: (answer: AnswerContentUpdater) => void;
+  /** Actualiza la respuesta a una pregunta específica por su ID. */
   setAnswerQuestion: (id: string, answer: AnswerQuestionUpdater) => void;
+  /** Lista de errores de validación de campos devueltos por la API. */
   fieldErrors: FieldErrorDTO[];
+  /** Establece los errores de validación de campos. */
   setFieldErrors: (fieldErrors: FieldErrorDTO[]) => void;
+  /** Indica si se están cargando los datos iniciales. */
   isLoading: boolean;
+  /** Controla el estado de carga. */
   setLoading: (loading: boolean) => void;
 };
 
 const AnswerContext = createContext<AnswerConcextType | null>(null);
 
+/**
+ * Propiedades para el componente AnswerProvider.
+ */
 type AnswerProviderProps = {
+  /** ID de la clase. */
   classId: string;
+  /** ID de la evaluación. */
   testId: string;
+  /** ID del estudiante. */
   userId: number;
+  /** Contenido hijo. */
   children: React.ReactNode;
 };
 
+/**
+ * Proveedor de contexto para la gestión de respuestas a evaluaciones.
+ * 
+ * Responsabilidades:
+ * 1. Cargar la respuesta existente del estudiante o crear una nueva si no existe.
+ * 2. Cargar el contenido de la evaluación pública.
+ * 3. Consultar el estado de calificación de la respuesta.
+ * 4. Proveer métodos para actualizar las respuestas de forma reactiva.
+ */
 export const AnswerProvider = ({
   classId,
   testId,

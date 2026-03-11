@@ -4,13 +4,30 @@ import { ResourcePreview, useUser } from "@presentation";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router";
 
+/**
+ * Parámetros de ruta para la previsualización de recursos.
+ */
 type Params = {
+  /** ID del recurso a visualizar. */
   resourceId: string;
+  /** ID de la clase desde la cual se accede al recurso. */
   classId: string;
 };
 
+/**
+ * Estado interno de la página de previsualización.
+ */
 type Page = { state: "loading" } | { state: "idle"; resource: Resource };
 
+/**
+ * Página para la previsualización de recursos académicos.
+ * 
+ * Responsabilidades:
+ * 1. Cargar y mostrar el contenido del recurso mediante `ResourcePreview`.
+ * 2. Registrar el tiempo de inicio de la visualización.
+ * 3. Enviar telemetría (tiempo de lectura) al cerrar la página o navegar fuera.
+ * 4. Permitir a los profesores acceder al reporte de uso del recurso.
+ */
 export function ResourcePreviewPage() {
   const { resourceId, classId } = useParams<Params>();
   const [page, setPage] = useState<Page>({ state: "loading" });

@@ -5,6 +5,9 @@ const defaultQuestion: Omit<Question, "id" | "type"> = {
   title: "Nueva pregunta",
 };
 
+/**
+ * Configuración de las estructuras iniciales por defecto para cada tipo de pregunta.
+ */
 export const questionFabric: Record<QuestionTypes, () => Question> = {
   [QuestionTypes.MultipleChoise]: () => {
     const id = uuidv4();
@@ -45,6 +48,12 @@ export const questionFabric: Record<QuestionTypes, () => Question> = {
   }),
 };
 
+/**
+ * Fabrica una nueva instancia de pregunta con valores por defecto según el tipo solicitado.
+ * @param type El tipo de pregunta a crear.
+ * @returns Una nueva entidad `Question` inicializada.
+ * @throws Error si el tipo de pregunta no es soportado por la factoría.
+ */
 export const QuestionFabric = (type: QuestionTypes): Question => {
   const question = questionFabric[type]();
 

@@ -5,11 +5,14 @@
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5018";
 
+/**
+ * Indica si se permiten las peticiones automatizadas (ej. autoguardado).
+ */
 export const AUTOMATED_FETCHS_ALLOWED = (import.meta.env.VITE_AUTOMATED_FETCHS_ALLOWED || 'true') === 'true';
 console.log(`Auto: ${AUTOMATED_FETCHS_ALLOWED}`);
 
 /**
- * Colores predefinidos para selectores de colores
+ * Colores predefinidos para selectores de colores.
  */
 export const PREDEFINED_COLORS = [
   "#2E7D32",
@@ -23,7 +26,7 @@ export const PREDEFINED_COLORS = [
 ];
 
 /**
- * Configuracion I18N para español
+ * Configuración de internacionalización (I18N) para el editor de texto.
  */
 export const EDITOR_I18N = {
   messages: {

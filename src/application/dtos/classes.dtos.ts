@@ -86,40 +86,69 @@ export type ClassProfessorCriteria = Criteria & {
   isOwner?: boolean;
 };
 
+/** Resumen de una clase para la vista del profesor. */
 export type ProfessorClassesSummary = {
+  /** ID único de la clase. */
   classId: string;
+  /** Indica si la clase está activa. */
   active: boolean;
+  /** Nombre de la clase. */
   className: string;
+  /** Asignatura (opcional). */
   subject?: string;
+  /** Sección (opcional). */
   section?: string;
+  /** Color de la clase. */
   color: string;
+  /** Indica si el profesor es el propietario. */
   owner: boolean;
 };
 
+/** Criterios para buscar el resumen de clases de un profesor. */
 export type ProfessorClassesSummaryCriteria = Criteria & {
+  /** Filtra por estado activo. */
   active?: boolean;
+  /** Filtra por nombre de clase. */
   className?: StringQuery;
+  /** Filtra por asignatura. */
   subject?: StringQuery;
+  /** Filtra por sección. */
   section?: StringQuery;
+  /** ID del profesor. */
   professorId: number;
 };
 
+/** Resumen de una clase para la vista del estudiante. */
 export type StudentClassesSummary = {
+  /** ID único de la clase. */
   classId: string;
+  /** Indica si la clase está activa. */
   active: boolean;
+  /** Nombre de la clase. */
   className: string;
+  /** Asignatura (opcional). */
   subject?: string;
+  /** Sección (opcional). */
   section?: string;
+  /** Color de la clase. */
   color: string;
+  /** Indica si el estudiante tiene la clase oculta. */
   hidden: boolean;
 };
 
+/** Criterios para buscar el resumen de clases de un estudiante. */
 export type StudentClassesSummaryCriteria = Criteria & {
+  /** Filtra por estado activo de la clase. */
   active?: boolean;
+  /** Filtra por si la clase está oculta para el estudiante. */
   hidden?: boolean;
+  /** Filtra por nombre de clase. */
   className?: StringQuery;
+  /** Filtra por asignatura. */
   subject?: StringQuery;
+  /** Filtra por sección. */
   section?: StringQuery;
+  /** ID del estudiante. */
   studentId: number;
 };
 
@@ -143,7 +172,10 @@ export type ClassProfessorSummary = {
   owner: boolean;
 };
 
+/** Criterios para buscar el resumen de profesores de una clase. */
 export type ClassProfessorSummaryCriteria = Criteria & {
+  /** ID de la clase. */
   ClassId: string;
+  /** ID del profesor que realiza la consulta. */
   ProfessorId: number;
 };

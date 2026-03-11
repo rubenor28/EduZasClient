@@ -4,29 +4,55 @@ import { Box, CircularProgress } from "@mui/material";
 import { NotFound } from "@presentation";
 import { createContext, useContext, useEffect, useState } from "react";
 
-// Definir el Estado y las Acciones del Store
+/**
+ * Interfaz que define el estado y las acciones disponibles en el contexto de edición de evaluaciones.
+ */
 export interface TestContextType {
+  /** La entidad de evaluación que se está editando. */
   test: Test;
+  /** Lista de errores de validación de campos devueltos por la API. */
   fieldErrors: FieldErrorDTO[];
+  /** Lista ordenada de IDs de las preguntas, para manejar el orden en la UI. */
   orderedIds: string[];
+  /** Actualiza la entidad de evaluación completa. */
   setTest: (test: Test) => void;
+  /** Actualiza el título de la evaluación. */
   setTitle: (title: string) => void;
+  /** Actualiza el color asociado a la evaluación. */
   setColor: (color: string) => void;
+  /** Establece el límite de tiempo en minutos. */
   setTimeLimit: (minutes: number | undefined) => void;
+  /** Actualiza el contenido (preguntas) de la evaluación. */
   setContent: (
     content: TestContent | ((prevContent: TestContent) => TestContent),
   ) => void;
+  /** Actualiza el orden de los IDs de las preguntas. */
   setOrderedIds: (ids: string[]) => void;
+  /** Establece la lista de errores de validación de campos. */
   setFieldErrors: (fieldErrors: FieldErrorDTO[]) => void;
 }
 
 const TestContext = createContext<TestContextType | null>(null);
 
+/**
+ * Propiedades para el componente TestProvider.
+ */
 type TestProviderProps = {
+  /** ID de la evaluación a cargar y editar. */
   testId: string;
+  /** Contenido hijo. */
   children: React.ReactNode;
 };
 
+/**
+ * Proveedor de contexto para la creación y edición de evaluaciones.
+ * 
+ * Responsabilidades:
+ * 1. Cargar la evaluación desde la API al inicializarse.
+ * 2. Mantener el estado reactivo del título, color, tiempo límite y preguntas.
+ * 3. Gestionar el orden de las preguntas para su renderizado.
+ * 4. Proveer métodos centralizados para modificar la evaluación.
+ */
 export const TestProvider = ({ testId, children }: TestProviderProps) => {
   const [test, setTest] = useState<Test | null>(null);
   const [orderedIds, setOrderedIds] = useState<string[]>([]);

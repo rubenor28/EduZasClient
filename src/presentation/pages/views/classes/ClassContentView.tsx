@@ -28,6 +28,15 @@ interface ClassContentResponse {
   totalPages: number;
 }
 
+/**
+ * Vista que muestra el contenido publicado en una clase específica.
+ * 
+ * Funcionalidades:
+ * 1. Listar recursos y evaluaciones asignadas a la clase.
+ * 2. Mostrar el código de invitación a la clase.
+ * 3. Generar reportes de calificaciones (solo para profesores).
+ * 4. Navegar a la visualización de recursos o a la realización/reporte de evaluaciones.
+ */
 export const ClassContentView = () => {
   const { classId } = useParams<{ classId: string }>();
   const [data, setData] = useState<ClassContentResponse | null>(null);

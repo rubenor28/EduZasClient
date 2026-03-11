@@ -118,11 +118,26 @@ function EngagementChart({ students }: { students: StudentActivityDetail[] }) {
   );
 }
 
+/**
+ * Parámetros de ruta para el reporte de uso de recursos.
+ */
 export type Params = {
+  /** ID de la clase. */
   classId: string;
+  /** ID del recurso académico. */
   resourceId: string;
 };
 
+/**
+ * Vista de reporte de uso de un recurso académico.
+ * 
+ * Funcionalidades:
+ * 1. Mostrar métricas agregadas (vistas totales, estudiantes únicos, tiempo promedio, tiempo total).
+ * 2. Visualizar el Top 10 de estudiantes con mayor compromiso mediante `EngagementChart`.
+ * 3. Mostrar el alcance del recurso (estudiantes que lo han visto vs total estimado).
+ * 4. Listar el detalle de actividad por estudiante en una tabla ordenable y filtrable.
+ * 5. Permitir la impresión/descarga del reporte.
+ */
 export function ResourceReportView() {
   const { classId, resourceId } = useParams<Params>();
   const [report, setReport] = useState<

@@ -28,11 +28,27 @@ import { useNavigate, useParams } from "react-router";
 import PrintIcon from "@mui/icons-material/Print";
 import StatCard from "./StatCard";
 
+/**
+ * Parámetros de ruta para el reporte de examen de clase.
+ */
 type Params = {
+  /** ID de la clase. */
   classId: string;
+  /** ID de la evaluación. */
   testId: string;
 };
 
+/**
+ * Vista de reporte de evaluación por clase.
+ * 
+ * Funcionalidades:
+ * 1. Mostrar estadísticas descriptivas (promedio, tasa de aprobación, desviación estándar, etc.).
+ * 2. Visualizar gráficas de resumen mediante `ScorePieChart`.
+ * 3. Listar resultados individuales de todos los estudiantes inscritos.
+ * 4. Filtrar resultados por nombre y calificación.
+ * 5. Identificar y notificar acciones requeridas (como calificaciones manuales pendientes).
+ * 6. Navegar a la revisión detallada de la respuesta de cada estudiante.
+ */
 export function ClassTestReportView() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);

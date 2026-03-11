@@ -16,6 +16,13 @@ type SnackbarState =
   | { open: false }
   | { open: true; severity: "success" | "error"; message: string };
 
+/**
+ * Vista de perfil de usuario.
+ * 
+ * Permite al usuario autenticado visualizar sus datos personales y realizar
+ * actualizaciones. Maneja el estado de edición, la validación de errores
+ * de la API y muestra feedback visual mediante un Snackbar.
+ */
 export function UserProfileView() {
   const toUserUpdate = ({
     id,

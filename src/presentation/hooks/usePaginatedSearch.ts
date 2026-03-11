@@ -9,25 +9,27 @@ import {
 import { useState, useEffect, useCallback } from "react";
 
 /**
- * Opciones de configuración para la búsqueda paginada.
+ * Opciones de configuración para el gancho de búsqueda paginada.
  */
 type SearchOptions = {
-  /** Si es `true`, la búsqueda se ejecuta automáticamente al montar el componente. */
+  /** Indica si la búsqueda debe ejecutarse automáticamente al montar el componente. @default true */
   autoFetch?: boolean;
-  /** Si es `true`, los errores se envían automáticamente al servicio de errores global. */
+  /** Indica si los errores deben notificarse automáticamente al servicio global de errores. @default true */
   autoErrorHandling?: boolean;
-  /** Tiempo de espera en ms para el debounce de los criterios de búsqueda. */
+  /** Tiempo de espera en milisegundos para el retraso (debounce) de los criterios de búsqueda. @default 300 */
   debounceMs?: number;
 };
 
 /**
- * Hook genérico para gestionar búsquedas paginadas contra la API.
- * Maneja automáticamente el estado de carga, errores, debounce y paginación.
- *
- * @param endpoint - URL del endpoint de búsqueda (ej. `/users/search`).
- * @param initialCriteria - Criterios iniciales de búsqueda (filtros, página, etc.).
- * @param options - Opciones adicionales de configuración.
- * @returns Objeto con los resultados, estado y funciones de control (siguiente página, refrescar, etc.).
+ * Gancho genérico para gestionar búsquedas paginadas contra la API.
+ * 
+ * Este gancho automatiza el manejo del estado de carga, la gestión de errores, 
+ * el retraso de las consultas (debounce) y la lógica de navegación entre páginas.
+ * 
+ * @param endpoint Ruta del endpoint de búsqueda en la API.
+ * @param initialCriteria Criterios iniciales de filtrado y paginación.
+ * @param options Configuración adicional para el comportamiento del gancho.
+ * @returns Un objeto con el estado de la búsqueda y funciones de control de paginación.
  */
 export function usePaginatedSearch<T, C extends Criteria>(
   endpoint: string,

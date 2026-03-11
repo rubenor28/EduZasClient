@@ -13,6 +13,9 @@ import SchoolIcon from "@mui/icons-material/School";
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Definición de las acciones administrativas disponibles en el panel.
+ */
 const actions = [
   {
     title: "Gestión de Base de Datos",
@@ -38,13 +41,13 @@ const actions = [
     icon: <MenuBookIcon fontSize="large" />,
     path: "/admin/resources",
   }
-  // Futuras acciones del administrador pueden ir aquí
 ];
 
 /**
- * Panel principal para usuarios con rol de Administrador.
- * Muestra un grid de tarjetas con accesos directos a las funciones administrativas
- * (gestión de base de datos, usuarios, etc.).
+ * Panel de control para el rol de Administrador.
+ * 
+ * Presenta una interfaz de tablero (dashboard) con acceso directo a las funciones
+ * críticas del sistema, como la gestión de datos, usuarios y contenido global.
  */
 export const AdminPanel = () => {
   const navigate = useNavigate();
